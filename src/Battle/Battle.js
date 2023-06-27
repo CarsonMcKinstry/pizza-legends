@@ -20,7 +20,8 @@ export class Battle {
           maxXp: 100,
           level: 1,
           status: null,
-          team: "player"
+          team: "player",
+          isPlayerControlled: true,
         },
         this
       ),
@@ -32,7 +33,7 @@ export class Battle {
           maxHp: 50,
           xp: 20,
           maxXp: 100,
-          level: 1
+          level: 1,
         },
         this
       ),
@@ -44,15 +45,15 @@ export class Battle {
           maxHp: 50,
           xp: 20,
           maxXp: 100,
-          level: 1
+          level: 1,
         },
         this
-      )
+      ),
     };
 
     this.activeCombatants = {
       player: "player1",
-      enemy: "enemy2"
+      enemy: "enemy2",
     };
   }
 
@@ -88,7 +89,7 @@ export class Battle {
           const battleEvent = new BattleEvent(event, this);
           battleEvent.init(resolve);
         });
-      }
+      },
     });
 
     this.turnCycle.init();

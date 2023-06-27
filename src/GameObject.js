@@ -11,7 +11,7 @@ export class GameObject {
     this.direction = config.direction || "down";
     this.sprite = new Sprite({
       gameObject: this,
-      src: config.src ?? Hero
+      src: config.src ?? Hero,
     });
 
     this.behaviorLoop = config.behaviorLoop || [];

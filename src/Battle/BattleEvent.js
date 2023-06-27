@@ -19,7 +19,7 @@ export class BattleEvent {
       text,
       onComplete: () => {
         resolve();
-      }
+      },
     });
     message.init(this.battle.element);
   }
@@ -29,13 +29,9 @@ export class BattleEvent {
 
     let who = this.event.onCaster ? caster : target;
 
-    if (action.targetType === "friendly") {
-      who = caster;
-    }
-
     if (damage) {
       target.update({
-        hp: target.hp - damage
+        hp: target.hp - damage,
       });
 
       target.pizzaElement.classList.add("battle-damage-blink");
@@ -47,19 +43,19 @@ export class BattleEvent {
         newHp = who.maxHp;
       }
       who.update({
-        hp: newHp
+        hp: newHp,
       });
     }
 
     if (status) {
       who.update({
-        status: { ...status }
+        status: { ...status },
       });
     }
 
     if (status === null) {
       who.update({
-        status: null
+        status: null,
       });
     }
 
@@ -74,7 +70,7 @@ export class BattleEvent {
       enemy: this.event.enemy,
       onComplete: (submission) => {
         resolve(submission);
-      }
+      },
     });
 
     menu.init(this.battle.element);

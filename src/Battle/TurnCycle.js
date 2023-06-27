@@ -10,15 +10,16 @@ export class TurnCycle {
     const casterId = this.battle.activeCombatants[this.currentTeam];
     const caster = this.battle.combatants[casterId];
 
-    const enemyId = this.battle.activeCombatants[
-      caster.team === "player" ? "enemy" : "player"
-    ];
+    const enemyId =
+      this.battle.activeCombatants[
+        caster.team === "player" ? "enemy" : "player"
+      ];
     const enemy = this.battle.combatants[enemyId];
 
     const submission = await this.onNewEvent({
       type: "submissionMenu",
       enemy,
-      caster
+      caster,
     });
 
     const resultingEvent = caster.getReplacedEvents(submission.action.success);
@@ -29,7 +30,7 @@ export class TurnCycle {
         submission,
         action: submission.action,
         caster,
-        target: submission.target
+        target: submission.target,
       };
       await this.onNewEvent(event);
     }
@@ -43,7 +44,7 @@ export class TurnCycle {
         submission,
         action: submission.action,
         caster,
-        target: submission.target
+        target: submission.target,
       };
       await this.onNewEvent(event);
     }
@@ -61,10 +62,10 @@ export class TurnCycle {
   }
 
   async init() {
-    await this.onNewEvent({
-      type: "textMessage",
-      text: "The battle is starting!"
-    });
+    // await this.onNewEvent({
+    //   type: "textMessage",
+    //   text: "The battle is starting!"
+    // });
 
     // start the first turn!
     this.turn();
