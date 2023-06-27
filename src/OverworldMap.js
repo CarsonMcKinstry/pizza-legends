@@ -3,9 +3,10 @@ import DemoLower from "./images/maps/DemoLower.png";
 import DemoUpper from "./images/maps/DemoUpper.png";
 import KitchenLower from "./images/maps/KitchenLower.png";
 import KitchenUpper from "./images/maps/KitchenUpper.png";
+import StreetLower from "./images/maps/StreetLower.png";
+import StreetUpper from "./images/maps/StreetUpper.png";
 import Npc1 from "./images/characters/people/npc1.png";
 import Npc2 from "./images/characters/people/erio.png";
-import Npc3 from "./images/characters/people/npc3.png";
 import { Person } from "./Person";
 import { asGridCoords, nextPosition, withGrid } from "./utils";
 import { OverworldEvent } from "./OverworldEvent";
@@ -14,6 +15,7 @@ import { PizzaStone } from "./PizzaStone";
 
 export const OverworldMaps = {
   DemoRoom: {
+    id: "DemoRoom",
     lowerSrc: DemoLower,
     upperSrc: DemoUpper,
     gameObjects: {
@@ -169,6 +171,7 @@ export const OverworldMaps = {
     },
   },
   Kitchen: {
+    id: "Kitchen",
     lowerSrc: KitchenLower,
     upperSrc: KitchenUpper,
     gameObjects: {
@@ -199,6 +202,48 @@ export const OverworldMaps = {
         ],
       }),
       // npcB: new Person({ x: withGrid(10), y: withGrid(8), src: Npc3 })
+    },
+    cutsceneSpaces: {
+      [asGridCoords(5, 10)]: [
+        {
+          events: [
+            {
+              type: "changeMap",
+              map: "Street",
+              x: withGrid(29),
+              y: withGrid(9),
+              direction: "down",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  Street: {
+    id: "Street",
+    lowerSrc: StreetLower,
+    upperSrc: StreetUpper,
+    gameObjects: {
+      hero: new Person({
+        isPlayerControlled: true,
+        x: withGrid(30),
+        y: withGrid(10),
+      }),
+    },
+    cutsceneSpaces: {
+      [asGridCoords(29, 9)]: [
+        {
+          events: [
+            {
+              type: "changeMap",
+              map: "Kitchen",
+              x: withGrid(5),
+              y: withGrid(10),
+              direction: "up",
+            },
+          ],
+        },
+      ],
     },
   },
 };

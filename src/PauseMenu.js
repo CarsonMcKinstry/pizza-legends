@@ -6,8 +6,9 @@ import { Pizzas } from "./Content/pizzas";
 import { playerState } from "./State/PlayerState";
 
 export class PauseMenu {
-  constructor({ onComplete }) {
+  constructor({ onComplete, progress }) {
     this.onComplete = onComplete;
+    this.progress = progress;
   }
 
   getOptions(pageKey) {
@@ -31,7 +32,10 @@ export class PauseMenu {
         {
           label: "Save",
           description: "Save your progress",
-          handler: () => {},
+          handler: () => {
+            this.progress.save();
+            this.close();
+          },
         },
         {
           label: "Close",

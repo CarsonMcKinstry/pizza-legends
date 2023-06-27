@@ -72,7 +72,6 @@ class PlayerState {
       this.lineup.push(newId);
     }
     emitEvent("LineupChanged");
-    console.log(this);
   }
 }
 
