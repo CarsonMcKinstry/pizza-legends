@@ -10,6 +10,7 @@ import { Person } from "./Person";
 import { asGridCoords, nextPosition, withGrid } from "./utils";
 import { OverworldEvent } from "./OverworldEvent";
 import { playerState } from "./State/PlayerState";
+import { PizzaStone } from "./PizzaStone";
 
 export const OverworldMaps = {
   DemoRoom: {
@@ -95,6 +96,12 @@ export const OverworldMaps = {
         //   { type: "walk", direction: "right" },
         //   { type: "walk", direction: "down" }
         // ]
+      }),
+      pizzaStone: new PizzaStone({
+        x: withGrid(2),
+        y: withGrid(7),
+        storyFlag: "USED_PIZZA_STONE",
+        pizzas: ["s002", "f001"],
       }),
     },
     walls: {

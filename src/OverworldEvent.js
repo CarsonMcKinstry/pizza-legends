@@ -1,5 +1,6 @@
 import { Battle } from "./Battle/Battle";
 import { Enemies } from "./Content/enemies";
+import { CraftingMenu } from "./CraftingMenu";
 import { OverworldMaps } from "./OverworldMap";
 import { PauseMenu } from "./PauseMenu";
 import { SceneTransition } from "./SceneTransition";
@@ -101,6 +102,16 @@ export class OverworldEvent {
         resolve();
         this.map.isPaused = false;
         this.map.overworld.startGameLoop();
+      },
+    });
+    menu.init(document.querySelector(".game-container"));
+  }
+
+  craftingMenu(resolve) {
+    const menu = new CraftingMenu({
+      pizzas: this.event.pizzas,
+      onComplete: () => {
+        resolve();
       },
     });
     menu.init(document.querySelector(".game-container"));
