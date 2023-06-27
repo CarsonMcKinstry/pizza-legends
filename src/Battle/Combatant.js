@@ -22,7 +22,7 @@ export class Combatant {
   }
 
   get isActive() {
-    return this.battle.activeCombatants[this.team] === this.id;
+    return this.battle?.activeCombatants[this.team] === this.id;
   }
 
   get givesXp() {

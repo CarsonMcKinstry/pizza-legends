@@ -9,6 +9,7 @@ import { TurnCycle } from "./TurnCycle";
 import { BattleEvent } from "./BattleEvent";
 import { Team } from "./Team";
 import { playerState } from "../State/PlayerState";
+import { emitEvent } from "../utils";
 
 export class Battle {
   constructor({ enemy, onComplete }) {
@@ -119,6 +120,9 @@ export class Battle {
           playerState.inventory = playerState.inventory.filter((item) => {
             return !this.usedInstanceIds[item.instanceId];
           });
+
+          // send signal to update
+          emitEvent("PlayerStateUpdated");
         }
 
         this.element.remove();

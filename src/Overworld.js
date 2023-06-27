@@ -1,4 +1,5 @@
 import { DirectionInput } from "./DirectionInput";
+import { Hud } from "./Hud";
 import { KeyPressListener } from "./KeypressListener";
 import { OverworldMap, OverworldMaps } from "./OverworldMap";
 
@@ -79,6 +80,9 @@ export class Overworld {
   }
 
   init() {
+    this.hud = new Hud();
+    this.hud.init(document.querySelector(".game-container"));
+
     this.startMap(OverworldMaps.DemoRoom);
 
     this.bindActionInput();
