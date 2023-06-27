@@ -9,6 +9,7 @@ import Npc3 from "./images/characters/people/npc3.png";
 import { Person } from "./Person";
 import { asGridCoords, nextPosition, withGrid } from "./utils";
 import { OverworldEvent } from "./OverworldEvent";
+import { playerState } from "./State/PlayerState";
 
 export const OverworldMaps = {
   DemoRoom: {
@@ -32,21 +33,35 @@ export const OverworldMaps = {
         ],
         talking: [
           {
+            requires: ["TALKED_TO_ERIO"],
             events: [
               {
                 type: "textMessage",
-                text: "I'm busy...!",
+                text: "Isn't Erio the coolest?",
+                faceHero: "npc1",
+              },
+            ],
+          },
+          {
+            events: [
+              {
+                type: "textMessage",
+                text: "I'm going to crush you!",
                 faceHero: "npc1",
               },
               {
                 type: "battle",
                 enemyId: "beth",
               },
-              // {
-              //   type: "textMessage",
-              //   text: "Go away."
-              // },
-              // { type: "walk", direction: "up", who: "hero" },
+              {
+                type: "addStoryFlag",
+                flag: "DEFEATED_BETH",
+              },
+              {
+                type: "textMessage",
+                text: "You crushed me like weak pepper.",
+                faceHero: "npc1",
+              },
             ],
           },
         ],
@@ -59,7 +74,16 @@ export const OverworldMaps = {
           {
             events: [
               { type: "textMessage", text: "Bahaha!", faceHero: "npc2" },
-              { type: "battle", enemyId: "erio" },
+              {
+                type: "addStoryFlag",
+                flag: "TALKED_TO_ERIO",
+              },
+              {
+                type: "stand",
+                direction: "down",
+                who: "npc2",
+              },
+              // { type: "battle", enemyId: "erio" },
             ],
           },
         ],
@@ -229,7 +253,11 @@ export class OverworldMap {
         event,
         map: this,
       });
-      await eventHandler.init();
+      const result = await eventHandler.init();
+
+      if (result === "LOST_BATTLE") {
+        break;
+      }
     }
 
     this.isCutscenePlaying = false;
@@ -263,7 +291,15 @@ export class OverworldMap {
     });
 
     if (!this.isCutscenePlaying && match && match.talking.length) {
-      this.startCutscene(match.talking[0].events);
+      const relevantScenario = match.talking.find((scenario) => {
+        return (scenario.requires || []).every((sf) => {
+          return playerState.storyFlags[sf];
+        });
+      });
+
+      if (relevantScenario) {
+        this.startCutscene(relevantScenario.events);
+      }
     }
   }
 

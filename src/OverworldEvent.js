@@ -3,6 +3,7 @@ import { Enemies } from "./Content/enemies";
 import { OverworldMaps } from "./OverworldMap";
 import { PauseMenu } from "./PauseMenu";
 import { SceneTransition } from "./SceneTransition";
+import { playerState } from "./State/PlayerState";
 import { TextMessage } from "./TextMessage";
 import { oppositeDirection } from "./utils";
 
@@ -86,8 +87,8 @@ export class OverworldEvent {
   battle(resolve) {
     const battle = new Battle({
       enemy: Enemies[this.event.enemyId],
-      onComplete: () => {
-        resolve();
+      onComplete: (didWin) => {
+        resolve(didWin ? "WON_BATTLE" : "LOST_BATTLE");
       },
     });
     battle.init(document.querySelector(".game-container"));
@@ -103,6 +104,11 @@ export class OverworldEvent {
       },
     });
     menu.init(document.querySelector(".game-container"));
+  }
+
+  addStoryFlag(resolve) {
+    playerState.storyFlags[this.event.flag] = true;
+    resolve();
   }
 
   async init() {
