@@ -3,10 +3,11 @@ import { KeyboardMenu } from "../KeyboardMenu";
 import "../styles/SubmissionMenu.css";
 
 export class SubmissionMenu {
-  constructor({ caster, enemy, onComplete, items }) {
+  constructor({ caster, enemy, onComplete, items, replacements }) {
     this.caster = caster;
     this.enemy = enemy;
     this.onComplete = onComplete;
+    this.replacements = replacements || [];
 
     let quantityMap = {};
 
@@ -26,7 +27,6 @@ export class SubmissionMenu {
       }
     }
     this.items = Object.values(quantityMap);
-    console.log(this.items);
   }
 
   getPages() {
@@ -57,7 +57,9 @@ export class SubmissionMenu {
         {
           label: "Swap",
           description: "Change to another pizza",
-          handler: () => {},
+          handler: () => {
+            this.keyboardMenu.setOptions(this.getPages().replacements);
+          },
         },
       ],
       attacks: [
@@ -89,7 +91,26 @@ export class SubmissionMenu {
         }),
         backOption,
       ],
+      replacements: [
+        ...this.replacements.map((replacement) => {
+          return {
+            label: replacement.name,
+            description: replacement.description,
+            handler: () => {
+              this.menuSubmitReplacement(replacement);
+            },
+          };
+        }),
+        backOption,
+      ],
     };
+  }
+
+  menuSubmitReplacement(replacement) {
+    this.keyboardMenu?.end();
+    this.onComplete({
+      replacement,
+    });
   }
 
   menuSubmit(action, instanceId = null) {

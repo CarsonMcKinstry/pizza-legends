@@ -83,6 +83,7 @@ export const Actions = {
   },
   item_recoverHp: {
     name: "Parmesan",
+    description: "Cheesy goodness",
     targetType: "friendly",
     success: [
       {
