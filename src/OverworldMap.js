@@ -164,6 +164,9 @@ export const OverworldMaps = {
             {
               type: "changeMap",
               map: "Kitchen",
+              x: withGrid(2),
+              y: withGrid(2),
+              direction: "down",
             },
           ],
         },
