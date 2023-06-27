@@ -1,7 +1,7 @@
 export const Actions = {
   damage1: {
     name: "Whomp!",
-    description: "",
+    description: "Pillowy punch of dough",
     success: [
       {
         type: "textMessage",
@@ -20,7 +20,7 @@ export const Actions = {
   saucyStatus: {
     name: "Tomato Squeeze!",
     targetType: "friendly",
-    description: "",
+    description: "Applies the saucy status",
     success: [
       {
         type: "textMessage",
@@ -37,7 +37,7 @@ export const Actions = {
   },
   clumsyStatus: {
     name: "Olive Oil",
-    description: "",
+    description: "Slippery mess of deliciousness",
     success: [
       {
         type: "textMessage",
@@ -58,6 +58,44 @@ export const Actions = {
       {
         type: "textMessage",
         text: "{TARGET} is slipping all around!",
+      },
+    ],
+  },
+  // Items
+  item_recoverStatus: {
+    name: "Heating Lamp",
+    description: "Feeling fresh and warm",
+    targetType: "friendly",
+    success: [
+      {
+        type: "textMessage",
+        text: "{CASTER} uses a {ACTION}!",
+      },
+      {
+        type: "stateChange",
+        status: null,
+      },
+      {
+        type: "textMessage",
+        text: "Feeling fresh!",
+      },
+    ],
+  },
+  item_recoverHp: {
+    name: "Parmesan",
+    targetType: "friendly",
+    success: [
+      {
+        type: "textMessage",
+        text: "{CASTER} sprinkles on {ACTION}!",
+      },
+      {
+        type: "stateChange",
+        recover: 10,
+      },
+      {
+        type: "textMessage",
+        text: "{CASTER} recovers HP!",
       },
     ],
   },

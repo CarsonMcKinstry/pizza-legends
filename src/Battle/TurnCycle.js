@@ -22,6 +22,12 @@ export class TurnCycle {
       caster,
     });
 
+    if (submission.instanceId) {
+      this.battle.items = this.battle.items.filter(
+        (i) => i.instanceId !== submission.instanceId
+      );
+    }
+
     const resultingEvent = caster.getReplacedEvents(submission.action.success);
 
     for (let i = 0; i < resultingEvent.length; i++) {
