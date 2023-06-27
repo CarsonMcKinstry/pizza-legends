@@ -35,7 +35,7 @@ export class Overworld {
       Object.values(this.map.gameObjects).forEach((object) => {
         object.update({
           arrow: this.directionInput.direction,
-          map: this.map
+          map: this.map,
         });
       });
 
@@ -88,16 +88,5 @@ export class Overworld {
     this.directionInput.init();
 
     this.startGameLoop();
-
-    this.map.startCutscene([
-      {
-        type: "battle"
-      }
-      // {
-      //   type: "changeMap",
-      //   map: "DemoRoom"
-      // }
-      // { type: "textMessage", text: "This is the very first message!" }
-    ]);
   }
 }

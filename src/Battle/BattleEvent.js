@@ -61,6 +61,10 @@ export class BattleEvent {
     }
 
     await wait(600);
+
+    this.battle.playerTeam.update();
+    this.battle.enemyTeam.update();
+
     resolve();
     target.pizzaElement.classList.remove("battle-damage-blink");
   }
@@ -100,6 +104,10 @@ export class BattleEvent {
     replacement.update();
 
     await wait(400);
+
+    this.battle.playerTeam.update();
+    this.battle.enemyTeam.update();
+
     resolve();
   }
 
@@ -113,6 +121,33 @@ export class BattleEvent {
       },
     });
     menu.init(this.battle.element);
+  }
+
+  giveXp(resolve) {
+    let amount = this.event.xp;
+    const { combatant } = this.event;
+
+    const step = () => {
+      if (amount > 0) {
+        amount--;
+        combatant.xp += 1;
+
+        if (combatant.xp === combatant.maxXp) {
+          combatant.xp = 0;
+          combatant.maxXp = 100;
+          combatant.level++;
+        }
+
+        combatant.update();
+
+        requestAnimationFrame(step);
+        return;
+      } else {
+        resolve();
+        return;
+      }
+    };
+    requestAnimationFrame(step);
   }
 
   animation(resolve) {

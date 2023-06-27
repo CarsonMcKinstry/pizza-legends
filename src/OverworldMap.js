@@ -4,7 +4,7 @@ import DemoUpper from "./images/maps/DemoUpper.png";
 import KitchenLower from "./images/maps/KitchenLower.png";
 import KitchenUpper from "./images/maps/KitchenUpper.png";
 import Npc1 from "./images/characters/people/npc1.png";
-import Npc2 from "./images/characters/people/npc2.png";
+import Npc2 from "./images/characters/people/erio.png";
 import Npc3 from "./images/characters/people/npc3.png";
 import { Person } from "./Person";
 import { asGridCoords, nextPosition, withGrid } from "./utils";
@@ -18,7 +18,7 @@ export const OverworldMaps = {
       hero: new Person({
         x: withGrid(5),
         y: withGrid(6),
-        isPlayerControlled: true
+        isPlayerControlled: true,
       }),
       npc1: new Person({
         x: withGrid(7),
@@ -28,7 +28,7 @@ export const OverworldMaps = {
           { type: "stand", direction: "left", time: 800 },
           { type: "stand", direction: "up", time: 800 },
           { type: "stand", direction: "right", time: 1200 },
-          { type: "stand", direction: "up", time: 300 }
+          { type: "stand", direction: "up", time: 300 },
         ],
         talking: [
           {
@@ -36,21 +36,34 @@ export const OverworldMaps = {
               {
                 type: "textMessage",
                 text: "I'm busy...!",
-                faceHero: "npc1"
+                faceHero: "npc1",
               },
               {
-                type: "textMessage",
-                text: "Go away."
+                type: "battle",
+                enemyId: "beth",
               },
-              { type: "walk", direction: "up", who: "hero" }
-            ]
-          }
-        ]
+              // {
+              //   type: "textMessage",
+              //   text: "Go away."
+              // },
+              // { type: "walk", direction: "up", who: "hero" },
+            ],
+          },
+        ],
       }),
       npc2: new Person({
         x: withGrid(8),
         y: withGrid(5),
-        src: Npc2
+        src: Npc2,
+        talking: [
+          {
+            events: [
+              { type: "textMessage", text: "Bahaha!", faceHero: "npc2" },
+              { type: "battle", enemyId: "erio" },
+            ],
+          },
+        ],
+
         // behaviorLoop: [
         //   { type: "walk", direction: "left" },
         //   { type: "stand", direction: "up", time: 800 },
@@ -58,13 +71,13 @@ export const OverworldMaps = {
         //   { type: "walk", direction: "right" },
         //   { type: "walk", direction: "down" }
         // ]
-      })
+      }),
     },
     walls: {
       [asGridCoords(7, 6)]: true,
       [asGridCoords(8, 6)]: true,
       [asGridCoords(7, 7)]: true,
-      [asGridCoords(8, 7)]: true
+      [asGridCoords(8, 7)]: true,
     },
     cutsceneSpaces: {
       [asGridCoords(7, 4)]: [
@@ -73,56 +86,56 @@ export const OverworldMaps = {
             {
               who: "npc2",
               type: "walk",
-              direction: "left"
+              direction: "left",
             },
             {
               who: "hero",
               type: "stand",
-              direction: "down"
+              direction: "down",
             },
             {
               who: "npc2",
               type: "stand",
-              direction: "up"
+              direction: "up",
             },
             {
               type: "textMessage",
-              text: "You can't be in there!"
+              text: "You can't be in there!",
             },
             {
               who: "npc2",
               type: "walk",
-              direction: "right"
+              direction: "right",
             },
             {
               who: "npc2",
               type: "stand",
-              direction: "down"
+              direction: "down",
             },
             {
               who: "hero",
               type: "walk",
-              direction: "down"
+              direction: "down",
             },
             {
               who: "hero",
               type: "walk",
-              direction: "left"
-            }
-          ]
-        }
+              direction: "left",
+            },
+          ],
+        },
       ],
       [asGridCoords(5, 10)]: [
         {
           events: [
             {
               type: "changeMap",
-              map: "Kitchen"
-            }
-          ]
-        }
-      ]
-    }
+              map: "Kitchen",
+            },
+          ],
+        },
+      ],
+    },
   },
   Kitchen: {
     lowerSrc: KitchenLower,
@@ -131,7 +144,7 @@ export const OverworldMaps = {
       hero: new Person({
         x: withGrid(5),
         y: withGrid(5),
-        isPlayerControlled: true
+        isPlayerControlled: true,
       }),
       npcA: new Person({
         x: withGrid(9),
@@ -143,20 +156,20 @@ export const OverworldMaps = {
               {
                 type: "textMessage",
                 text: "You made it!",
-                faceHero: "npcA"
+                faceHero: "npcA",
               },
               {
                 who: "npcA",
                 type: "stand",
-                direction: "down"
-              }
-            ]
-          }
-        ]
-      })
+                direction: "down",
+              },
+            ],
+          },
+        ],
+      }),
       // npcB: new Person({ x: withGrid(10), y: withGrid(8), src: Npc3 })
-    }
-  }
+    },
+  },
 };
 
 export class OverworldMap {
@@ -213,7 +226,7 @@ export class OverworldMap {
     for (const event of events) {
       const eventHandler = new OverworldEvent({
         event,
-        map: this
+        map: this,
       });
       await eventHandler.init();
     }

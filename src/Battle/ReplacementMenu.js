@@ -3,7 +3,7 @@ import { KeyboardMenu } from "../KeyboardMenu";
 export class ReplacementMenu {
   constructor({ replacements, onComplete }) {
     this.replacements = replacements;
-    console.log(this.replacements);
+
     this.onComplete = onComplete;
   }
 

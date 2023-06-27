@@ -1,4 +1,5 @@
 import { Battle } from "./Battle/Battle";
+import { Enemies } from "./Content/enemies";
 import { OverworldMaps } from "./OverworldMap";
 import { SceneTransition } from "./SceneTransition";
 import { TextMessage } from "./TextMessage";
@@ -15,12 +16,12 @@ export class OverworldEvent {
 
     who.startBehavior(
       {
-        map: this.map
+        map: this.map,
       },
       {
         type: "stand",
         direction: this.event.direction,
-        time: this.event.time
+        time: this.event.time,
       }
     );
 
@@ -38,12 +39,12 @@ export class OverworldEvent {
 
     who.startBehavior(
       {
-        map: this.map
+        map: this.map,
       },
       {
         type: "walk",
         direction: this.event.direction,
-        retry: true
+        retry: true,
       }
     );
 
@@ -66,7 +67,7 @@ export class OverworldEvent {
       text: this.event.text,
       onComplete: () => {
         resolve();
-      }
+      },
     });
 
     message.init(document.querySelector(".game-container"));
@@ -83,9 +84,10 @@ export class OverworldEvent {
 
   battle(resolve) {
     const battle = new Battle({
+      enemy: Enemies[this.event.enemyId],
       onComplete: () => {
         resolve();
-      }
+      },
     });
     battle.init(document.querySelector(".game-container"));
   }

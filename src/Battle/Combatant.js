@@ -8,6 +8,7 @@ export class Combatant {
     for (const [key, value] of Object.entries(config)) {
       this[key] = value;
     }
+    this.hp = typeof this.hp === "undefined" ? this.maxHp : this.hp;
     this.battle = battle;
   }
 
@@ -22,6 +23,10 @@ export class Combatant {
 
   get isActive() {
     return this.battle.activeCombatants[this.team] === this.id;
+  }
+
+  get givesXp() {
+    return this.level * 20;
   }
 
   createElement() {
@@ -102,8 +107,8 @@ export class Combatant {
       return [
         {
           type: "textMessage",
-          text: `${this.name} flops over!`
-        }
+          text: `${this.name} flops over!`,
+        },
       ];
     }
     return originalEvents;
@@ -116,8 +121,8 @@ export class Combatant {
         {
           type: "stateChange",
           recover: 5,
-          onCaster: true
-        }
+          onCaster: true,
+        },
       ];
     }
 
@@ -130,11 +135,11 @@ export class Combatant {
       const status = this.status;
       if (this.status.expiresIn === 0) {
         this.update({
-          status: null
+          status: null,
         });
         return {
           type: "textMessage",
-          text: "{STATUS} expired!".replace("{STATUS}", status.type)
+          text: "{STATUS} expired!".replace("{STATUS}", status.type),
         };
       }
     }

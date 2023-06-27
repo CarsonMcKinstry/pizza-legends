@@ -7,91 +7,53 @@ import { Combatant } from "./Combatant";
 import { Pizzas } from "../Content/pizzas";
 import { TurnCycle } from "./TurnCycle";
 import { BattleEvent } from "./BattleEvent";
+import { Team } from "./Team";
+import { playerState } from "../State/PlayerState";
 
 export class Battle {
-  constructor() {
-    this.combatants = {
-      player1: new Combatant(
-        {
-          ...Pizzas["s001"],
-          hp: 50,
-          maxHp: 50,
-          xp: 20,
-          maxXp: 100,
-          level: 1,
-          status: null,
-          team: "player",
-          isPlayerControlled: true,
-        },
-        this
-      ),
-      player2: new Combatant(
-        {
-          ...Pizzas["s002"],
-          hp: 50,
-          maxHp: 50,
-          xp: 20,
-          maxXp: 100,
-          level: 1,
-          status: null,
-          team: "player",
-          isPlayerControlled: true,
-        },
-        this
-      ),
-      enemy1: new Combatant(
-        {
-          ...Pizzas["v001"],
-          team: "enemy",
-          hp: 1,
-          maxHp: 50,
-          xp: 20,
-          maxXp: 100,
-          level: 1,
-        },
-        this
-      ),
-      enemy2: new Combatant(
-        {
-          ...Pizzas["f001"],
-          team: "enemy",
-          hp: 50,
-          maxHp: 50,
-          xp: 20,
-          maxXp: 100,
-          level: 1,
-        },
-        this
-      ),
-    };
+  constructor({ enemy, onComplete }) {
+    this.enemy = enemy;
+    this.onComplete = onComplete;
+
+    this.combatants = {};
 
     this.activeCombatants = {
-      player: "player1",
-      enemy: "enemy1",
+      player: null,
+      enemy: null,
     };
 
-    this.items = [
-      {
-        actionId: "item_recoverStatus",
-        instanceId: "p1",
+    playerState.lineup.forEach((id) => {
+      this.addCombatant(id, "player", playerState.pizzas[id]);
+    });
+
+    Object.keys(this.enemy.pizzas).forEach((id) => {
+      this.addCombatant("e_" + id, "enemy", this.enemy.pizzas[id]);
+    });
+
+    this.items = [];
+
+    playerState.inventory.forEach((item) => {
+      this.items.push({
+        ...item,
         team: "player",
-      },
+      });
+    });
+
+    this.usedInstanceIds = {};
+  }
+
+  addCombatant(id, team, config) {
+    this.combatants[id] = new Combatant(
       {
-        actionId: "item_recoverStatus",
-        instanceId: "p2",
-        team: "player",
+        ...Pizzas[config.pizzaId],
+        ...config,
+        team,
+        isPlayerControlled: team === "player",
       },
-      {
-        actionId: "item_recoverStatus",
-        instanceId: "p3",
-        team: "enemy",
-      },
-      {
-        actionId: "item_recoverHp",
-        instanceId: "p4",
-        team: "player",
-      },
-    ];
+      this
+    );
+
+    this.activeCombatants[team] = this.activeCombatants[team] ?? id;
   }
 
   createElement() {
@@ -104,7 +66,7 @@ export class Battle {
         <img src="${Hero}" alt="Hero" style="background-image: url(${Shadow})"/>
       </div>
       <div class="Battle_enemy">
-        <img src="${Enemy}" alt="Hero" style="background-image: url(${Shadow})"/>
+        <img src="${this.enemy.src}" alt="${this.enemy.name}" style="background-image: url(${Shadow})"/>
       </div>
     `;
   }
@@ -113,11 +75,23 @@ export class Battle {
     this.createElement();
     container.appendChild(this.element);
 
+    this.playerTeam = new Team("player", "Hero");
+    this.enemyTeam = new Team("enemy", "Bully");
+
     Object.keys(this.combatants).forEach((key) => {
       let combatant = this.combatants[key];
       combatant.id = key;
       combatant.init(this.element);
+
+      if (combatant.team === "player") {
+        this.playerTeam.combatants.push(combatant);
+      } else if (combatant.team === "enemy") {
+        this.enemyTeam.combatants.push(combatant);
+      }
     });
+
+    this.playerTeam.init(this.element);
+    this.enemyTeam.init(this.element);
 
     this.turnCycle = new TurnCycle({
       battle: this,
@@ -126,6 +100,29 @@ export class Battle {
           const battleEvent = new BattleEvent(event, this);
           battleEvent.init(resolve);
         });
+      },
+      onWinner: (winner) => {
+        if (winner === "player") {
+          const _playerState = playerState;
+
+          Object.keys(_playerState.pizzas).forEach((id) => {
+            const playerStatePizza = _playerState.pizzas[id];
+            const combatant = this.combatants[id];
+            if (combatant) {
+              playerStatePizza.hp = combatant.hp;
+              playerStatePizza.xp = combatant.xp;
+              playerStatePizza.maxXp = combatant.maxXp;
+              playerStatePizza.level = combatant.level;
+            }
+          });
+
+          playerState.inventory = playerState.inventory.filter((item) => {
+            return !this.usedInstanceIds[item.instanceId];
+          });
+        }
+
+        this.element.remove();
+        this.onComplete();
       },
     });
 
