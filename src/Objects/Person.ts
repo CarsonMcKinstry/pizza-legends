@@ -38,6 +38,7 @@ export class Person extends GameObject {
 
   override update(state: PersonStateUpdate) {
     this.updatePosition();
+    this.updateSprite(state);
 
     // I have access to the held directions here...
 
@@ -57,6 +58,21 @@ export class Person extends GameObject {
 
       this[prop] += val;
       this.movingProgressRemaining -= 1;
+    }
+  }
+
+  updateSprite(state: PersonStateUpdate) {
+    if (
+      this.isPlayerControlled &&
+      this.movingProgressRemaining === 0 &&
+      !state.lastPressed
+    ) {
+      this.sprite.setAnimation(`idle-${this.direction}`);
+      return;
+    }
+
+    if (this.movingProgressRemaining > 0) {
+      this.sprite.setAnimation(`walk-${this.direction}`);
     }
   }
 }

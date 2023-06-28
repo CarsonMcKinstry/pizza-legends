@@ -1,4 +1,3 @@
-import { DirectionsHeld } from "./Inputs/DirectionInput";
 import { Sprite, SpriteConfig } from "./Sprite";
 import { Direction } from "./types";
 
@@ -12,7 +11,6 @@ export interface GameObjectConfig
 
 export interface GameObjectStateUpdate {
   lastPressed?: Direction;
-  directionsHeld?: DirectionsHeld;
 }
 
 export class GameObject {
@@ -26,6 +24,7 @@ export class GameObject {
     this.y = config.y;
     this.direction = config.direction ?? this.direction;
     this.sprite = new Sprite({
+      ...config,
       gameObject: this,
       src: config.src ?? "/images/characters/people/hero.png",
     });
