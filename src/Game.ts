@@ -1,5 +1,6 @@
 import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
+import { DirectionInput } from "./Inputs/DirectionInput";
 
 interface GameConfig {
   element: HTMLElement;
@@ -10,6 +11,8 @@ export class Game {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   scene: SceneController | null;
+
+  directionInput: DirectionInput | null = null;
 
   constructor(config: GameConfig) {
     this.element = config.element;
@@ -28,6 +31,10 @@ export class Game {
         this.scene.drawLowerImage(this.ctx);
 
         for (const obj of Object.values(this.scene.gameObjects)) {
+          obj.update({
+            lastPressed: this.directionInput?.direction,
+            directionsHeld: this.directionInput?.directionsHeld,
+          });
           obj.sprite.draw(this.ctx);
         }
 
@@ -42,6 +49,10 @@ export class Game {
 
   init() {
     this.scene = new SceneController(Scenes.DemoRoom);
+
+    this.directionInput = new DirectionInput();
+
+    this.directionInput.init();
 
     this.startGameLoop();
   }

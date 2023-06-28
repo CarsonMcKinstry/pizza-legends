@@ -1,14 +1,6 @@
 import { GameObject } from "./GameObject";
-import {
-  CHAR_OFFSET_X,
-  CHAR_OFFSET_Y,
-  SPRITE_SIZE,
-  TILE_SIZE,
-} from "./constants";
-
-export type FrameCoords = [number, number];
-
-export type Animations = Record<string, FrameCoords[]>;
+import { CHAR_OFFSET_X, CHAR_OFFSET_Y, SPRITE_SIZE } from "./constants";
+import { Animations } from "./types";
 
 export interface SpriteConfig {
   animations?: Animations;
@@ -70,8 +62,8 @@ export class Sprite {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    const x = this.gameObject.x * TILE_SIZE - CHAR_OFFSET_X;
-    const y = this.gameObject.y * TILE_SIZE - CHAR_OFFSET_Y;
+    const x = this.gameObject.x - CHAR_OFFSET_X;
+    const y = this.gameObject.y - CHAR_OFFSET_Y;
 
     if (this.isShadowLoaded) {
       ctx.drawImage(this.shadow, x, y, SPRITE_SIZE, SPRITE_SIZE);
