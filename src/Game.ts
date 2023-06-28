@@ -1,3 +1,4 @@
+import { GameObject } from "./GameObject";
 import {
   CHAR_OFFSET_X,
   CHAR_OFFSET_Y,
@@ -35,38 +36,20 @@ export class Game {
 
     image.src = "/images/maps/DemoLower.png";
 
-    const x = 5;
-    const y = 6;
-    const hero = new Image();
-    hero.addEventListener("load", () => {
-      this.ctx.drawImage(
-        hero,
-        0, // left cut
-        0, // right cut
-        SPRITE_SIZE, // width of cut
-        SPRITE_SIZE, // height of cut
-        x * TILE_SIZE - CHAR_OFFSET_X, // position x
-        y * TILE_SIZE - CHAR_OFFSET_Y, // position y
-        SPRITE_SIZE, // width at position
-        SPRITE_SIZE // height at position
-      );
+    // Place some game objects!
+    const hero = new GameObject({
+      x: 5,
+      y: 6,
     });
-    hero.src = "/images/characters/people/hero.png";
+    const npc1 = new GameObject({
+      x: 7,
+      y: 9,
+      src: "/images/characters/people/npc1.png",
+    });
 
-    const shadow = new Image();
-    shadow.addEventListener("load", () => {
-      this.ctx.drawImage(
-        shadow,
-        0, // left cut
-        0, // right cut
-        SPRITE_SIZE, // width of cut
-        SPRITE_SIZE, // height of cut
-        x * TILE_SIZE - CHAR_OFFSET_X, // position x
-        y * TILE_SIZE - CHAR_OFFSET_Y, // position y
-        SPRITE_SIZE, // width at position
-        SPRITE_SIZE // height at position
-      );
-    });
-    shadow.src = "/images/characters/shadow.png";
+    setTimeout(() => {
+      hero.sprite.draw(this.ctx);
+      npc1.sprite.draw(this.ctx);
+    }, 200);
   }
 }
