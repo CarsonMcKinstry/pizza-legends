@@ -46,20 +46,8 @@ export class Progress {
       for (const [key, value] of Object.entries(file.playerState)) {
         playerState[key] = value;
       }
-      // {
-      //     mapId: this.mapId,
 
-      //     startingHeroX: this.startingHeroX,
-      //     startingHeroY: this.startingHeroY,
-      //     startingHeroDirection: this.startingHeroDirection,
-
-      //     playerState: {
-      //       pizzas: playerState.pizzas,
-      //       lineup: playerState.lineup,
-      //       items: playerState.items,
-      //       storyFlags: playerState.storyFlags,
-      //     },
-      //   }
+      return file;
     }
   }
 }

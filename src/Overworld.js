@@ -3,6 +3,7 @@ import { Hud } from "./Hud";
 import { KeyPressListener } from "./KeypressListener";
 import { OverworldMap, OverworldMaps } from "./OverworldMap";
 import { Progress } from "./Progress";
+import { TitleScreen } from "./TitleScreen";
 
 export class Overworld {
   constructor(config) {
@@ -102,9 +103,18 @@ export class Overworld {
     this.progress.startingHeroDirection = this.map.gameObjects.hero.direction;
   }
 
-  init() {
+  async init() {
     // tracker
     this.progress = new Progress();
+
+    // show title screen
+    this.titleScreen = new TitleScreen({
+      progress: this.progress,
+    });
+
+    const useSaveFile = await this.titleScreen.init(
+      document.querySelector(".game-container")
+    );
 
     // hude
     this.hud = new Hud();
@@ -113,8 +123,8 @@ export class Overworld {
     // check for save data
 
     let initialHeroState = null;
-    const saveFile = this.progress.getSaveFile();
-    if (saveFile) {
+    // const saveFile = this.progress.getSaveFile();
+    if (useSaveFile) {
       this.progress.load();
       initialHeroState = {
         x: this.progress.startingHeroX,
