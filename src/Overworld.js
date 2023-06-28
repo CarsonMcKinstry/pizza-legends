@@ -108,13 +108,13 @@ export class Overworld {
     this.progress = new Progress();
 
     // show title screen
-    // this.titleScreen = new TitleScreen({
-    //   progress: this.progress,
-    // });
+    this.titleScreen = new TitleScreen({
+      progress: this.progress,
+    });
 
-    const useSaveFile = false; // await this.titleScreen.init(
-    //   document.querySelector(".game-container")
-    // );
+    const useSaveFile = await this.titleScreen.init(
+      document.querySelector(".game-container")
+    );
 
     // hude
     this.hud = new Hud();
