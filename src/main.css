@@ -1,0 +1,39 @@
+:root {
+  --game-window-width: 352px;
+  --game-window-height: 198px;
+  --game-scale: 3;
+}
+
+html {
+  @apply h-full;
+}
+
+body {
+  @apply bg-neutral-900 p-0 m-0 overflow-hidden flex items-center justify-center h-full;
+  image-rendering: crisp-edges;
+}
+
+.game-container {
+  @apply absolute outline outline-white outline-1;
+
+  width: var(--game-window-width);
+  height: var(--game-window-height);
+  transform: scale(var(--game-scale));
+}
+
+.game-overlay {
+  @apply absolute;
+
+  width: var(--game-window-width);
+  height: var(--game-window-height);
+
+  transform: scale(var(--game-scale));
+}
+
+.game-canvas {
+  /* all four are needed to support the most browsers */
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
