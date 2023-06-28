@@ -1,10 +1,5 @@
-import { GameObject } from "./GameObject";
-import {
-  CHAR_OFFSET_X,
-  CHAR_OFFSET_Y,
-  SPRITE_SIZE,
-  TILE_SIZE,
-} from "./constants";
+import { SceneController } from "./SceneController";
+import { Scenes } from "./Scenes";
 
 interface GameConfig {
   element: HTMLElement;
@@ -14,6 +9,7 @@ export class Game {
   element: HTMLElement;
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  scene: SceneController | null;
 
   constructor(config: GameConfig) {
     this.element = config.element;
@@ -21,35 +17,32 @@ export class Game {
       ".game-canvas"
     ) as HTMLCanvasElement;
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.scene = null;
+  }
+
+  startGameLoop() {
+    const step = () => {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      if (this.scene) {
+        this.scene.drawLowerImage(this.ctx);
+
+        for (const obj of Object.values(this.scene.gameObjects)) {
+          obj.sprite.draw(this.ctx);
+        }
+
+        this.scene.drawUpperImage(this.ctx);
+      }
+
+      requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
   }
 
   init() {
-    const image = new Image();
+    this.scene = new SceneController(Scenes.DemoRoom);
 
-    image.addEventListener(
-      "load",
-      () => {
-        this.ctx.drawImage(image, 0, 0);
-      },
-      { once: true }
-    );
-
-    image.src = "/images/maps/DemoLower.png";
-
-    // Place some game objects!
-    const hero = new GameObject({
-      x: 5,
-      y: 6,
-    });
-    const npc1 = new GameObject({
-      x: 7,
-      y: 9,
-      src: "/images/characters/people/npc1.png",
-    });
-
-    setTimeout(() => {
-      hero.sprite.draw(this.ctx);
-      npc1.sprite.draw(this.ctx);
-    }, 200);
+    this.startGameLoop();
   }
 }
