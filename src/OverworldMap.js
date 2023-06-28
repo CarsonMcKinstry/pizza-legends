@@ -1,4 +1,3 @@
-import { GameObject } from "./GameObject";
 import DemoLower from "./images/maps/DemoLower.png";
 import DemoUpper from "./images/maps/DemoUpper.png";
 import KitchenLower from "./images/maps/KitchenLower.png";
@@ -7,10 +6,10 @@ import StreetLower from "./images/maps/StreetLower.png";
 import StreetUpper from "./images/maps/StreetUpper.png";
 import Npc1 from "./images/characters/people/npc1.png";
 import Npc2 from "./images/characters/people/erio.png";
-import { Person } from "./Person";
 import { asGridCoords, nextPosition, withGrid } from "./utils";
 import { OverworldEvent } from "./OverworldEvent";
 import { playerState } from "./State/PlayerState";
+import { Person } from "./Person";
 import { PizzaStone } from "./PizzaStone";
 
 export const OverworldMaps = {
@@ -18,13 +17,16 @@ export const OverworldMaps = {
     id: "DemoRoom",
     lowerSrc: DemoLower,
     upperSrc: DemoUpper,
-    gameObjects: {
-      hero: new Person({
+
+    configObjects: {
+      hero: {
+        type: "Person",
         x: withGrid(5),
         y: withGrid(6),
         isPlayerControlled: true,
-      }),
-      npc1: new Person({
+      },
+      npc1: {
+        type: "Person",
         x: withGrid(7),
         y: withGrid(9),
         src: Npc1,
@@ -68,8 +70,9 @@ export const OverworldMaps = {
             ],
           },
         ],
-      }),
-      npc2: new Person({
+      },
+      npc2: {
+        type: "Person",
         x: withGrid(8),
         y: withGrid(5),
         src: Npc2,
@@ -98,13 +101,14 @@ export const OverworldMaps = {
         //   { type: "walk", direction: "right" },
         //   { type: "walk", direction: "down" }
         // ]
-      }),
-      pizzaStone: new PizzaStone({
+      },
+      pizzaStone: {
+        type: "PizzaStone",
         x: withGrid(2),
         y: withGrid(7),
         storyFlag: "USED_PIZZA_STONE",
         pizzas: ["s002", "f001"],
-      }),
+      },
     },
     walls: {
       [asGridCoords(7, 6)]: true,
@@ -177,13 +181,16 @@ export const OverworldMaps = {
     id: "Kitchen",
     lowerSrc: KitchenLower,
     upperSrc: KitchenUpper,
-    gameObjects: {
-      hero: new Person({
+
+    configObjects: {
+      hero: {
+        type: "Person",
         x: withGrid(5),
         y: withGrid(5),
         isPlayerControlled: true,
-      }),
-      npcA: new Person({
+      },
+      npcA: {
+        type: "Person",
         x: withGrid(9),
         y: withGrid(6),
         src: Npc2,
@@ -203,7 +210,7 @@ export const OverworldMaps = {
             ],
           },
         ],
-      }),
+      },
       // npcB: new Person({ x: withGrid(10), y: withGrid(8), src: Npc3 })
     },
     cutsceneSpaces: {
@@ -226,12 +233,14 @@ export const OverworldMaps = {
     id: "Street",
     lowerSrc: StreetLower,
     upperSrc: StreetUpper,
-    gameObjects: {
-      hero: new Person({
+
+    configObjects: {
+      hero: {
+        type: "Person",
         isPlayerControlled: true,
         x: withGrid(30),
         y: withGrid(10),
-      }),
+      },
     },
     cutsceneSpaces: {
       [asGridCoords(29, 9)]: [
@@ -254,7 +263,10 @@ export const OverworldMaps = {
 export class OverworldMap {
   constructor(config) {
     this.overworld = null;
-    this.gameObjects = config.gameObjects;
+    this.gameObjects = {}; // Live objects
+
+    this.configObjects = config.configObjects; // Content configuration
+
     this.cutsceneSpaces = config.cutsceneSpaces || {};
     this.walls = config.walls || {};
 
@@ -287,17 +299,42 @@ export class OverworldMap {
   isSpaceTaken(currentX, currentY, direction) {
     const { x, y } = nextPosition(currentX, currentY, direction);
 
-    return this.walls[`${x},${y}`] || false;
+    if (this.walls[`${x},${y}`]) {
+      return true;
+    }
+
+    // Check for game objects at this position
+
+    return Object.values(this.gameObjects).some((obj) => {
+      if (obj.x === x && obj.y === y) return true;
+
+      if (
+        obj.intentPosition &&
+        object.intentPosition.x === x &&
+        object.intentPosition.y === y
+      )
+        return true;
+
+      return false;
+    });
   }
 
   mountObjects() {
-    Object.keys(this.gameObjects).forEach((key) => {
-      // TODO: determine if this object should actually mount
-      let object = this.gameObjects[key];
-      object.id = key;
+    for (const [id, config] of Object.entries(this.configObjects)) {
+      let instance;
+      if (config.type === "Person") {
+        instance = new Person(config);
+      }
 
-      object.mount(this);
-    });
+      if (config.type === "PizzaStone") {
+        instance = new PizzaStone(config);
+      }
+
+      instance.id = id;
+      this.gameObjects[id] = instance;
+
+      instance.mount(this);
+    }
   }
 
   async startCutscene(events) {
@@ -321,20 +358,6 @@ export class OverworldMap {
     Object.values(this.gameObjects).forEach((object) =>
       object.doBehaviorEvent(this)
     );
-  }
-
-  addWall(x, y) {
-    this.walls[`${x},${y}`] = true;
-  }
-
-  removeWall(x, y) {
-    delete this.walls[`${x},${y}`];
-  }
-
-  moveWall(wasX, wasY, direction) {
-    this.removeWall(wasX, wasY);
-    const { x, y } = nextPosition(wasX, wasY, direction);
-    this.addWall(x, y);
   }
 
   checkForActionCutscene() {

@@ -1,11 +1,12 @@
 import { GameObject } from "./GameObject";
-import { emitEvent } from "./utils";
+import { emitEvent, nextPosition } from "./utils";
 
 export class Person extends GameObject {
   constructor(config) {
     super(config);
     this.movingProgressRemaining = 0;
     this.isStanding = false;
+    this.intentPosition = null; // or {x,y}
 
     this.isPlayerControlled = config.isPlayerControlled || false;
 
@@ -13,7 +14,7 @@ export class Person extends GameObject {
       up: ["y", -1],
       down: ["y", 1],
       left: ["x", -1],
-      right: ["x", 1]
+      right: ["x", 1],
     };
   }
 
@@ -29,7 +30,7 @@ export class Person extends GameObject {
       ) {
         this.startBehavior(state, {
           type: "walk",
-          direction: state.arrow
+          direction: state.arrow,
         });
       }
       this.updateSprite(state);
@@ -37,6 +38,9 @@ export class Person extends GameObject {
   }
 
   startBehavior(state, behavior) {
+    if (!this.isMounted) {
+      return;
+    }
     // Set character direction to whatever behavior has
     this.direction = behavior.direction;
     if (behavior.type === "walk") {
@@ -51,8 +55,10 @@ export class Person extends GameObject {
       }
 
       //Ready to walk!
-      state.map.moveWall(this.x, this.y, this.direction);
+      // state.map.moveWall(this.x, this.y, this.direction);
+
       this.movingProgressRemaining = 16;
+      this.intentPosition = nextPosition(this.x, this.y, this.direction);
       this.updateSprite(state);
     }
 
@@ -60,7 +66,7 @@ export class Person extends GameObject {
       this.isStanding = true;
       setTimeout(() => {
         emitEvent("PersonStandComplete", {
-          whoId: this.id
+          whoId: this.id,
         });
         this.isStanding = false;
       }, behavior.time ?? 0);
@@ -74,8 +80,9 @@ export class Person extends GameObject {
 
     if (this.movingProgressRemaining === 0) {
       //We finished the walk!
+      this.intentPosition = null;
       emitEvent("PersonWalkingComplete", {
-        whoId: this.id
+        whoId: this.id,
       });
     }
   }

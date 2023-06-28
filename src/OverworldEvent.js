@@ -77,6 +77,11 @@ export class OverworldEvent {
   }
 
   changeMap(resolve) {
+    // Deactivate old objects
+    for (const obj of Object.values(this.map.gameObjects)) {
+      obj.isMount = false;
+    }
+
     const sceneTransition = new SceneTransition();
     sceneTransition.init(document.querySelector(".game-container"), () => {
       this.map.overworld.startMap(OverworldMaps[this.event.map], {

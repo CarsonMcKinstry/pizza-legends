@@ -90,11 +90,11 @@ export class Overworld {
 
     if (heroInitialState) {
       const { hero } = this.map.gameObjects;
-      this.map.removeWall(hero.x, hero.y);
+      // this.map.removeWall(hero.x, hero.y);
       this.map.gameObjects.hero.x = heroInitialState.x;
       this.map.gameObjects.hero.y = heroInitialState.y;
       this.map.gameObjects.hero.direction = heroInitialState.direction;
-      this.map.addWall(hero.x, hero.y);
+      // this.map.addWall(hero.x, hero.y);
     }
 
     this.progress.mapId = mapConfig.id;
@@ -108,13 +108,13 @@ export class Overworld {
     this.progress = new Progress();
 
     // show title screen
-    this.titleScreen = new TitleScreen({
-      progress: this.progress,
-    });
+    // this.titleScreen = new TitleScreen({
+    //   progress: this.progress,
+    // });
 
-    const useSaveFile = await this.titleScreen.init(
-      document.querySelector(".game-container")
-    );
+    const useSaveFile = false; // await this.titleScreen.init(
+    //   document.querySelector(".game-container")
+    // );
 
     // hude
     this.hud = new Hud();
