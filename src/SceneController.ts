@@ -3,6 +3,8 @@ import { GameObject } from "./GameObject";
 import { CAMERA_NUDGE_X, CAMERA_NUDGE_Y } from "./constants";
 import { Direction } from "./types";
 import { withGrid } from "./utils/withGrid";
+import { Behavior, behavior } from "./Behaviors";
+import { SceneEvent } from "./SceneEvent";
 
 // Overworld map
 
@@ -21,6 +23,8 @@ export class SceneController {
   lowerImageLoaded = false;
   upperImageLoaded = false;
   walls: Record<string, true> = {};
+
+  isCutscenePlaying = false;
 
   constructor(config: SceneControllerConfig) {
     this.gameObjects = config.gameObjects;
@@ -41,7 +45,8 @@ export class SceneController {
   }
 
   mountObjects() {
-    for (const obj of Object.values(this.gameObjects)) {
+    for (const [key, obj] of Object.entries(this.gameObjects)) {
+      obj.id = key;
       obj.mount(this);
     }
   }
@@ -72,6 +77,20 @@ export class SceneController {
     );
   }
 
+  async startCutscene(events: Behavior[]) {
+    this.isCutscenePlaying = true;
+
+    for (const event of events) {
+      const eventHandler = new SceneEvent({
+        scene: this,
+        event,
+      });
+      await eventHandler.init();
+    }
+
+    this.isCutscenePlaying = false;
+  }
+
   addWall(x: number, y: number) {
     this.walls[`${x},${y}`] = true;
   }
@@ -85,11 +104,4 @@ export class SceneController {
     const { x, y } = nextPosition(wasX, wasY, direction);
     this.addWall(x, y);
   }
-}
-
-export interface SceneConfig {
-  lowerSrc: string;
-  upperSrc: string;
-  gameObjects: Record<string, GameObject>;
-  walls: Record<string, true>;
 }

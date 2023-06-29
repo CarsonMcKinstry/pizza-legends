@@ -1,6 +1,8 @@
 import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
 import { DirectionInput } from "./Inputs/DirectionInput";
+import { GameObject } from "./GameObject";
+import { behavior } from "./Behaviors";
 
 interface GameConfig {
   element: HTMLElement;
@@ -30,7 +32,9 @@ export class Game {
       if (this.scene) {
         const cameraPerson = this.scene.gameObjects.hero;
 
-        for (const obj of Object.values(this.scene.gameObjects)) {
+        const gameObjects = Object.values<GameObject>(this.scene.gameObjects);
+
+        for (const obj of gameObjects) {
           obj.update({
             arrow: this.directionInput?.direction,
             scene: this.scene,
@@ -39,7 +43,7 @@ export class Game {
 
         this.scene.drawLowerImage(this.ctx, cameraPerson);
 
-        for (const obj of Object.values(this.scene.gameObjects)) {
+        for (const obj of gameObjects.sort((a, b) => a.y - b.y)) {
           obj.sprite.draw(this.ctx, cameraPerson);
         }
 
@@ -61,5 +65,11 @@ export class Game {
     this.directionInput.init();
 
     this.startGameLoop();
+
+    this.scene.startCutscene([
+      behavior.walk({ direction: "down", who: "hero", tiles: 2 }),
+      behavior.walk({ direction: "left", who: "npcA", tiles: 2 }),
+      behavior.stand({ direction: "up", who: "npcA", time: 800 }),
+    ]);
   }
 }
