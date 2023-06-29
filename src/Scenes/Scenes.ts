@@ -1,5 +1,6 @@
 import { Person } from "../Objects/Person";
 import { SceneConfig } from "../SceneController";
+import { asGridCoords } from "../utils/asGridCoords";
 import { withGrid } from "../utils/withGrid";
 
 export const Scenes: Record<string, SceneConfig> = {
@@ -18,6 +19,12 @@ export const Scenes: Record<string, SceneConfig> = {
         y: withGrid(9),
         spriteName: "npc1",
       }),
+    },
+    walls: {
+      [asGridCoords(7, 6)]: true,
+      [asGridCoords(8, 6)]: true,
+      [asGridCoords(7, 7)]: true,
+      [asGridCoords(8, 7)]: true,
     },
   },
   Kitchen: {
@@ -40,5 +47,6 @@ export const Scenes: Record<string, SceneConfig> = {
         spriteName: "npc3",
       }),
     },
+    walls: {},
   },
 };

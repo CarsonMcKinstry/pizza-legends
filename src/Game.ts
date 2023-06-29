@@ -28,17 +28,22 @@ export class Game {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       if (this.scene) {
-        this.scene.drawLowerImage(this.ctx);
+        const cameraPerson = this.scene.gameObjects.hero;
 
         for (const obj of Object.values(this.scene.gameObjects)) {
           obj.update({
-            lastPressed: this.directionInput?.direction,
-            directionsHeld: this.directionInput?.directionsHeld,
+            arrow: this.directionInput?.direction,
+            scene: this.scene,
           });
-          obj.sprite.draw(this.ctx);
         }
 
-        this.scene.drawUpperImage(this.ctx);
+        this.scene.drawLowerImage(this.ctx, cameraPerson);
+
+        for (const obj of Object.values(this.scene.gameObjects)) {
+          obj.sprite.draw(this.ctx, cameraPerson);
+        }
+
+        this.scene.drawUpperImage(this.ctx, cameraPerson);
       }
 
       requestAnimationFrame(step);
@@ -49,6 +54,7 @@ export class Game {
 
   init() {
     this.scene = new SceneController(Scenes.DemoRoom);
+    this.scene.mountObjects();
 
     this.directionInput = new DirectionInput();
 

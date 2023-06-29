@@ -1,6 +1,13 @@
 import { GameObject } from "./GameObject";
-import { CHAR_OFFSET_X, CHAR_OFFSET_Y, SPRITE_SIZE } from "./constants";
+import {
+  CAMERA_NUDGE_X,
+  CAMERA_NUDGE_Y,
+  CHAR_OFFSET_X,
+  CHAR_OFFSET_Y,
+  SPRITE_SIZE,
+} from "./constants";
 import { Animations } from "./types";
+import { withGrid } from "./utils/withGrid";
 
 export interface SpriteConfig {
   animations?: Animations;
@@ -123,9 +130,18 @@ export class Sprite {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    const x = this.gameObject.x - CHAR_OFFSET_X;
-    const y = this.gameObject.y - CHAR_OFFSET_Y;
+  draw(ctx: CanvasRenderingContext2D, cameraPerson: GameObject) {
+    const x =
+      this.gameObject.x -
+      CHAR_OFFSET_X +
+      withGrid(CAMERA_NUDGE_X) -
+      cameraPerson.x;
+
+    const y =
+      this.gameObject.y -
+      CHAR_OFFSET_Y +
+      withGrid(CAMERA_NUDGE_Y) -
+      cameraPerson.y;
 
     if (this.isShadowLoaded) {
       ctx.drawImage(this.shadow, x, y, SPRITE_SIZE, SPRITE_SIZE);

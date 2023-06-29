@@ -4,6 +4,7 @@ import {
   GameObjectStateUpdate,
 } from "../GameObject";
 import { Direction } from "../types";
+import { BuildBehaviorType, createBehaviors } from "../utils/createBehaviors";
 
 export interface PersonConfig extends Omit<GameObjectConfig, "src"> {
   spriteName: string;
@@ -15,6 +16,14 @@ export interface PersonStateUpdate extends GameObjectStateUpdate {}
 type DirectionUpdate = ["x" | "y", 1 | -1];
 
 type DirectionUpdates = Record<Direction, DirectionUpdate>;
+
+const behaviors = createBehaviors<{
+  walk: {
+    direction: Direction;
+  };
+}>("walk");
+
+export type Behavior = BuildBehaviorType<typeof behaviors>;
 
 export class Person extends GameObject {
   movingProgressRemaining = 0;
@@ -37,42 +46,40 @@ export class Person extends GameObject {
   }
 
   override update(state: PersonStateUpdate) {
-    this.updatePosition();
-    this.updateSprite(state);
+    if (this.movingProgressRemaining > 0) {
+      this.updatePosition();
+    } else {
+      if (this.isPlayerControlled && state.arrow) {
+        this.startBehavior(state, behaviors.walk({ direction: state.arrow }));
+      }
+      this.updateSprite(state);
+    }
+  }
 
-    // I have access to the held directions here...
+  startBehavior(state: PersonStateUpdate, behavior: Behavior) {
+    if (behavior.type === "walk") {
+      this.direction = behavior.direction;
+      if (state.scene.isSpaceTaken(this.x, this.y, this.direction)) {
+        return;
+      }
 
-    if (
-      this.isPlayerControlled &&
-      this.movingProgressRemaining === 0 &&
-      state.lastPressed
-    ) {
-      this.direction = state.lastPressed;
+      state.scene.moveWall(this.x, this.y, this.direction);
       this.movingProgressRemaining = 16;
     }
   }
 
   updatePosition() {
-    if (this.movingProgressRemaining > 0) {
-      const [prop, val] = this.directionUpdate[this.direction];
+    const [prop, val] = this.directionUpdate[this.direction];
 
-      this[prop] += val;
-      this.movingProgressRemaining -= 1;
-    }
+    this[prop] += val;
+    this.movingProgressRemaining -= 1;
   }
 
-  updateSprite(state: PersonStateUpdate) {
-    if (
-      this.isPlayerControlled &&
-      this.movingProgressRemaining === 0 &&
-      !state.lastPressed
-    ) {
-      this.sprite.setAnimation(`idle-${this.direction}`);
-      return;
-    }
-
+  updateSprite(_state: PersonStateUpdate) {
     if (this.movingProgressRemaining > 0) {
       this.sprite.setAnimation(`walk-${this.direction}`);
+      return;
     }
+    this.sprite.setAnimation(`idle-${this.direction}`);
   }
 }

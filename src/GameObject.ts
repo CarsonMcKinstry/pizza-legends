@@ -1,3 +1,4 @@
+import { SceneController } from "./SceneController";
 import { Sprite, SpriteConfig } from "./Sprite";
 import { Direction } from "./types";
 
@@ -10,7 +11,8 @@ export interface GameObjectConfig
 }
 
 export interface GameObjectStateUpdate {
-  lastPressed?: Direction;
+  arrow?: Direction;
+  scene: SceneController;
 }
 
 export class GameObject {
@@ -18,6 +20,7 @@ export class GameObject {
   y = 0;
   sprite: Sprite;
   direction: Direction = "down";
+  isMounted = false;
 
   constructor(config: GameObjectConfig) {
     this.x = config.x;
@@ -31,4 +34,9 @@ export class GameObject {
   }
 
   update(state: GameObjectStateUpdate) {}
+
+  mount(scene: SceneController) {
+    this.isMounted = true;
+    scene.addWall(this.x, this.y);
+  }
 }

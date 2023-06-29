@@ -1,4 +1,8 @@
+import { nextPosition } from "./utils/nextPosition";
 import { GameObject } from "./GameObject";
+import { CAMERA_NUDGE_X, CAMERA_NUDGE_Y } from "./constants";
+import { Direction } from "./types";
+import { withGrid } from "./utils/withGrid";
 
 // Overworld map
 
@@ -6,6 +10,7 @@ export interface SceneControllerConfig {
   gameObjects: Record<string, GameObject>;
   lowerSrc: string;
   upperSrc: string;
+  walls?: Record<string, true>;
 }
 
 export class SceneController {
@@ -15,9 +20,11 @@ export class SceneController {
 
   lowerImageLoaded = false;
   upperImageLoaded = false;
+  walls: Record<string, true> = {};
 
   constructor(config: SceneControllerConfig) {
     this.gameObjects = config.gameObjects;
+    this.walls = config.walls || this.walls;
 
     this.lowerImage = new Image();
 
@@ -33,13 +40,50 @@ export class SceneController {
     this.upperImage.src = config.upperSrc;
   }
 
-  // Turn these into layers?
-  drawLowerImage(ctx: CanvasRenderingContext2D) {
-    ctx.drawImage(this.lowerImage, 0, 0);
+  mountObjects() {
+    for (const obj of Object.values(this.gameObjects)) {
+      obj.mount(this);
+    }
   }
 
-  drawUpperImage(ctx: CanvasRenderingContext2D) {
-    ctx.drawImage(this.upperImage, 0, 0);
+  isSpaceTaken(currentX: number, currentY: number, direction: Direction) {
+    const { x, y } = nextPosition(currentX, currentY, direction);
+    return this.walls[`${x},${y}`] ?? false;
+  }
+
+  // Turn these into layers?
+  drawLowerImage(ctx: CanvasRenderingContext2D, cameraPerson: GameObject) {
+    this.drawImage(ctx, cameraPerson, this.lowerImage);
+  }
+
+  drawUpperImage(ctx: CanvasRenderingContext2D, cameraPerson: GameObject) {
+    this.drawImage(ctx, cameraPerson, this.upperImage);
+  }
+
+  drawImage(
+    ctx: CanvasRenderingContext2D,
+    cameraPerson: GameObject,
+    image: HTMLImageElement
+  ) {
+    ctx.drawImage(
+      image,
+      withGrid(CAMERA_NUDGE_X) - cameraPerson.x,
+      withGrid(CAMERA_NUDGE_Y) - cameraPerson.y
+    );
+  }
+
+  addWall(x: number, y: number) {
+    this.walls[`${x},${y}`] = true;
+  }
+
+  removeWall(x: number, y: number) {
+    delete this.walls[`${x},${y}`];
+  }
+
+  moveWall(wasX: number, wasY: number, direction: Direction) {
+    this.removeWall(wasX, wasY);
+    const { x, y } = nextPosition(wasX, wasY, direction);
+    this.addWall(x, y);
   }
 }
 
@@ -47,4 +91,5 @@ export interface SceneConfig {
   lowerSrc: string;
   upperSrc: string;
   gameObjects: Record<string, GameObject>;
+  walls: Record<string, true>;
 }
