@@ -3,11 +3,15 @@ type AnyObject = {
   [key: string]: any;
 };
 
-type Behavior<D extends AnyObject, Type extends string = string> = {
+export type Behavior<Type extends string, D extends AnyObject> = {
   [Key in keyof D]: D[Key];
 } & {
   type: Type;
 };
+
+export type BehaviorCreator<Type extends string, Data extends AnyObject> = (
+  data: Data
+) => Behavior<Type, Data>;
 
 export type BuildBehaviorType<B extends object> = ReturnType<B[keyof B]>;
 
@@ -18,7 +22,7 @@ function createBehavior<Data extends AnyObject, Type extends string = string>(
     return {
       ...data,
       type,
-    } as Behavior<Data, Type>;
+    } as Behavior<Type, Data>;
   };
 }
 
@@ -26,15 +30,16 @@ export function createBehaviors<Behaviors extends AnyObject>(
   ...behaviors: (keyof Behaviors)[]
 ) {
   // eslint-disable-next-line
-  const out: any = {};
+  const bahviorCreator: any = {};
 
   for (const behavior of behaviors) {
-    out[behavior] = createBehavior(behavior as string);
+    bahviorCreator[behavior] = createBehavior(behavior as string);
   }
 
-  return out as {
-    [Key in keyof Behaviors]: ReturnType<
-      typeof createBehavior<Behaviors[Key], Key extends string ? Key : never>
+  return bahviorCreator as {
+    [Key in keyof Behaviors]: BehaviorCreator<
+      Key extends string ? Key : never,
+      Behaviors[Key]
     >;
   };
 }
