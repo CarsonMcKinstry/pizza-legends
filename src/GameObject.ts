@@ -64,10 +64,10 @@ export class GameObject {
     }
 
     // Setting up our event with relevant info
-    const eventConfig: Behavior = {
+    const eventConfig = {
       ...(this.behaviorLoop[this.behaviorLoopIndex] ?? {}),
       who: this.id,
-    };
+    } as Behavior;
 
     // create an event instance out of our next event config
     const eventHandler = new SceneEvent({

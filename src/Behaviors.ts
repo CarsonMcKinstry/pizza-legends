@@ -20,7 +20,6 @@ export const behavior = createBehaviors<{
   };
   changeScene: {
     scene: string;
-    who?: string;
   };
 }>("walk", "stand", "textMessage", "changeScene");
 

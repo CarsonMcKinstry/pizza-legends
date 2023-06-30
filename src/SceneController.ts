@@ -137,7 +137,7 @@ export class SceneController {
         this.startCutscene(
           match.talking[0].events.map((event) => ({
             ...event,
-            who: event.who ?? match.id,
+            who: "who" in event ? event.who : match.id,
           }))
         );
       }
