@@ -2,7 +2,9 @@ import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
 import { DirectionInput } from "./Inputs/DirectionInput";
 import { GameObject } from "./GameObject";
-import { behavior } from "./Behaviors";
+import { KeyPressListener } from "./Inputs/KeyPressListener";
+import { globalEvents } from "./GlobalEvents";
+import { SceneConfig } from "./types";
 
 interface GameConfig {
   element: HTMLElement;
@@ -56,20 +58,46 @@ export class Game {
     requestAnimationFrame(step);
   }
 
-  init() {
-    this.scene = new SceneController(Scenes.DemoRoom);
+  bindActionInput() {
+    new KeyPressListener("Enter", () => {
+      // Is there a person here to talk to?
+      this.scene?.checkForActionCutscene();
+    });
+  }
+
+  bindHeroPositionCheck() {
+    globalEvents.on("PersonWalkingComplete", ({ detail }) => {
+      if (detail.whoId === "hero") {
+        this.scene?.checkForFootstepCutscene();
+      }
+    });
+  }
+
+  startScene(sceneConfig: SceneConfig) {
+    this.scene = new SceneController(sceneConfig);
+    this.scene.game = this;
     this.scene.mountObjects();
+  }
+
+  init() {
+    this.startScene(Scenes.DemoRoom);
+
+    this.bindActionInput();
+    this.bindHeroPositionCheck();
 
     this.directionInput = new DirectionInput();
-
     this.directionInput.init();
 
     this.startGameLoop();
 
-    this.scene.startCutscene([
-      behavior.walk({ direction: "down", who: "hero", tiles: 2 }),
-      behavior.walk({ direction: "left", who: "npcA", tiles: 2 }),
-      behavior.stand({ direction: "up", who: "npcA", time: 800 }),
-    ]);
+    // this.scene.startCutscene([
+    //   behavior.walk({ direction: "down", who: "hero", tiles: 2 }),
+    //   behavior.walk({ direction: "left", who: "npcA", tiles: 2 }),
+    //   behavior.stand({ direction: "up", who: "npcA" }),
+    //   behavior.textMessage({
+    //     text: "WHY HELLO THERE!",
+    //   }),
+    //   behavior.walk({ direction: "right", who: "npcA" }),
+    // ]);
   }
 }

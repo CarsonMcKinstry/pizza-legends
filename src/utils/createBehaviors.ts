@@ -1,21 +1,22 @@
-type AnyObject = {
+type WhoObject = {
   // eslint-disable-next-line
   [key: string]: any;
+  who?: string;
 };
 
-export type Behavior<Type extends string, D extends AnyObject> = {
+export type Behavior<Type extends string, D extends WhoObject> = {
   [Key in keyof D]: D[Key];
 } & {
   type: Type;
 };
 
-export type BehaviorCreator<Type extends string, Data extends AnyObject> = (
+export type BehaviorCreator<Type extends string, Data extends WhoObject> = (
   data: Data
 ) => Behavior<Type, Data>;
 
 export type BuildBehaviorType<B extends object> = ReturnType<B[keyof B]>;
 
-function createBehavior<Data extends AnyObject, Type extends string = string>(
+function createBehavior<Data extends WhoObject, Type extends string = string>(
   type: Type
 ) {
   return (data: Data) => {
@@ -26,7 +27,7 @@ function createBehavior<Data extends AnyObject, Type extends string = string>(
   };
 }
 
-export function createBehaviors<Behaviors extends AnyObject>(
+export function createBehaviors<Behaviors extends WhoObject & { who?: string }>(
   ...behaviors: (keyof Behaviors)[]
 ) {
   // eslint-disable-next-line

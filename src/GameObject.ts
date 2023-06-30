@@ -1,4 +1,4 @@
-import { Behavior, behavior } from "./Behaviors";
+import { Behavior } from "./Behaviors";
 import { SceneController } from "./SceneController";
 import { SceneEvent } from "./SceneEvent";
 import { Sprite, SpriteConfig } from "./Sprite";
@@ -28,6 +28,7 @@ export class GameObject {
   behaviorLoop: Behavior[] = [];
 
   behaviorLoopIndex = 0;
+  isStanding = false;
 
   constructor(config: GameObjectConfig) {
     this.x = config.x;
@@ -41,11 +42,11 @@ export class GameObject {
     this.behaviorLoop = config.behaviorLoop ?? this.behaviorLoop;
   }
 
-  update(state: GameObjectStateUpdate) {}
+  update(_state: GameObjectStateUpdate) {}
 
-  mount(scene: SceneController) {
+  mount(scene: SceneController, id?: string) {
     this.isMounted = true;
-    scene.addWall(this.x, this.y);
+    this.id = id;
 
     setTimeout(() => {
       this.doBehaviorEvent(scene);
@@ -54,7 +55,11 @@ export class GameObject {
 
   async doBehaviorEvent(scene: SceneController) {
     // Don't do anything...
-    if (scene.isCutscenePlaying || !this.behaviorLoop.length) {
+    if (
+      scene.isCutscenePlaying ||
+      !this.behaviorLoop.length ||
+      !this.isBehaviorReady
+    ) {
       return;
     }
 
@@ -78,5 +83,9 @@ export class GameObject {
     this.doBehaviorEvent(scene);
   }
 
-  startBehavior(...args: any[]) {}
+  isBehaviorReady() {
+    return true;
+  }
+
+  startBehavior(..._args: any[]) {}
 }

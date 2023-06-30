@@ -1,4 +1,4 @@
-import { Behavior, BehaviorMap, BehaviorType, behavior } from "./../Behaviors";
+import { Behavior, BehaviorMap, behavior } from "./../Behaviors";
 
 import { globalEvents } from "./../GlobalEvents";
 
@@ -8,12 +8,14 @@ import {
   GameObjectStateUpdate,
 } from "../GameObject";
 
-import { Direction } from "../types";
+import { CutsceneConfig, Direction } from "../types";
 import { TILE_SIZE } from "../constants";
+import { nextPosition } from "../utils/nextPosition";
 
 export interface PersonConfig extends Omit<GameObjectConfig, "src"> {
   spriteName: string;
   isPlayerControlled?: true;
+  talking?: CutsceneConfig[];
 }
 
 export interface PersonStateUpdate extends GameObjectStateUpdate {}
@@ -31,6 +33,9 @@ export class Person extends GameObject {
     right: ["x", 1],
   };
   isPlayerControlled = false;
+  override isStanding = false;
+  intentPosition: [number, number] | null = null;
+  talking: CutsceneConfig[] = [];
 
   constructor(config: PersonConfig) {
     super({
@@ -40,6 +45,8 @@ export class Person extends GameObject {
 
     this.isPlayerControlled =
       config.isPlayerControlled ?? this.isPlayerControlled;
+
+    this.talking = config.talking ?? this.talking;
   }
 
   override update(state: PersonStateUpdate) {
@@ -66,20 +73,30 @@ export class Person extends GameObject {
             setTimeout(() => {
               this.startBehavior(state, behavior);
             }, 0);
+          } else {
+            globalEvents.emit("PersonWalkingComplete", {
+              whoId: this.id,
+            });
           }
+
           return;
         }
 
-        state.scene.moveWall(this.x, this.y, this.direction);
         this.movingProgressRemaining = TILE_SIZE * (behavior.tiles ?? 1);
+
+        const intentPosition = nextPosition(this.x, this.y, this.direction);
+        this.intentPosition = [intentPosition.x, intentPosition.y];
+
         this.updateSprite();
       },
       stand: (_state, behavior) => {
         this.direction = behavior.direction;
+        this.isStanding = true;
         setTimeout(() => {
           globalEvents.emit("PersonStandComplete", {
             whoId: this.id,
           });
+          this.isStanding = false;
         }, behavior.time ?? 0);
       },
     };
@@ -99,6 +116,7 @@ export class Person extends GameObject {
 
     if (this.movingProgressRemaining === 0) {
       // finished the walk...
+      this.intentPosition = null;
       globalEvents.emit("PersonWalkingComplete", { whoId: this.id });
     }
   }
@@ -111,5 +129,9 @@ export class Person extends GameObject {
       return;
     }
     this.sprite.setAnimation(`idle-${this.direction}`);
+  }
+
+  override isBehaviorReady() {
+    return !this.isStanding;
   }
 }

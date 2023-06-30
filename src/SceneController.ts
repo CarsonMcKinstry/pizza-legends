@@ -1,10 +1,12 @@
 import { nextPosition } from "./utils/nextPosition";
 import { GameObject } from "./GameObject";
 import { CAMERA_NUDGE_X, CAMERA_NUDGE_Y } from "./constants";
-import { Direction } from "./types";
+import { Direction, TriggerSpaces } from "./types";
 import { withGrid } from "./utils/withGrid";
-import { Behavior, behavior } from "./Behaviors";
+import { Behavior } from "./Behaviors";
 import { SceneEvent } from "./SceneEvent";
+import { Person } from "./Objects/Person";
+import { Game } from "./Game";
 
 // Overworld map
 
@@ -13,9 +15,11 @@ export interface SceneControllerConfig {
   lowerSrc: string;
   upperSrc: string;
   walls?: Record<string, true>;
+  triggerSpaces?: TriggerSpaces;
 }
 
 export class SceneController {
+  game: Game | null = null;
   gameObjects: Record<string, GameObject>;
   lowerImage: HTMLImageElement;
   upperImage: HTMLImageElement;
@@ -25,6 +29,8 @@ export class SceneController {
   walls: Record<string, true> = {};
 
   isCutscenePlaying = false;
+
+  triggerSpaces: TriggerSpaces = {};
 
   constructor(config: SceneControllerConfig) {
     this.gameObjects = config.gameObjects;
@@ -42,18 +48,34 @@ export class SceneController {
       this.upperImageLoaded = true;
     });
     this.upperImage.src = config.upperSrc;
+
+    this.triggerSpaces = config.triggerSpaces ?? this.triggerSpaces;
   }
 
   mountObjects() {
     for (const [key, obj] of Object.entries(this.gameObjects)) {
-      obj.id = key;
-      obj.mount(this);
+      obj.mount(this, key);
     }
   }
 
   isSpaceTaken(currentX: number, currentY: number, direction: Direction) {
     const { x, y } = nextPosition(currentX, currentY, direction);
-    return this.walls[`${x},${y}`] ?? false;
+    if (this.walls[`${x},${y}`]) {
+      return true;
+    }
+
+    for (const obj of Object.values(this.gameObjects)) {
+      if (obj.x === x && obj.y === y) return true;
+      if (
+        obj instanceof Person &&
+        obj.intentPosition &&
+        obj.intentPosition[0] === x &&
+        obj.intentPosition[1] === y
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // Turn these into layers?
@@ -89,19 +111,45 @@ export class SceneController {
     }
 
     this.isCutscenePlaying = false;
+
+    // Reset NPCs to do their idle behvior
+
+    for (const obj of Object.values(this.gameObjects)) {
+      obj.doBehaviorEvent(this);
+    }
   }
 
-  addWall(x: number, y: number) {
-    this.walls[`${x},${y}`] = true;
+  checkForActionCutscene() {
+    const hero = this.gameObjects["hero"];
+
+    if (hero) {
+      const nextCoords = nextPosition(hero.x, hero.y, hero.direction);
+      const match = Object.values(this.gameObjects).find((obj) => {
+        return `${obj.x},${obj.y}` === `${nextCoords.x},${nextCoords.y}`;
+      });
+
+      if (
+        !this.isCutscenePlaying &&
+        match &&
+        match instanceof Person &&
+        match.talking.length
+      ) {
+        this.startCutscene(
+          match.talking[0].events.map((event) => ({
+            ...event,
+            who: event.who ?? match.id,
+          }))
+        );
+      }
+    }
   }
 
-  removeWall(x: number, y: number) {
-    delete this.walls[`${x},${y}`];
-  }
+  checkForFootstepCutscene() {
+    const hero = this.gameObjects["hero"];
+    const match = this.triggerSpaces[`${hero.x},${hero.y}`];
 
-  moveWall(wasX: number, wasY: number, direction: Direction) {
-    this.removeWall(wasX, wasY);
-    const { x, y } = nextPosition(wasX, wasY, direction);
-    this.addWall(x, y);
+    if (!this.isCutscenePlaying && match) {
+      this.startCutscene(match[0].events);
+    }
   }
 }

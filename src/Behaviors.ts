@@ -1,3 +1,4 @@
+import { TextMessageConfig } from "./UI/TextMesage";
 import { Direction } from "./types";
 import { BuildBehaviorType, createBehaviors } from "./utils/createBehaviors";
 
@@ -13,7 +14,15 @@ export const behavior = createBehaviors<{
     time?: number;
     who?: string;
   };
-}>("walk", "stand");
+  textMessage: Pick<TextMessageConfig, "text"> & {
+    who?: string;
+    faceHero?: boolean;
+  };
+  changeScene: {
+    scene: string;
+    who?: string;
+  };
+}>("walk", "stand", "textMessage", "changeScene");
 
 export type Behavior = BuildBehaviorType<typeof behavior>;
 
