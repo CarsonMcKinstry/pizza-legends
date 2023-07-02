@@ -89,7 +89,10 @@ export const Scenes: Record<string, SceneConfig> = {
         talking: [
           {
             events: [
-              behavior.textMessage({ text: "You made it!", faceHero: true }),
+              behavior.textMessage({
+                text: "You made it to the kitchen! I'm so proud of you!",
+                faceHero: true,
+              }),
               behavior.stand({ direction: "down" }),
             ],
           },

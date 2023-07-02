@@ -80,7 +80,7 @@ export class Game {
   }
 
   init() {
-    this.startScene(Scenes.DemoRoom);
+    this.startScene(Scenes.Kitchen);
 
     this.bindActionInput();
     this.bindHeroPositionCheck();

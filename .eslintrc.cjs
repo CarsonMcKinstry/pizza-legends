@@ -12,5 +12,6 @@ module.exports = {
     "react-refresh/only-export-components": "warn",
     "@typescript-eslint/no-empty-function": "warn",
     "@typescript-eslint/no-empty-interface": "warn",
+    "@typescript-eslint/no-non-null-assertion": "off",
   },
 };

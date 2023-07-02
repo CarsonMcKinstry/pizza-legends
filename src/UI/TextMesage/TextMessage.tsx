@@ -1,4 +1,6 @@
+import { createStore } from "zustand";
 import { KeyPressListener } from "../../Inputs/KeyPressListener";
+import { RevealingText, RevealingTextProps } from "./RevealingText";
 import "./TextMessage.css";
 import { createRoot, Root } from "react-dom/client";
 
@@ -15,9 +17,14 @@ export class TextMessage {
 
   actionListener: KeyPressListener | null = null;
 
+  state: RevealingTextProps["state"];
+
   constructor({ text, onComplete }: TextMessageConfig) {
     this.text = text;
     this.onComplete = onComplete;
+    this.state = createStore<{ isDone: boolean }>(() => ({
+      isDone: false,
+    }));
   }
 
   createElement() {
@@ -28,7 +35,9 @@ export class TextMessage {
 
     this.root.render(
       <>
-        <p className="TextMessage_p">{this.text}</p>
+        <p className="TextMessage_p">
+          <RevealingText text={this.text} speed={60} state={this.state} />
+        </p>
         <button
           className="TextMessage_button"
           onClick={() => {
@@ -41,15 +50,19 @@ export class TextMessage {
     );
 
     this.actionListener = new KeyPressListener("Enter", () => {
-      this.actionListener?.unbind();
       this.done();
     });
   }
 
   done() {
-    this.root?.unmount();
-    this.element?.remove();
-    this.onComplete();
+    if (this.state.getState().isDone) {
+      this.root?.unmount();
+      this.element?.remove();
+      this.onComplete();
+      this.actionListener?.unbind();
+    } else {
+      this.state.setState({ isDone: true });
+    }
   }
 
   init(container: HTMLElement) {
