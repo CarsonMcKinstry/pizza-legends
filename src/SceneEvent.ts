@@ -3,6 +3,9 @@ import { GlobalEventHandler, globalEvents } from "./GlobalEvents";
 import { SceneController } from "./SceneController";
 // import { SceneTransition } from "./Ui/SceneTransition";
 import { Scenes } from "./Scenes";
+import { baseActions } from "./ui/baseActions";
+import { TextMessageActions } from "./ui/components/TextMessage/state";
+import { TextMessage } from "./ui/controllers/TextMessage";
 // import { TextMessage } from "./Ui/TextMesage";
 import { oppositeDrection } from "./utils/oppositeDirection";
 // import { Battle } from "./ui-old/Battle";
@@ -94,14 +97,20 @@ export class SceneEvent implements SceneEventHandlers {
       }
     }
 
-    // const message = new TextMessage({
-    //   ...event,
-    //   onComplete: () => {
-    //     resolve();
-    //   },
-    // });
+    const message = new TextMessage(
+      {
+        ...event,
+        onComplete: () => {
+          resolve();
+          this.scene.game?.userInterface.dispatch(baseActions.reset());
+        },
+      },
+      this.scene
+    );
 
-    // message.init(this.overlay);
+    setTimeout(() => {
+      message.init();
+    }, 0);
   }
 
   changeScene(resolve: EventResolver) {

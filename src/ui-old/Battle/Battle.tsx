@@ -2,7 +2,6 @@ import "./Battle.css";
 import { UiElement } from "../UiElement";
 import { Combatant } from "../Combatant";
 import { Pizzas } from "../Content/Pizzas";
-import { StoreApi, createStore, useStore } from "zustand";
 
 type BattleConfig = {
   onComplete: () => void;
@@ -73,14 +72,14 @@ export class Battle extends UiElement<{ activeCombatants: ActiveCombatants }> {
       ),
     };
 
-    this.state = createStore<{
-      activeCombatants: ActiveCombatants;
-    }>(() => ({
-      activeCombatants: {
-        player: "player1",
-        enemy: "enemy1",
-      },
-    }));
+    // this.state = createStore<{
+    //   activeCombatants: ActiveCombatants;
+    // }>(() => ({
+    //   activeCombatants: {
+    //     player: "player1",
+    //     enemy: "enemy1",
+    //   },
+    // }));
   }
 
   override render() {

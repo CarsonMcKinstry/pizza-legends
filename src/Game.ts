@@ -6,6 +6,8 @@ import { KeyPressListener } from "./Inputs/KeyPressListener";
 import { globalEvents } from "./GlobalEvents";
 import { SceneConfig } from "./types";
 import { behavior } from "./Behaviors";
+import { Root, createRoot } from "react-dom/client";
+import { UserInterface } from "./ui/UserInterface";
 
 interface GameConfig {
   element: HTMLElement;
@@ -13,9 +15,11 @@ interface GameConfig {
 
 export class Game {
   element: HTMLElement;
+  uiRoot: Root;
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   scene: SceneController | null;
+  userInterface: UserInterface;
 
   directionInput: DirectionInput | null = null;
 
@@ -26,6 +30,8 @@ export class Game {
     ) as HTMLCanvasElement;
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     this.scene = null;
+    this.uiRoot = createRoot(document.querySelector(".game-overlay")!);
+    this.userInterface = new UserInterface();
   }
 
   startGameLoop() {
@@ -91,6 +97,13 @@ export class Game {
 
     this.startGameLoop();
 
-    this.scene?.startCutscene([behavior.battle({})]);
+    this.scene?.startCutscene([
+      behavior.textMessage({
+        text: "Hello, world",
+        who: "hero",
+      }),
+    ]);
+
+    this.userInterface.init(this.uiRoot);
   }
 }

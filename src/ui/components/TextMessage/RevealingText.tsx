@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { StoreApi, useStore } from "zustand";
 
 export type RevealingTextProps = {
   text: string;
   speed?: number;
-  state: StoreApi<{ isDone: boolean }>;
+  isDone: boolean;
+  onComplete: () => void;
 };
 
 export const RevealingText = ({
   text,
-  speed = 70,
-  state,
+  speed = 60,
+  isDone,
+  onComplete,
 }: RevealingTextProps) => {
-  const { isDone } = useStore(state);
   const textLength = useRef(text.length);
   const timeoutRef = useRef<number | null>(0);
   const delaysRef = useRef<{ char: string; delay: number }[]>(
@@ -33,7 +33,7 @@ export const RevealingText = ({
       }, delay);
     } else {
       clearTimeout(timeoutRef.current!);
-      state.setState({ isDone: true });
+      onComplete();
     }
 
     return () => {
@@ -41,7 +41,7 @@ export const RevealingText = ({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [chars.length, state]);
+  }, [chars.length, onComplete]);
 
   useEffect(() => {
     if (isDone) {

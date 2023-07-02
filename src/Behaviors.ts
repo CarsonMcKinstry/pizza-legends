@@ -1,5 +1,5 @@
-import { TextMessageConfig } from "./Ui/TextMesage";
 import { Direction } from "./types";
+
 import { BuildBehaviorType, createBehaviors } from "./utils/createBehaviors";
 
 export const behavior = createBehaviors<{
@@ -14,7 +14,8 @@ export const behavior = createBehaviors<{
     time?: number;
     who?: string;
   };
-  textMessage: Pick<TextMessageConfig, "text"> & {
+  textMessage: {
+    text: string;
     who?: string;
     faceHero?: boolean;
   };
