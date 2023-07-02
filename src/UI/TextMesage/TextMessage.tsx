@@ -1,6 +1,6 @@
 import { createStore } from "zustand";
 import { KeyPressListener } from "../../Inputs/KeyPressListener";
-import { RevealingText } from "./RevealingText";
+import { RevealingText } from "../components/RevealingText";
 import "./TextMessage.css";
 import { UiElement } from "../UiElement";
 
