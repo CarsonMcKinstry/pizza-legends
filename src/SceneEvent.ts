@@ -1,11 +1,11 @@
 import { AsBehavior, Behavior, BehaviorType } from "./Behaviors";
 import { GlobalEventHandler, globalEvents } from "./GlobalEvents";
 import { SceneController } from "./SceneController";
-import { SceneTransition } from "./Ui/SceneTransition";
+// import { SceneTransition } from "./Ui/SceneTransition";
 import { Scenes } from "./Scenes";
-import { TextMessage } from "./Ui/TextMesage";
+// import { TextMessage } from "./Ui/TextMesage";
 import { oppositeDrection } from "./utils/oppositeDirection";
-import { Battle } from "./Ui/Battle";
+// import { Battle } from "./ui-old/Battle";
 
 type EventResolver = (value?: unknown) => void;
 
@@ -94,43 +94,43 @@ export class SceneEvent implements SceneEventHandlers {
       }
     }
 
-    const message = new TextMessage({
-      ...event,
-      onComplete: () => {
-        resolve();
-      },
-    });
+    // const message = new TextMessage({
+    //   ...event,
+    //   onComplete: () => {
+    //     resolve();
+    //   },
+    // });
 
-    message.init(this.overlay);
+    // message.init(this.overlay);
   }
 
   changeScene(resolve: EventResolver) {
     const event = this.event as AsBehavior<"changeScene">;
-    const sceneTransition = new SceneTransition({
-      onComplete: () => {
-        const sceneConfig = Scenes[event.scene];
+    // const sceneTransition = new SceneTransition({
+    //   onComplete: () => {
+    //     const sceneConfig = Scenes[event.scene];
 
-        if (sceneConfig) {
-          this.scene.game?.startScene(sceneConfig);
-        }
-        resolve();
-        sceneTransition.fadeOut();
-      },
-    });
+    //     if (sceneConfig) {
+    //       this.scene.game?.startScene(sceneConfig);
+    //     }
+    //     resolve();
+    //     sceneTransition.fadeOut();
+    //   },
+    // });
 
-    sceneTransition.init(this.overlay);
+    // sceneTransition.init(this.overlay);
   }
 
   battle(resolve: EventResolver) {
     const event = this.event as AsBehavior<"battle">;
 
-    const battle = new Battle({
-      onComplete: () => {
-        resolve();
-      },
-    });
+    // const battle = new Battle({
+    //   onComplete: () => {
+    //     resolve();
+    //   },
+    // });
 
-    battle.init(this.overlay);
+    // battle.init(this.overlay);
   }
 
   init() {
