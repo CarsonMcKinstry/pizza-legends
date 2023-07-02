@@ -1,42 +1,38 @@
 import { createStore } from "zustand";
 import { KeyPressListener } from "../../Inputs/KeyPressListener";
-import { RevealingText, RevealingTextProps } from "./RevealingText";
+import { RevealingText } from "./RevealingText";
 import "./TextMessage.css";
-import { createRoot, Root } from "react-dom/client";
+import { UiElement } from "../UiElement";
+
+type TextMessageState = {
+  isDone: boolean;
+};
 
 export type TextMessageConfig = {
   text: string;
   onComplete: () => void;
 };
 
-export class TextMessage {
-  root: Root | null = null;
-  element: HTMLElement | null = null;
+export class TextMessage extends UiElement<TextMessageState> {
   text: string;
   onComplete: () => void;
+  keyPressListener?: KeyPressListener;
 
-  actionListener: KeyPressListener | null = null;
+  constructor(config: TextMessageConfig) {
+    super("TextMessage");
+    this.text = config.text;
+    this.onComplete = config.onComplete;
 
-  state: RevealingTextProps["state"];
-
-  constructor({ text, onComplete }: TextMessageConfig) {
-    this.text = text;
-    this.onComplete = onComplete;
-    this.state = createStore<{ isDone: boolean }>(() => ({
+    this.state = createStore(() => ({
       isDone: false,
     }));
   }
 
-  createElement() {
-    this.element = document.createElement("div");
-    this.element.classList.add("TextMessage");
-
-    this.root = createRoot(this.element);
-
-    this.root.render(
+  override render() {
+    return (
       <>
         <p className="TextMessage_p">
-          <RevealingText text={this.text} speed={60} state={this.state} />
+          <RevealingText text={this.text} speed={60} state={this.state!} />
         </p>
         <button
           className="TextMessage_button"
@@ -44,31 +40,27 @@ export class TextMessage {
             this.done();
           }}
         >
-          Next
+          Continue
         </button>
       </>
     );
+  }
 
-    this.actionListener = new KeyPressListener("Enter", () => {
+  override bindActionListeners(): void {
+    this.keyPressListener = new KeyPressListener("Enter", () => {
       this.done();
     });
   }
 
   done() {
-    if (this.state.getState().isDone) {
-      this.root?.unmount();
-      this.element?.remove();
+    if (this.state?.getState().isDone) {
+      this.unmount();
       this.onComplete();
-      this.actionListener?.unbind();
+      this.keyPressListener?.unbind();
     } else {
-      this.state.setState({ isDone: true });
-    }
-  }
-
-  init(container: HTMLElement) {
-    this.createElement();
-    if (this.element) {
-      container.appendChild(this.element);
+      this.state?.setState({
+        isDone: true,
+      });
     }
   }
 }
