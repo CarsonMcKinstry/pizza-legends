@@ -117,19 +117,18 @@
 
 .Pizza {
   position: absolute;
-  /* transform: scale(2); */
   background-repeat: no-repeat no-repeat;
   transition: opacity 0.4s, transform 0.4s;
   transform: translate3d(0, 16px, 0) scale(2);
   opacity: 0;
 }
 .Pizza.player {
-  bottom: 73px;
-  left: 51px;
+  bottom: -25px;
+  left: 11px;
 }
 .Pizza.enemy {
-  top: 47px;
-  right: 100px;
+  top: 5px;
+  right: 22px;
 }
 
 .Pizza.active {
