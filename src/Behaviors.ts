@@ -1,4 +1,4 @@
-import { TextMessageConfig } from "./UI/TextMesage";
+import { TextMessageConfig } from "./Ui/TextMesage";
 import { Direction } from "./types";
 import { BuildBehaviorType, createBehaviors } from "./utils/createBehaviors";
 

@@ -1,8 +1,9 @@
 import { AsBehavior, Behavior, BehaviorType } from "./Behaviors";
 import { GlobalEventHandler, globalEvents } from "./GlobalEvents";
 import { SceneController } from "./SceneController";
+import { SceneTransition } from "./SceneTransition";
 import { Scenes } from "./Scenes";
-import { TextMessage } from "./UI/TextMesage";
+import { TextMessage } from "./Ui/TextMesage";
 import { oppositeDrection } from "./utils/oppositeDirection";
 
 type EventResolver = (value?: unknown) => void;
@@ -104,13 +105,16 @@ export class SceneEvent implements SceneEventHandlers {
 
   changeScene(resolve: EventResolver) {
     const event = this.event as AsBehavior<"changeScene">;
+    const sceneTransition = new SceneTransition();
+    sceneTransition.init(this.overlay, () => {
+      const sceneConfig = Scenes[event.scene];
 
-    const sceneConfig = Scenes[event.scene];
-
-    if (sceneConfig) {
-      this.scene.game?.startScene(sceneConfig);
-    }
-    resolve();
+      if (sceneConfig) {
+        this.scene.game?.startScene(sceneConfig);
+      }
+      resolve();
+      sceneTransition.fadeOut();
+    });
   }
 
   init() {

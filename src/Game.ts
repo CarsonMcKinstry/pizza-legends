@@ -5,6 +5,7 @@ import { GameObject } from "./GameObject";
 import { KeyPressListener } from "./Inputs/KeyPressListener";
 import { globalEvents } from "./GlobalEvents";
 import { SceneConfig } from "./types";
+import { behavior } from "./Behaviors";
 
 interface GameConfig {
   element: HTMLElement;
@@ -80,7 +81,7 @@ export class Game {
   }
 
   init() {
-    this.startScene(Scenes.Kitchen);
+    this.startScene(Scenes.DemoRoom);
 
     this.bindActionInput();
     this.bindHeroPositionCheck();
@@ -90,14 +91,6 @@ export class Game {
 
     this.startGameLoop();
 
-    // this.scene.startCutscene([
-    //   behavior.walk({ direction: "down", who: "hero", tiles: 2 }),
-    //   behavior.walk({ direction: "left", who: "npcA", tiles: 2 }),
-    //   behavior.stand({ direction: "up", who: "npcA" }),
-    //   behavior.textMessage({
-    //     text: "WHY HELLO THERE!",
-    //   }),
-    //   behavior.walk({ direction: "right", who: "npcA" }),
-    // ]);
+    // this.scene?.startCutscene([behavior.changeScene({ scene: "DemoRoom" })]);
   }
 }
