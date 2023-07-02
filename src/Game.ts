@@ -91,6 +91,6 @@ export class Game {
 
     this.startGameLoop();
 
-    // this.scene?.startCutscene([behavior.changeScene({ scene: "DemoRoom" })]);
+    this.scene?.startCutscene([behavior.battle({})]);
   }
 }

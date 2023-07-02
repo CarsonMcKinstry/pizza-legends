@@ -5,6 +5,7 @@ import { SceneTransition } from "./Ui/SceneTransition";
 import { Scenes } from "./Scenes";
 import { TextMessage } from "./Ui/TextMesage";
 import { oppositeDrection } from "./utils/oppositeDirection";
+import { Battle } from "./Ui/Battle";
 
 type EventResolver = (value?: unknown) => void;
 
@@ -118,6 +119,18 @@ export class SceneEvent implements SceneEventHandlers {
     });
 
     sceneTransition.init(this.overlay);
+  }
+
+  battle(resolve: EventResolver) {
+    const event = this.event as AsBehavior<"battle">;
+
+    const battle = new Battle({
+      onComplete: () => {
+        resolve();
+      },
+    });
+
+    battle.init(this.overlay);
   }
 
   init() {

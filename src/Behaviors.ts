@@ -21,7 +21,8 @@ export const behavior = createBehaviors<{
   changeScene: {
     scene: string;
   };
-}>("walk", "stand", "textMessage", "changeScene");
+  battle: any;
+}>("walk", "stand", "textMessage", "changeScene", "battle");
 
 export type Behavior = BuildBehaviorType<typeof behavior>;
 
