@@ -1,14 +1,11 @@
 import { AsBehavior, Behavior, BehaviorType } from "./Behaviors";
 import { GlobalEventHandler, globalEvents } from "./GlobalEvents";
 import { SceneController } from "./SceneController";
-// import { SceneTransition } from "./Ui/SceneTransition";
 import { Scenes } from "./Scenes";
 import { baseActions } from "./ui/baseActions";
-import { TextMessageActions } from "./ui/components/TextMessage/state";
+import { SceneTransition } from "./ui/controllers/SceneTransition";
 import { TextMessage } from "./ui/controllers/TextMessage";
-// import { TextMessage } from "./Ui/TextMesage";
 import { oppositeDrection } from "./utils/oppositeDirection";
-// import { Battle } from "./ui-old/Battle";
 
 type EventResolver = (value?: unknown) => void;
 
@@ -115,19 +112,23 @@ export class SceneEvent implements SceneEventHandlers {
 
   changeScene(resolve: EventResolver) {
     const event = this.event as AsBehavior<"changeScene">;
-    // const sceneTransition = new SceneTransition({
-    //   onComplete: () => {
-    //     const sceneConfig = Scenes[event.scene];
 
-    //     if (sceneConfig) {
-    //       this.scene.game?.startScene(sceneConfig);
-    //     }
-    //     resolve();
-    //     sceneTransition.fadeOut();
-    //   },
-    // });
+    const sceneTransition = new SceneTransition(
+      {
+        onComplete: () => {
+          const sceneConfig = Scenes[event.scene];
 
-    // sceneTransition.init(this.overlay);
+          if (sceneConfig) {
+            this.scene.game?.startScene(sceneConfig);
+          }
+          resolve();
+          sceneTransition.fadeOut();
+        },
+      },
+      this.scene
+    );
+
+    sceneTransition.init();
   }
 
   battle(resolve: EventResolver) {

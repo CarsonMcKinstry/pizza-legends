@@ -2,6 +2,7 @@ import { Root } from "react-dom/client";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { TextMessage } from "./components/TextMessage";
+import { SceneTransition } from "./components/SceneTransition";
 
 export class UserInterface {
   store: typeof store;
@@ -16,6 +17,7 @@ export class UserInterface {
     root.render(
       <Provider store={this.store}>
         <TextMessage />
+        <SceneTransition />
       </Provider>
     );
   }

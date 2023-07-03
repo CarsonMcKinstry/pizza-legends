@@ -56,10 +56,14 @@ export class GameObject {
   async doBehaviorEvent(scene: SceneController) {
     // Don't do anything...
     if (
-      scene.isCutscenePlaying ||
-      !this.behaviorLoop.length ||
-      !this.isBehaviorReady
+      // scene.isCutscenePlaying ||
+      this.behaviorLoop.length === 0
+      // !this.isBehaviorReady
     ) {
+      return;
+    }
+
+    if (scene.isCutscenePlaying) {
       return;
     }
 

@@ -73,6 +73,17 @@ export const Scenes: Record<string, SceneConfig> = {
     },
   },
   Kitchen: {
+    triggerSpaces: {
+      [asGridCoords(5, 10)]: [
+        {
+          events: [
+            behavior.changeScene({
+              scene: "DemoRoom",
+            }),
+          ],
+        },
+      ],
+    },
     lowerSrc: "/images/maps/KitchenLower.png",
     upperSrc: "/images/maps/KitchenUpper.png",
     gameObjects: {

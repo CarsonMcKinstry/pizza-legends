@@ -65,6 +65,10 @@ export class Person extends GameObject {
   }
 
   override startBehavior(state: PersonStateUpdate, behavior: Behavior) {
+    if (!this.isMounted) {
+      return;
+    }
+
     const behaviorMap: BehaviorMap<PersonStateUpdate> = {
       walk: (state, behavior) => {
         this.direction = behavior.direction;
