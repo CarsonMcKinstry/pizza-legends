@@ -3,6 +3,7 @@ import { GlobalEventHandler, globalEvents } from "./GlobalEvents";
 import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
 import { baseActions } from "./ui/baseActions";
+import { Battle } from "./ui/controllers/Battle";
 import { SceneTransition } from "./ui/controllers/SceneTransition";
 import { TextMessage } from "./ui/controllers/TextMessage";
 import { oppositeDrection } from "./utils/oppositeDirection";
@@ -134,13 +135,16 @@ export class SceneEvent implements SceneEventHandlers {
   battle(resolve: EventResolver) {
     const event = this.event as AsBehavior<"battle">;
 
-    // const battle = new Battle({
-    //   onComplete: () => {
-    //     resolve();
-    //   },
-    // });
+    const battle = new Battle(
+      {
+        onComplete: () => {
+          resolve();
+        },
+      },
+      this.scene
+    );
 
-    // battle.init(this.overlay);
+    battle.init();
   }
 
   init() {

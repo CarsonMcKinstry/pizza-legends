@@ -106,5 +106,7 @@ export class Game {
     // ]);
 
     this.userInterface.init(this.uiRoot);
+
+    this.scene?.startCutscene([behavior.battle({})]);
   }
 }

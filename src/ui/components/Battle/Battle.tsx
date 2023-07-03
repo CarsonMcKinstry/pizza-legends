@@ -1,9 +1,21 @@
+import { useSelector } from "react-redux";
 import { PizzaType } from "../../../Content/Pizzas";
 import { Combatant } from "../Combatant";
 import "./Battle.css";
 import { Pizza } from "./Pizza";
+import { UserInterfaceState } from "../../store";
+import { BattleState } from "./state";
 
 export const Battle = () => {
+  const { isOpen, activeCombatants, combatants } = useSelector<
+    UserInterfaceState,
+    BattleState
+  >((state) => state.battle);
+
+  if (!isOpen) return null;
+
+  // const player = combatants?.[activeCombatants.player];
+
   return (
     <div
       className="Battle"
@@ -27,44 +39,20 @@ export const Battle = () => {
           }}
         />
       </div>
-      <Combatant
-        name="Slice Samurai"
-        level={1}
-        src="/images/characters/pizzas/s001.png"
-        hp={40}
-        maxHp={50}
-        xp={0}
-        maxXp={100}
-        icon="/images/icons/spicy.png"
-        type={PizzaType.Spicy}
-        active
-        team="player"
-      />
-      <Pizza
-        name="Slice Samurai"
-        src="/images/characters/pizzas/s001.png"
-        team="player"
-        active
-      />
-      <Combatant
-        name="Call Me Kale"
-        level={1}
-        src="/images/characters/pizzas/v001.png"
-        hp={40}
-        maxHp={50}
-        xp={0}
-        maxXp={100}
-        icon="/images/icons/veggie.png"
-        type={PizzaType.Veggie}
-        active
-        team="enemy"
-      />
-      <Pizza
-        name="Call me Kale"
-        src="/images/characters/pizzas/v001.png"
-        team="enemy"
-        active
-      />
+      {Object.entries(combatants ?? {}).map(([id, combatant]) => {
+        const isActive = id === activeCombatants[combatant.team];
+        return (
+          <>
+            <Combatant {...combatant} active={isActive} />
+            <Pizza
+              name={combatant.name}
+              src={combatant.src}
+              team={combatant.team}
+              active={isActive}
+            />
+          </>
+        );
+      })}
     </div>
   );
 };

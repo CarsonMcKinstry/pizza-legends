@@ -1,3 +1,51 @@
+.Combatant {
+  width: 67px;
+  height: 14px;
+  background-repeat: no-repeat no-repeat;
+  position: absolute;
+  background-image: url("/images/ui/combatant-plate.png");
+}
+
+.Combatant.player {
+  left: 46px;
+  top: 70px;
+}
+
+.Combatant.enemy {
+  top: 28px;
+  right: 77px;
+}
+
+.Battle .Combatant {
+  transform: scale(2);
+  transition: opacity 0.4s;
+  opacity: 0;
+}
+
+.Battle .Combatant.active {
+  opacity: 1;
+}
+
+.Combatant_character_crop {
+  position: absolute;
+  bottom: 1px;
+  left: 3px;
+  width: 22px;
+  height: 12px;
+  overflow: hidden;
+}
+
+.Combatant_character {
+  display: block;
+  position: absolute;
+  left: -11px;
+  bottom: -7px;
+}
+
+.Battle .Combatant_character_crop {
+  display: none;
+}
+
 .Combatant_name {
   position: absolute;
   left: -2px;
