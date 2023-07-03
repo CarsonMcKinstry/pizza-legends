@@ -20,3 +20,10 @@ export interface SceneConfig {
   walls: Record<string, true>;
   triggerSpaces?: TriggerSpaces;
 }
+
+export type Team = "player" | "enemy";
+
+export type CombatantStatus = {
+  type: "saucy" | "clumsy";
+  expiresIn: number;
+};

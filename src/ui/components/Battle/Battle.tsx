@@ -1,7 +1,9 @@
+import { PizzaType } from "../../../Content/Pizzas";
+import { Combatant } from "../Combatant";
 import "./Battle.css";
-type BattleProps = {};
+import { Pizza } from "./Pizza";
 
-export const Battle = ({}: BattleProps) => {
+export const Battle = () => {
   return (
     <div
       className="Battle"
@@ -25,62 +27,43 @@ export const Battle = ({}: BattleProps) => {
           }}
         />
       </div>
-      <div className="Combatant player active" data-combatant="s001">
-        <p className="Combatant_name">Slice Samurai</p>
-        <p className="Combatant_level">1</p>
-        <div className="Combatant_character_crop">
-          <img
-            className="Combatant_character"
-            alt=""
-            src="/images/characters/pizzas/s001.png"
-          />
-        </div>
-        <img className="Combatant_type" src="/images/icons/spicy.png" />
-        <svg viewBox="0 0 26 3" className="Combatant_life-container">
-          <rect x="0" y="0" width="50%" height="1" fill="#82ff71" />
-          <rect x="0" y="1" width="50%" height="2" fill="#3ef126" />
-        </svg>
-        <svg viewBox="0 0 26 2" className="Combatant_xp-container">
-          <rect x="0" y="0" width="50%" height="1" fill="#ffd76a" />
-          <rect x="0" y="1" width="50%" height="1" fill="#ffc934" />
-        </svg>
-        <p className="Combatant_status saucy">Saucy</p>
-      </div>
-      <img
-        className="Pizza player"
+      <Combatant
+        name="Slice Samurai"
+        level={1}
         src="/images/characters/pizzas/s001.png"
-        style={{
-          backgroundImage: "url(/images/characters/shadow.png)",
-        }}
+        hp={40}
+        maxHp={50}
+        xp={0}
+        maxXp={100}
+        icon="/images/icons/spicy.png"
+        type={PizzaType.Spicy}
+        active
+        team="player"
       />
-
-      <div className="Combatant enemy active" data-combatant="v001">
-        <p className="Combatant_name">Call Me Kale</p>
-        <p className="Combatant_level">1</p>
-        <div className="Combatant_character_crop">
-          <img
-            className="Combatant_character"
-            alt=""
-            src="/images/characters/pizzas/v001.png"
-          />
-        </div>
-        <img className="Combatant_type" src="/images/icons/veggie.png" />
-        <svg viewBox="0 0 26 3" className="Combatant_life-container">
-          <rect x="0" y="0" width="50%" height="1" fill="#82ff71" />
-          <rect x="0" y="1" width="50%" height="2" fill="#3ef126" />
-        </svg>
-        <svg viewBox="0 0 26 2" className="Combatant_xp-container">
-          <rect x="0" y="0" width="50%" height="1" fill="#ffd76a" />
-          <rect x="0" y="1" width="50%" height="1" fill="#ffc934" />
-        </svg>
-        <p className="Combatant_status clumsy">Clumsy</p>
-      </div>
-      <img
-        className="Pizza enemy"
+      <Pizza
+        name="Slice Samurai"
+        src="/images/characters/pizzas/s001.png"
+        team="player"
+        active
+      />
+      <Combatant
+        name="Call Me Kale"
+        level={1}
         src="/images/characters/pizzas/v001.png"
-        style={{
-          backgroundImage: "url(/images/characters/shadow.png)",
-        }}
+        hp={40}
+        maxHp={50}
+        xp={0}
+        maxXp={100}
+        icon="/images/icons/veggie.png"
+        type={PizzaType.Veggie}
+        active
+        team="enemy"
+      />
+      <Pizza
+        name="Call me Kale"
+        src="/images/characters/pizzas/v001.png"
+        team="enemy"
+        active
       />
     </div>
   );

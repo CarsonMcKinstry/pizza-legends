@@ -1,3 +1,7 @@
+/* @tailwind base; */
+/* @tailwind components;
+@tailwind utilities; */
+
 :root {
   --game-window-width: 352px;
   --game-window-height: 198px;
@@ -11,6 +15,10 @@
   --menu-selected-background: #7fc2ff;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 html {
   @apply h-full;
 }
@@ -18,6 +26,7 @@ html {
 body {
   @apply bg-neutral-900 p-0 m-0 overflow-hidden flex items-center justify-center h-full;
   image-rendering: crisp-edges;
+  font-family: sans-serif;
 }
 
 .game-container {
