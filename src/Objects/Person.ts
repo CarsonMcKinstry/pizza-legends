@@ -76,7 +76,7 @@ export class Person extends GameObject {
           if (behavior.retry) {
             setTimeout(() => {
               this.startBehavior(state, behavior);
-            }, 0);
+            }, 20);
           } else {
             globalEvents.emit("PersonWalkingComplete", {
               whoId: this.id,
@@ -86,7 +86,7 @@ export class Person extends GameObject {
           return;
         }
 
-        this.movingProgressRemaining = TILE_SIZE * (behavior.tiles ?? 1);
+        this.movingProgressRemaining = TILE_SIZE;
 
         const intentPosition = nextPosition(this.x, this.y, this.direction);
         this.intentPosition = [intentPosition.x, intentPosition.y];

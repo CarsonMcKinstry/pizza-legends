@@ -81,6 +81,7 @@ export class Game {
   }
 
   startScene(sceneConfig: SceneConfig) {
+    this.scene?.cleanup();
     this.scene = new SceneController(sceneConfig);
     this.scene.game = this;
     this.scene.mountObjects();
@@ -97,12 +98,12 @@ export class Game {
 
     this.startGameLoop();
 
-    this.scene?.startCutscene([
-      behavior.textMessage({
-        text: "Hello, world",
-        who: "hero",
-      }),
-    ]);
+    // this.scene?.startCutscene([
+    //   behavior.textMessage({
+    //     text: "Hello, world",
+    //     who: "hero",
+    //   }),
+    // ]);
 
     this.userInterface.init(this.uiRoot);
   }

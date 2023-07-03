@@ -53,17 +53,17 @@ export class GameObject {
     }, 0);
   }
 
+  unmount() {
+    this.isMounted = false;
+  }
+
   async doBehaviorEvent(scene: SceneController) {
     // Don't do anything...
     if (
-      // scene.isCutscenePlaying ||
-      this.behaviorLoop.length === 0
-      // !this.isBehaviorReady
+      scene.isCutscenePlaying ||
+      this.behaviorLoop.length === 0 ||
+      !this.isBehaviorReady
     ) {
-      return;
-    }
-
-    if (scene.isCutscenePlaying) {
       return;
     }
 

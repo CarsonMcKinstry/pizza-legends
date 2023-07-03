@@ -10,7 +10,7 @@ export const SceneTransition = () => {
     UserInterfaceState,
     SceneTransitionState
   >((state) => state.sceneTransition);
-  console.log({ isOpen, onComplete, fadeInFinished });
+
   if (!isOpen) return null;
 
   return (

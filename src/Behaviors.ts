@@ -7,7 +7,6 @@ export const behavior = createBehaviors<{
     direction: Direction;
     who?: string;
     retry?: true;
-    tiles?: number;
   };
   stand: {
     direction: Direction;

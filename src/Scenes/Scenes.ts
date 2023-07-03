@@ -40,6 +40,37 @@ export const Scenes: Record<string, SceneConfig> = {
         y: withGrid(5),
         spriteName: "npc2",
       }),
+      npcC: new Person({
+        x: withGrid(4),
+        y: withGrid(6),
+        spriteName: "npc7",
+        behaviorLoop: [
+          behavior.walk({
+            direction: "down",
+          }),
+          behavior.walk({
+            direction: "down",
+          }),
+          behavior.walk({
+            direction: "left",
+          }),
+          behavior.walk({
+            direction: "left",
+          }),
+          behavior.walk({
+            direction: "up",
+          }),
+          behavior.walk({
+            direction: "up",
+          }),
+          behavior.walk({
+            direction: "right",
+          }),
+          behavior.walk({
+            direction: "right",
+          }),
+        ],
+      }),
     },
     walls: {
       [asGridCoords(7, 6)]: true,

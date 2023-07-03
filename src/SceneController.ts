@@ -58,6 +58,10 @@ export class SceneController {
     }
   }
 
+  cleanup() {
+    this.gameObjects = {};
+  }
+
   isSpaceTaken(currentX: number, currentY: number, direction: Direction) {
     const { x, y } = nextPosition(currentX, currentY, direction);
     if (this.walls[`${x},${y}`]) {
