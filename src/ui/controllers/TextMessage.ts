@@ -3,7 +3,7 @@ import { KeyPressListener } from "../../Inputs/KeyPressListener";
 import { SceneController } from "../../SceneController";
 import { TextMessageActions } from "../components/TextMessage/state";
 
-type TextMessageConfig = AsBehavior<"textMessage"> & {
+type TextMessageConfig = Omit<AsBehavior<"textMessage">, "type"> & {
   onComplete: () => void;
 };
 

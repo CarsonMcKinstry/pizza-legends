@@ -3,12 +3,20 @@ import { BaseUiState } from "../../store";
 import { CombatantState } from "../Combatant/types";
 import { Team } from "../../../types";
 
+export type BattleAnimation = {
+  animation: string;
+  team: Team;
+  onComplete: () => void;
+};
+
 export type BattleState = BaseUiState & {
   combatants?: Record<string, CombatantState>;
   activeCombatants: {
     player: string;
     enemy: string;
   };
+  damaged?: string;
+  animation?: BattleAnimation;
 };
 
 const initialState: BattleState = {
@@ -46,6 +54,39 @@ export const BattleSlice = createSlice({
       }>
     ) {
       state.activeCombatants[payload.team] = payload.id;
+    },
+    damage(
+      state,
+      { payload }: PayloadAction<{ targetId: string; damage: number }>
+    ) {
+      const { targetId, damage } = payload;
+      const target = state.combatants?.[targetId];
+
+      if (target) {
+        state.combatants![targetId] = {
+          ...target,
+          hp: target.hp - (damage ?? 0),
+        };
+        state.damaged = targetId;
+      }
+    },
+    stopBlinking(state) {
+      delete state.damaged;
+    },
+    startAnimation(
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        animation: string;
+        team: Team;
+        onComplete: () => void;
+      }>
+    ) {
+      state.animation = payload;
+    },
+    animationEnded(state) {
+      delete state.animation;
     },
   },
 });
