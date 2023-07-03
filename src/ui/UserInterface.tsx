@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import { TextMessage } from "./components/TextMessage";
 import { SceneTransition } from "./components/SceneTransition";
+import { Battle } from "./components/Battle";
 
 export class UserInterface {
   store: typeof store;
@@ -18,6 +19,7 @@ export class UserInterface {
       <Provider store={this.store}>
         <TextMessage />
         <SceneTransition />
+        <Battle />
       </Provider>
     );
   }
