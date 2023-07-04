@@ -14,4 +14,5 @@ module.exports = {
     "@typescript-eslint/no-empty-interface": "warn",
     "@typescript-eslint/no-non-null-assertion": "off",
   },
+  ignorePatterns: [".eslintrc.cjs"],
 };
