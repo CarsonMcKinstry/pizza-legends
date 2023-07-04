@@ -1,16 +1,16 @@
-import { SceneBehavior } from "@/Behaviors/SceneBehaviors";
+import { SceneBehavior, SceneBehaviorType } from "@/Behaviors/SceneBehaviors";
 import { SceneController } from "@/SceneController";
 
 type EventResolver = (value?: unknown) => void;
 
 type SceneEventConfig = {
   scene: SceneController;
-  event: SceneBehavior;
+  event: SceneBehaviorType;
 };
 
 export class SceneEvent {
   scene: SceneController;
-  event: SceneBehavior;
+  event: SceneBehaviorType;
   resolve?: EventResolver;
 
   constructor({ scene, event }: SceneEventConfig) {

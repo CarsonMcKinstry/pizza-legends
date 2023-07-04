@@ -1,3 +1,4 @@
+import { SceneBehaviors } from "./Behaviors/SceneBehaviors";
 import { DirectionInput } from "./Inputs/DirectionInput";
 import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
@@ -55,5 +56,28 @@ export class Game {
     this.scene.mountEntities();
 
     this.startGameLoop();
+
+    // this.scene.startCutscene([
+    //   SceneBehaviors.walk({
+    //     direction: "down",
+    //     who: "hero",
+    //   }),
+    //   SceneBehaviors.walk({
+    //     direction: "down",
+    //     who: "hero",
+    //   }),
+    //   SceneBehaviors.walk({
+    //     direction: "left",
+    //     who: "npc1",
+    //   }),
+    //   SceneBehaviors.walk({
+    //     direction: "left",
+    //     who: "npc1",
+    //   }),
+    //   SceneBehaviors.stand({
+    //     direction: "up",
+    //     who: "npc1",
+    //   }),
+    // ]);
   }
 }

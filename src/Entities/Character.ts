@@ -1,5 +1,5 @@
 import {
-  SceneBehavior,
+  SceneBehaviorType,
   SceneBehaviors,
   isSceneBehavior,
 } from "@/Behaviors/SceneBehaviors";
@@ -56,7 +56,7 @@ export class Character extends Entity {
       if (
         //!state.scene.isCutscenePlayer &&
         this.isPlayerControlled &&
-        directionInput.direction
+        directionInput?.direction
       ) {
         this.startBehavior(
           state,
@@ -68,7 +68,7 @@ export class Character extends Entity {
     }
   }
 
-  startBehavior(state: EntityStateUpdate, behavior: SceneBehavior) {
+  startBehavior(state: EntityStateUpdate, behavior: SceneBehaviorType) {
     if (!this.isMounted) {
       return;
     }
@@ -83,7 +83,7 @@ export class Character extends Entity {
           }, 20);
         } else {
           globalEvents.emit("PersonWalkingComplete", {
-            whoId: who,
+            whoId: who ?? this.id,
           });
         }
         return;
@@ -94,7 +94,6 @@ export class Character extends Entity {
       this.intentPosition = nextPosition(this.x, this.y, this.direction);
 
       this.updateSprite();
-      return;
     }
 
     if (isSceneBehavior("stand", behavior)) {
@@ -119,10 +118,16 @@ export class Character extends Entity {
   }
 
   updatePosition() {
-    if (this.movingProgressRemaining > 0) {
-      const [prop, val] = this.directionUpdateMap[this.direction];
-      this[prop] += val;
-      this.movingProgressRemaining -= 1;
+    const [prop, val] = this.directionUpdateMap[this.direction];
+
+    this[prop] += val;
+    this.movingProgressRemaining -= 1;
+
+    if (this.movingProgressRemaining === 0) {
+      delete this.intentPosition;
+      globalEvents.emit("PersonWalkingComplete", {
+        whoId: this.id,
+      });
     }
   }
 

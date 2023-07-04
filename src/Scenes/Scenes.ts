@@ -2,6 +2,7 @@ import { asGridCoords, withGrid } from "@/utils";
 import { Character } from "@/Entities/Character";
 
 import { SceneConfig } from "@/SceneController";
+import { SceneBehaviors } from "@/Behaviors/SceneBehaviors";
 
 export const Scenes: Record<string, SceneConfig> = {
   DemoRoom: {
@@ -14,10 +15,28 @@ export const Scenes: Record<string, SceneConfig> = {
         isPlayerControlled: true,
         spriteName: "hero",
       }),
-      npc1: new Character({
+      npcA: new Character({
         x: withGrid(7),
         y: withGrid(9),
         spriteName: "npc1",
+        behaviorLoop: [
+          SceneBehaviors.stand({ direction: "left", time: 800 }),
+          SceneBehaviors.stand({ direction: "up", time: 800 }),
+          SceneBehaviors.stand({ direction: "right", time: 1200 }),
+          SceneBehaviors.stand({ direction: "up", time: 800 }),
+        ],
+      }),
+      npcB: new Character({
+        x: withGrid(3),
+        y: withGrid(7),
+        spriteName: "npc2",
+        behaviorLoop: [
+          SceneBehaviors.walk({ direction: "left" }),
+          SceneBehaviors.stand({ direction: "up", time: 800 }),
+          SceneBehaviors.walk({ direction: "up" }),
+          SceneBehaviors.walk({ direction: "right" }),
+          SceneBehaviors.walk({ direction: "down" }),
+        ],
       }),
     },
     walls: {

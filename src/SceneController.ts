@@ -1,5 +1,7 @@
+import { SceneBehaviorType } from "./Behaviors/SceneBehaviors";
 import { Character } from "./Entities/Character";
 import { Entity, EntityStateUpdate } from "./Entity";
+import { SceneEvent } from "./SceneEvent";
 import { CAMERA_NUDGE_X, CAMERA_NUDGE_Y } from "./constants";
 import { Direction } from "./types";
 import { loadImage, nextPosition, withGrid } from "./utils";
@@ -23,7 +25,11 @@ export class SceneController {
   // The Camera
   camera?: Entity;
 
+  // Walls
   walls: Record<string, true> = {};
+
+  // Cutscene State
+  isCutscenePlaying = false;
 
   constructor({
     entities,
@@ -43,8 +49,12 @@ export class SceneController {
 
   mountEntities() {
     for (const [id, entity] of Object.entries(this.entities)) {
-      entity.mount(id);
+      entity.mount(this, id);
     }
+  }
+
+  cleanup() {
+    this.entities = {};
   }
 
   isSpaceTaken(currentX: number, currentY: number, direction: Direction) {
@@ -66,7 +76,20 @@ export class SceneController {
     return false;
   }
 
-  private async loadGround(backgroundSrc: string, foregroundSrc: string) {
+  async startCutscene(events: SceneBehaviorType[]) {
+    this.isCutscenePlaying = true;
+    for (const event of events) {
+      const eventHandler = new SceneEvent({
+        scene: this,
+        event,
+      });
+      await eventHandler.init();
+    }
+
+    this.isCutscenePlaying = false;
+  }
+
+  async loadGround(backgroundSrc: string, foregroundSrc: string) {
     this.background = await loadImage(backgroundSrc);
     this.foreground = await loadImage(foregroundSrc);
   }
@@ -92,7 +115,7 @@ export class SceneController {
     }
   }
 
-  private drawImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement) {
+  drawImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement) {
     ctx.drawImage(
       image,
       withGrid(CAMERA_NUDGE_X) - this.camera!.x,
