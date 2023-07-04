@@ -1,3 +1,5 @@
+import { TILE_SIZE } from "./constants";
+
 export const loadImage = (src: string): Promise<HTMLImageElement> =>
   new Promise<HTMLImageElement>((res, rej) => {
     const image = new Image();
@@ -24,3 +26,5 @@ export const loadImage = (src: string): Promise<HTMLImageElement> =>
 
     image.src = src;
   });
+
+export const withGrid = (n: number) => n * TILE_SIZE;

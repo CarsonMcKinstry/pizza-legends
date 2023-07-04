@@ -1,7 +1,6 @@
-import { Entity } from "./Entity";
+import { DirectionInput } from "./Inputs/DirectionInput";
 import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
-import { loadImage } from "./utils";
 
 export type GameConfig = {
   element: HTMLElement;
@@ -13,6 +12,8 @@ export class Game {
   ctx: CanvasRenderingContext2D;
 
   scene?: SceneController;
+
+  directionInput?: DirectionInput;
 
   constructor(config: GameConfig) {
     this.element = config.element;
@@ -27,6 +28,10 @@ export class Game {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       if (this.scene) {
+        this.scene.update({
+          directionInput: this.directionInput!,
+        });
+
         this.scene.draw(this.ctx);
       }
 
@@ -38,6 +43,10 @@ export class Game {
 
   async init() {
     this.scene = new SceneController(Scenes.DemoRoom);
+
+    this.directionInput = new DirectionInput();
+
+    this.directionInput.init();
 
     this.startGameLoop();
   }

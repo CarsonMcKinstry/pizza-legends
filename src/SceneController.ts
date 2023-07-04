@@ -1,4 +1,4 @@
-import { Entity } from "./Entity";
+import { Entity, EntityStateUpdate } from "./Entity";
 import { loadImage } from "./utils";
 
 type SceneControllerConfig = {
@@ -30,6 +30,12 @@ export class SceneController {
   private async loadGround(backgroundSrc: string, foregroundSrc: string) {
     this.background = await loadImage(backgroundSrc);
     this.foreground = await loadImage(foregroundSrc);
+  }
+
+  update(updates: EntityStateUpdate) {
+    for (const entity of Object.values(this.entities)) {
+      entity.update(updates);
+    }
   }
 
   draw(ctx: CanvasRenderingContext2D) {

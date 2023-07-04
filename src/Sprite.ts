@@ -1,10 +1,5 @@
 import { Entity } from "./Entity";
-import {
-  CHAR_OFFSET_X,
-  CHAR_OFFSET_Y,
-  SPRITE_SIZE,
-  TILE_SIZE,
-} from "./constants";
+import { CHAR_OFFSET_X, CHAR_OFFSET_Y, SPRITE_SIZE } from "./constants";
 import { loadImage } from "./utils";
 
 export type SpriteFrameCoords = [number, number];
@@ -47,8 +42,8 @@ export class Sprite {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    const x = this.entity.x * TILE_SIZE - CHAR_OFFSET_X;
-    const y = this.entity.y * TILE_SIZE - CHAR_OFFSET_Y;
+    const x = this.entity.x - CHAR_OFFSET_X;
+    const y = this.entity.y - CHAR_OFFSET_Y;
 
     if (this.shadow) {
       ctx.drawImage(this.shadow, x, y, SPRITE_SIZE, SPRITE_SIZE);
