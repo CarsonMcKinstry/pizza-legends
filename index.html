@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pizza Legends!</title>
   </head>
-  <body class="">
-    <div class="game-container">
+  <body
+    class="h-full bg-neutral-900 p-0 m-0 overflow-hidden flex items-center justify-center"
+  >
+    <div class="game-container absolute outline outline-white outline-1">
       <canvas class="game-canvas" width="352" height="198" />
     </div>
-    <div class="game-overlay"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

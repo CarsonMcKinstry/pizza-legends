@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --game-window-width: 352px;
+  --game-window-height: 198px;
+  --game-scale: 2.5;
+}
+
+body {
+}
+
+.game-container {
+  width: var(--game-window-width);
+  height: var(--game-window-height);
+  transform: scale(var(--game-scale));
+}
+
+.game-canvas,
+.game-overlay {
+  /* all four are needed to support the most browsers */
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
