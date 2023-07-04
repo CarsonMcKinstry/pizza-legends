@@ -1,6 +1,10 @@
 import { KeyPressListener } from "@/Inputs/KeyPressListener";
+import { RevealingText, revealingTextSlice } from "@/components/RevealingText";
+import { RevealingTextState } from "@/components/RevealingText/state";
 import "@/styles/TextMessage.css";
+import { Store, configureStore } from "@reduxjs/toolkit";
 import { Root, createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
 
 type TextMessageConfig = {
   text: string;
@@ -16,9 +20,17 @@ export class TextMessage {
 
   actionListener?: KeyPressListener;
 
+  store: Store<{ revealingText: RevealingTextState }>;
+
   constructor({ text, onComplete }: TextMessageConfig) {
     this.text = text;
     this.onComplete = onComplete;
+
+    this.store = configureStore({
+      reducer: {
+        revealingText: revealingTextSlice.reducer,
+      },
+    });
   }
 
   createElement() {
@@ -28,8 +40,15 @@ export class TextMessage {
     this.root = createRoot(this.element);
 
     this.root.render(
-      <>
-        <p className="TextMessage_p m-0">{this.text}</p>
+      <Provider store={this.store}>
+        <p className="TextMessage_p m-0">
+          <RevealingText
+            text={this.text}
+            onComplete={() => {
+              this.store.dispatch(revealingTextSlice.actions.done());
+            }}
+          />
+        </p>
         <button
           className="TextMessage_button"
           onClick={() => {
@@ -38,7 +57,7 @@ export class TextMessage {
         >
           Continue...
         </button>
-      </>
+      </Provider>
     );
 
     this.actionListener = new KeyPressListener("Enter", () => {
@@ -47,10 +66,19 @@ export class TextMessage {
     });
   }
 
+  get isDone() {
+    return this.store.getState().revealingText.done;
+  }
+
   done() {
-    this.root?.unmount();
-    this.element?.remove();
-    this.onComplete();
+    if (this.isDone) {
+      this.root?.unmount();
+      this.element?.remove();
+      this.actionListener?.unbind();
+      this.onComplete();
+    } else {
+      this.store.dispatch(revealingTextSlice.actions.done());
+    }
   }
 
   init(container: HTMLElement) {
@@ -58,5 +86,9 @@ export class TextMessage {
     if (this.element) {
       container.appendChild(this.element);
     }
+
+    this.actionListener = new KeyPressListener("Enter", () => {
+      this.done();
+    });
   }
 }

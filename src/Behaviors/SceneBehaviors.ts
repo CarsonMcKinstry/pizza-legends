@@ -28,13 +28,6 @@ export const SceneBehavior = createSlice({
           behavior.payload.retry = true;
         }
 
-        who.startBehavior(
-          {
-            scene: sceneEvent.scene as unknown as SceneController,
-          },
-          behavior as SceneBehaviorType
-        );
-
         const completeHandler: GlobalEventHandler<"PersonWalkingComplete"> = (
           e
         ) => {
@@ -43,8 +36,14 @@ export const SceneBehavior = createSlice({
             sceneEvent.resolve?.();
           }
         };
-
         globalEvents.on("PersonWalkingComplete", completeHandler);
+
+        who.startBehavior(
+          {
+            scene: sceneEvent.scene as unknown as SceneController,
+          },
+          behavior as SceneBehaviorType
+        );
       } else {
         sceneEvent.resolve?.();
       }
@@ -62,13 +61,6 @@ export const SceneBehavior = createSlice({
       const who = whoId ? sceneEvent.scene.entities[whoId] : null;
 
       if (who && who instanceof Character) {
-        who.startBehavior(
-          {
-            scene: sceneEvent.scene as unknown as SceneController,
-          },
-          behavior as SceneBehaviorType
-        );
-
         const completeHandler: GlobalEventHandler<"PersonStandComplete"> = (
           e
         ) => {
@@ -79,6 +71,13 @@ export const SceneBehavior = createSlice({
         };
 
         globalEvents.on("PersonStandComplete", completeHandler);
+
+        who.startBehavior(
+          {
+            scene: sceneEvent.scene as unknown as SceneController,
+          },
+          behavior as SceneBehaviorType
+        );
       } else {
         sceneEvent.resolve?.();
       }
