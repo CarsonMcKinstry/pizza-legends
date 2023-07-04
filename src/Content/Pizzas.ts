@@ -22,14 +22,14 @@ export const Pizzas: Record<string, Pizza> = {
     type: PizzaType.Spicy,
     src: "/images/characters/pizzas/s001.png",
     icon: "/images/icons/spicy.png",
-    abilities: ["damage1"],
+    abilities: ["clumsyStatus", "damage1"],
   },
   v001: {
     name: "Call Me Kale",
     type: PizzaType.Veggie,
     src: "/images/characters/pizzas/v001.png",
     icon: "/images/icons/veggie.png",
-    abilities: ["damage1"],
+    abilities: ["clumsyStatus", "damage1"],
   },
   f001: {
     name: "Portabello Express",

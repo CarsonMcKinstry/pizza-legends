@@ -23,7 +23,9 @@ export interface SceneConfig {
 
 export type Team = "player" | "enemy";
 
+export type StatusAilment = "saucy" | "clumsy";
+
 export type CombatantStatus = {
-  type: "saucy" | "clumsy";
+  type: StatusAilment;
   expiresIn: number;
 };

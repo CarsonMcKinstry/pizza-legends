@@ -80,30 +80,39 @@ export class BattleEvent implements BattleEventHandlers {
   async stateChange(resolve: EventResolver<any>) {
     const event = this.event as AsBattleBehavior<"stateChange">;
 
-    const { damage, targetId } = event;
+    const { damage, targetId, casterId, status, recover, onCaster } = event;
 
     if (damage) {
       this.battle.damage(damage, targetId!);
+
+      await wait(600);
+
+      this.battle.stopBlinking();
+    } else if (status) {
+      this.battle.statusChange({
+        status,
+        targetId: onCaster ? casterId! : targetId!,
+        casterId: onCaster ? targetId! : casterId!,
+      });
+    } else if (recover) {
+      this.battle.recover(recover, onCaster ? casterId! : targetId!);
     }
-
-    await wait(600);
-
-    this.battle.stopBlinking();
 
     resolve();
   }
 
   animation(resolve: EventResolver<any>) {
     const event = this.event as AsBattleBehavior<"animation">;
-
     const caster = this.battle.combatants?.[event.casterId!];
 
     if (caster) {
       this.battle.startAnimation({
+        color: event.color,
         animation: event.animation,
         team: caster.team === "player" ? "player" : "enemy",
         onComplete: () => {
           resolve();
+          this.battle.stopAnimation();
         },
       });
     }

@@ -1,7 +1,7 @@
 // import { Direction } from "./types";
 
 import { Ability } from "../Content/Abilities";
-import { Team } from "../types";
+import { CombatantStatus, StatusAilment, Team } from "../types";
 import { BuildBehaviorType, createBehaviors } from "../utils/createBehaviors";
 
 export const battleBehavior = createBehaviors<{
@@ -10,6 +10,7 @@ export const battleBehavior = createBehaviors<{
     casterId?: string;
     ability?: Ability;
     targetId?: string;
+    status?: StatusAilment;
   };
   submissionMenu: {
     caster: string;
@@ -17,13 +18,17 @@ export const battleBehavior = createBehaviors<{
   };
   stateChange: {
     damage?: number;
+    status?: CombatantStatus;
+    recover?: number;
     targetId?: string;
     casterId?: string;
+    onCaster?: boolean;
   };
   animation: {
     casterId?: string;
     animation: string;
     team?: Team;
+    color?: string;
   };
 }>("textMessage", "submissionMenu", "stateChange", "animation");
 

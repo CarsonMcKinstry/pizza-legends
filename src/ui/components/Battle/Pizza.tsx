@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Team } from "../../../types";
 import { BattleAnimation } from "./state";
 import { Animations } from "./Animations";
-import { wait } from "../../../utils/wait";
+import { Glob } from "./Glob";
 
 type PizzaProps = {
   src: string;
@@ -21,26 +21,29 @@ export const Pizza = ({
   damaged,
   animation,
 }: PizzaProps) => {
+  const onPizza = animation?.animation === "spin";
+
   const animationName = animation
     ? Animations[animation.animation][animation.team]
-    : "";
+    : undefined;
 
   return (
-    <img
-      className={clsx(
-        "Pizza",
-        team,
-        {
+    <>
+      <img
+        className={clsx("Pizza", team, {
           active,
           "battle-damage-blink": damaged,
-        },
-        animationName
-      )}
-      src={src}
-      alt={name}
-      onAnimationEnd={async () => {
-        animation?.onComplete();
-      }}
-    />
+          [animationName!]: onPizza,
+        })}
+        src={src}
+        alt={name}
+        onAnimationEnd={() => {
+          if (onPizza) {
+            animation?.onComplete();
+          }
+        }}
+      />
+      {!onPizza && <Glob {...animation!} />}
+    </>
   );
 };

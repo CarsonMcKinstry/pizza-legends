@@ -3,6 +3,8 @@ import clsx from "clsx";
 import { CombatantStatus, Team } from "../../../types";
 import { clamp } from "../../../utils/clamp";
 import { PizzaType } from "../../../Content/Pizzas";
+import { BattleAnimation } from "../Battle/state";
+import { Animations } from "../Battle/Animations";
 
 type CombatantProps = {
   level: number;

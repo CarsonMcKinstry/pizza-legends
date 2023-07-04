@@ -1,8 +1,10 @@
 import { Pizzas } from "../Content/Pizzas";
 import { SceneController } from "../SceneController";
-import { Team } from "../types";
+import { CombatantStatus, StatusAilment, Team } from "../types";
 import { BattleActions } from "../ui/components/Battle/state";
-import { BattleBehavior } from "./BattleBehaviors";
+import { randomFromArray } from "../utils/randomFromArray";
+import { wait } from "../utils/wait";
+import { BattleBehavior, battleBehavior } from "./BattleBehaviors";
 import { BattleEvent } from "./BattleEvent";
 import { TurnCycle } from "./TurnCycle";
 
@@ -38,11 +40,61 @@ export class Battle {
     );
   }
 
+  recover(recover: number, targetId: string) {
+    this.scene.game?.userInterface.dispatch(
+      BattleActions.recover({
+        amount: recover,
+        targetId,
+      })
+    );
+  }
+
+  statusChange(changes: {
+    status: CombatantStatus;
+    targetId: string;
+    casterId: string;
+  }) {
+    this.scene.game?.userInterface.dispatch(
+      BattleActions.statusChange(changes)
+    );
+  }
+
+  async decrementStatus(whoId: string) {
+    let who = this.combatants![whoId];
+
+    if (who && who.status && who.status.expiresIn > 0) {
+      this.statusChange({
+        status: {
+          ...who.status,
+          expiresIn: who.status.expiresIn - 1,
+        },
+        casterId: whoId,
+        targetId: whoId,
+      });
+
+      who = this.combatants![whoId];
+
+      if (who.status && who.status.expiresIn === 0) {
+        await wait(800);
+        this.scene.game?.userInterface.dispatch(
+          BattleActions.statusExpired(whoId)
+        );
+
+        return battleBehavior.textMessage({
+          text: `${
+            who.status.type.charAt(0).toUpperCase() + who.status.type.slice(1)
+          } expired!`,
+        });
+      }
+    }
+  }
+
   stopBlinking() {
     this.scene.game?.userInterface.dispatch(BattleActions.stopBlinking());
   }
 
   startAnimation(animation: {
+    color?: string;
     animation: string;
     team: Team;
     onComplete: () => void;
@@ -54,6 +106,42 @@ export class Battle {
 
   stopAnimation() {
     this.scene.game?.userInterface.dispatch(BattleActions.animationEnded());
+  }
+
+  getPostEvents(casterId: string): BattleBehavior[] {
+    const caster = this.combatants![casterId];
+
+    if (caster && caster.status) {
+      if (caster.status.type === "saucy") {
+        return [
+          battleBehavior.textMessage({ text: "Feelin' saucy!" }),
+          battleBehavior.stateChange({ recover: 5, onCaster: true }),
+        ];
+      }
+    }
+
+    return [];
+  }
+
+  getReplacedEvents(
+    casterId: string,
+    events: BattleBehavior[]
+  ): BattleBehavior[] {
+    const caster = this.combatants![casterId];
+
+    if (
+      caster &&
+      caster.status?.type === "clumsy" &&
+      randomFromArray([true, false, false])
+    ) {
+      return [
+        battleBehavior.textMessage({
+          text: `${caster.name} flops over!`,
+        }),
+      ];
+    }
+
+    return events;
   }
 
   init() {
@@ -68,10 +156,6 @@ export class Battle {
             xp: 0,
             maxXp: 100,
             level: 1,
-            status: {
-              type: "clumsy",
-              expiresIn: 3,
-            },
             team: "player",
           },
           enemy1: {
@@ -84,7 +168,7 @@ export class Battle {
             level: 1,
             team: "enemy",
             status: {
-              type: "saucy",
+              type: "clumsy",
               expiresIn: 3,
             },
           },

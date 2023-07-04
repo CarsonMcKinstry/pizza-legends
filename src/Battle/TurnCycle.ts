@@ -35,7 +35,10 @@ export class TurnCycle {
         })
       );
 
-      const resultingEvents = submission.ability.success;
+      const resultingEvents = this.battle.getReplacedEvents(
+        casterId,
+        submission.ability.success
+      );
 
       for (const event of resultingEvents) {
         await this.onNewEvent({
@@ -43,7 +46,32 @@ export class TurnCycle {
           ability: submission.ability,
           casterId: casterId,
           targetId: submission.target.id,
-        } as any);
+        } as BattleBehavior);
+      }
+
+      // check for post events
+      // do things after the original submission
+
+      const postEvents = this.battle.getPostEvents(casterId);
+
+      for (const event of postEvents) {
+        await this.onNewEvent({
+          ...event,
+          ability: submission.ability,
+          casterId: casterId,
+          targetId: submission.target.id,
+        } as BattleBehavior);
+      }
+
+      const expiredEvent = await this.battle.decrementStatus(casterId);
+
+      if (expiredEvent) {
+        await this.onNewEvent({
+          ...expiredEvent,
+          ability: submission.ability,
+          casterId: casterId,
+          targetId: submission.target.id,
+        } as BattleBehavior);
       }
 
       this.currentTeam = this.currentTeam === "player" ? "enemy" : "player";

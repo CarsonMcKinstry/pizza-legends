@@ -24,9 +24,11 @@ export class SubmissionMenu {
   }
 
   decide() {
+    const ability = Abilities[this.caster.abilities[0]];
+
     this.onComplete({
-      ability: Abilities[this.caster.abilities[0]],
-      target: this.enemy,
+      ability,
+      target: ability.targetType === "friendly" ? this.caster : this.enemy,
     });
   }
 

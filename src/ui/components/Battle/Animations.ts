@@ -5,4 +5,8 @@ export const Animations: Record<string, Record<Team, string>> = {
     player: "battle-spin-right",
     enemy: "battle-spin-left",
   },
+  glob: {
+    player: "battle-glob-right",
+    enemy: "battle-glob-left",
+  },
 };
