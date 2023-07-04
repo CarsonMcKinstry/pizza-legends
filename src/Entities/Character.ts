@@ -35,8 +35,10 @@ export class Character extends Entity {
     this.isPlayerControlled = isPlayerControlled ?? this.isPlayerControlled;
   }
 
-  override update({ directionInput }: EntityStateUpdate) {
+  override update(state: EntityStateUpdate) {
+    const { directionInput } = state;
     this.updatePosition();
+    this.updateSprite(state);
 
     if (
       this.isPlayerControlled &&
@@ -45,6 +47,21 @@ export class Character extends Entity {
     ) {
       this.direction = directionInput.direction;
       this.movingProgressRemaining = 16;
+    }
+  }
+
+  updateSprite({ directionInput }: EntityStateUpdate) {
+    if (
+      this.isPlayerControlled &&
+      this.movingProgressRemaining === 0 &&
+      !directionInput.direction
+    ) {
+      this.sprite.setAnimation(`idle-${this.direction}`);
+      return;
+    }
+
+    if (this.movingProgressRemaining > 0) {
+      this.sprite.setAnimation(`walk-${this.direction}`);
     }
   }
 
