@@ -25,18 +25,16 @@ export const Scenes: Record<string, SceneConfig> = {
           SceneBehaviors.stand({ direction: "right", time: 1200 }),
           SceneBehaviors.stand({ direction: "up", time: 800 }),
         ],
+        talking: [
+          {
+            events: [SceneBehaviors.walk({ direction: "up", who: "hero" })],
+          },
+        ],
       }),
       npcB: new Character({
-        x: withGrid(3),
-        y: withGrid(7),
+        x: withGrid(8),
+        y: withGrid(5),
         spriteName: "npc2",
-        behaviorLoop: [
-          SceneBehaviors.walk({ direction: "left" }),
-          SceneBehaviors.stand({ direction: "up", time: 800 }),
-          SceneBehaviors.walk({ direction: "up" }),
-          SceneBehaviors.walk({ direction: "right" }),
-          SceneBehaviors.walk({ direction: "down" }),
-        ],
       }),
     },
     walls: {
@@ -44,6 +42,20 @@ export const Scenes: Record<string, SceneConfig> = {
       [asGridCoords(8, 6)]: true,
       [asGridCoords(7, 7)]: true,
       [asGridCoords(8, 7)]: true,
+    },
+    triggerSpaces: {
+      [asGridCoords(7, 4)]: [
+        {
+          events: [
+            SceneBehaviors.walk({ direction: "left", who: "npcB" }),
+            SceneBehaviors.stand({ direction: "up", who: "npcB" }),
+            SceneBehaviors.walk({ direction: "right", who: "npcB" }),
+            SceneBehaviors.stand({ direction: "down", who: "npcB" }),
+            SceneBehaviors.walk({ direction: "down", who: "hero" }),
+            SceneBehaviors.walk({ direction: "left", who: "hero" }),
+          ],
+        },
+      ],
     },
   },
   // Kitchen: {

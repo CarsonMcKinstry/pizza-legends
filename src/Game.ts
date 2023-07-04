@@ -1,5 +1,6 @@
-import { SceneBehaviors } from "./Behaviors/SceneBehaviors";
 import { DirectionInput } from "./Inputs/DirectionInput";
+import { globalEvents } from "./Inputs/GlobalEvents";
+import { KeyPressListener } from "./Inputs/KeyPressListener";
 import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
 
@@ -46,11 +47,28 @@ export class Game {
     requestAnimationFrame(step);
   }
 
+  bindActionInput() {
+    new KeyPressListener("Enter", () => {
+      // Is there a person here to talk to?
+      this.scene?.checkForActionCutscene();
+    });
+  }
+
+  bindHeroPositionCheck() {
+    globalEvents.on("PersonWalkingComplete", ({ detail }) => {
+      if (detail.whoId === "hero") {
+        this.scene?.checkForFootstepCutscene();
+      }
+    });
+  }
+
   async init() {
     this.scene = new SceneController(Scenes.DemoRoom);
 
-    this.directionInput = new DirectionInput();
+    this.bindActionInput();
+    this.bindHeroPositionCheck();
 
+    this.directionInput = new DirectionInput();
     this.directionInput.init();
 
     this.scene.mountEntities();

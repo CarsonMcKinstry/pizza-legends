@@ -3,7 +3,7 @@ import { Character } from "./Entities/Character";
 import { Entity, EntityStateUpdate } from "./Entity";
 import { SceneEvent } from "./SceneEvent";
 import { CAMERA_NUDGE_X, CAMERA_NUDGE_Y } from "./constants";
-import { Direction } from "./types";
+import { Direction, TriggerSpaces } from "./types";
 import { loadImage, nextPosition, withGrid } from "./utils";
 
 type SceneControllerConfig = {
@@ -11,6 +11,7 @@ type SceneControllerConfig = {
   backgroundSrc: string;
   foregroundSrc: string;
   walls: Record<string, true>;
+  triggerSpaces?: TriggerSpaces;
 };
 
 export type SceneConfig = SceneControllerConfig;
@@ -30,12 +31,16 @@ export class SceneController {
 
   // Cutscene State
   isCutscenePlaying = false;
+  triggerSpaces: TriggerSpaces = {};
+
+  overlay: HTMLElement = document.querySelector(".game-overlay") as HTMLElement;
 
   constructor({
     entities,
     backgroundSrc,
     foregroundSrc,
     walls,
+    triggerSpaces,
   }: SceneControllerConfig) {
     // Establish entities in the scene
     this.entities = entities;
@@ -45,6 +50,7 @@ export class SceneController {
     this.camera = entities.hero;
 
     this.walls = walls ?? this.walls;
+    this.triggerSpaces = triggerSpaces ?? this.triggerSpaces;
   }
 
   mountEntities() {
@@ -121,5 +127,42 @@ export class SceneController {
       withGrid(CAMERA_NUDGE_X) - this.camera!.x,
       withGrid(CAMERA_NUDGE_Y) - this.camera!.y
     );
+  }
+
+  checkForFootstepCutscene() {
+    const hero = this.entities["hero"];
+    const match = this.triggerSpaces[`${hero.x},${hero.y}`];
+
+    if (!this.isCutscenePlaying && match) {
+      this.startCutscene(match[0].events);
+    }
+  }
+
+  checkForActionCutscene() {
+    const hero = this.entities["hero"];
+
+    if (hero) {
+      const nextCoords = nextPosition(hero.x, hero.y, hero.direction);
+      const match = Object.values(this.entities).find((entity) => {
+        return `${entity.x},${entity.y}` === `${nextCoords.x},${nextCoords.y}`;
+      });
+
+      if (
+        !this.isCutscenePlaying &&
+        match &&
+        match instanceof Character &&
+        match.talking.length
+      ) {
+        this.startCutscene(
+          match.talking[0].events.map((event) => ({
+            ...event,
+            payload: {
+              ...event.payload,
+              who: event.payload.who ?? match.id,
+            },
+          }))
+        );
+      }
+    }
   }
 }

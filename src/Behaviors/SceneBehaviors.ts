@@ -28,7 +28,7 @@ export const SceneBehavior = createSlice({
 
         who.startBehavior(
           {
-            scene: sceneEvent.scene as SceneController,
+            scene: sceneEvent.scene as unknown as SceneController,
           },
           behavior as SceneBehaviorType
         );
@@ -62,7 +62,7 @@ export const SceneBehavior = createSlice({
       if (who && who instanceof Character) {
         who.startBehavior(
           {
-            scene: sceneEvent.scene as SceneController,
+            scene: sceneEvent.scene as unknown as SceneController,
           },
           behavior as SceneBehaviorType
         );

@@ -6,12 +6,13 @@ import {
 import { Entity, EntityConfig, EntityStateUpdate } from "@/Entity";
 import { globalEvents } from "@/Inputs/GlobalEvents";
 import { TILE_SIZE } from "@/constants";
-import { Direction } from "@/types";
+import { CutsceneConfig, Direction } from "@/types";
 import { nextPosition } from "@/utils";
 
-export type PersonConfig = Omit<EntityConfig, "src"> & {
+export type CharacterConfig = Omit<EntityConfig, "src"> & {
   spriteName: string;
   isPlayerControlled?: true;
+  talking?: CutsceneConfig[];
 };
 
 type DirectionUpdate = ["x" | "y", 1 | -1];
@@ -35,17 +36,21 @@ export class Character extends Entity {
     y: number;
   };
 
+  talking: CutsceneConfig[] = [];
+
   constructor({
     spriteName,
     isPlayerControlled,
+    talking,
     ...entityConfig
-  }: PersonConfig) {
+  }: CharacterConfig) {
     super({
       ...entityConfig,
       src: `/images/characters/people/${spriteName}.png`,
     });
 
     this.isPlayerControlled = isPlayerControlled ?? this.isPlayerControlled;
+    this.talking = talking ?? this.talking;
   }
 
   override update(state: EntityStateUpdate) {
@@ -54,7 +59,7 @@ export class Character extends Entity {
     } else {
       const { directionInput } = state;
       if (
-        //!state.scene.isCutscenePlayer &&
+        !state.scene.isCutscenePlaying &&
         this.isPlayerControlled &&
         directionInput?.direction
       ) {
