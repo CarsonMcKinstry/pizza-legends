@@ -1,10 +1,6 @@
 import { Entity } from "./Entity";
-import {
-  CHAR_OFFSET_X,
-  CHAR_OFFSET_Y,
-  SPRITE_SIZE,
-  TILE_SIZE,
-} from "./constants";
+import { SceneController } from "./SceneController";
+import { Scenes } from "./Scenes";
 import { loadImage } from "./utils";
 
 export type GameConfig = {
@@ -16,6 +12,8 @@ export class Game {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
 
+  scene?: SceneController;
+
   constructor(config: GameConfig) {
     this.element = config.element;
     this.canvas = this.element.querySelector(
@@ -24,28 +22,23 @@ export class Game {
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
   }
 
+  startGameLoop() {
+    const step = () => {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      if (this.scene) {
+        this.scene.draw(this.ctx);
+      }
+
+      requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
+  }
+
   async init() {
-    const image = await loadImage("/images/maps/DemoLower.png");
+    this.scene = new SceneController(Scenes.DemoRoom);
 
-    this.ctx.drawImage(image, 0, 0);
-
-    const x = 5;
-    const y = 5;
-
-    const hero = new Entity({
-      x,
-      y,
-    });
-
-    const npc1 = new Entity({
-      x: 7,
-      y: 9,
-      src: "/images/characters/people/npc1.png",
-    });
-
-    setTimeout(() => {
-      hero.sprite.draw(this.ctx);
-      npc1.sprite.draw(this.ctx);
-    }, 200);
+    this.startGameLoop();
   }
 }

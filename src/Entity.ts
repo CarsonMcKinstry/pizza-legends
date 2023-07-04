@@ -7,6 +7,7 @@ export type EntityConfig = Omit<SpriteConfig, "src" | "entity"> & {
 };
 
 export class Entity {
+  private _id?: string;
   x = 0;
   y = 0;
   sprite: Sprite;
@@ -20,5 +21,13 @@ export class Entity {
       src: src ?? "/images/characters/people/hero.png",
       ...spriteConfig,
     });
+  }
+
+  set id(id: string) {
+    this._id = id;
+  }
+
+  get id(): string | undefined {
+    return this._id;
   }
 }

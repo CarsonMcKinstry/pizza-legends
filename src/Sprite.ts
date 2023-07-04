@@ -24,9 +24,6 @@ export class Sprite {
   image?: HTMLImageElement;
   shadow?: HTMLImageElement;
 
-  isLoaded = false;
-  isShadowLoaded = false;
-
   // Animations
   animations: SpriteAnimations = {};
   currentAnimation = "idle-down";
@@ -53,13 +50,13 @@ export class Sprite {
     const x = this.entity.x * TILE_SIZE - CHAR_OFFSET_X;
     const y = this.entity.y * TILE_SIZE - CHAR_OFFSET_Y;
 
-    if (this.isShadowLoaded) {
-      ctx.drawImage(this.shadow!, x, y, SPRITE_SIZE, SPRITE_SIZE);
+    if (this.shadow) {
+      ctx.drawImage(this.shadow, x, y, SPRITE_SIZE, SPRITE_SIZE);
     }
 
-    if (this.isLoaded) {
+    if (this.image) {
       ctx.drawImage(
-        this.image!,
+        this.image,
         0,
         0,
         SPRITE_SIZE,
@@ -74,11 +71,9 @@ export class Sprite {
 
   private async loadSprite(src: string, useShadow?: boolean) {
     this.image = await loadImage(src);
-    this.isLoaded = true;
 
     if (useShadow) {
       this.shadow = await loadImage("/images/character/shadow.png");
-      this.isShadowLoaded = true;
     }
   }
 }
