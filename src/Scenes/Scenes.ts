@@ -1,6 +1,6 @@
-import { withGrid } from "@/utils";
+import { asGridCoords, withGrid } from "@/utils";
 import { Character } from "@/Entities/Character";
-import { Entity } from "@/Entity";
+
 import { SceneConfig } from "@/SceneController";
 
 export const Scenes: Record<string, SceneConfig> = {
@@ -14,31 +14,37 @@ export const Scenes: Record<string, SceneConfig> = {
         isPlayerControlled: true,
         spriteName: "hero",
       }),
-      //   npc1: new Entity({
-      //     x: 7,
-      //     y: 9,
-      //     src: "/images/characters/people/npc1.png",
-      //   }),
-    },
-  },
-  Kitchen: {
-    backgroundSrc: "/images/maps/KitchenLower.png",
-    foregroundSrc: "/images/maps/KitchenUpper.png",
-    entities: {
-      hero: new Entity({
-        x: 3,
-        y: 1,
-      }),
-      npcA: new Entity({
-        x: 9,
-        y: 2,
-        src: "/images/characters/people/npc2.png",
-      }),
-      npcB: new Entity({
-        x: 10,
-        y: 4,
-        src: "/images/characters/people/npc3.png",
+      npc1: new Character({
+        x: withGrid(7),
+        y: withGrid(9),
+        spriteName: "npc1",
       }),
     },
+    walls: {
+      [asGridCoords(7, 6)]: true,
+      [asGridCoords(8, 6)]: true,
+      [asGridCoords(7, 7)]: true,
+      [asGridCoords(8, 7)]: true,
+    },
   },
+  // Kitchen: {
+  //   backgroundSrc: "/images/maps/KitchenLower.png",
+  //   foregroundSrc: "/images/maps/KitchenUpper.png",
+  //   entities: {
+  //     hero: new Entity({
+  //       x: 3,
+  //       y: 1,
+  //     }),
+  //     npcA: new Entity({
+  //       x: 9,
+  //       y: 2,
+  //       src: "/images/characters/people/npc2.png",
+  //     }),
+  //     npcB: new Entity({
+  //       x: 10,
+  //       y: 4,
+  //       src: "/images/characters/people/npc3.png",
+  //     }),
+  //   },
+  // },
 };

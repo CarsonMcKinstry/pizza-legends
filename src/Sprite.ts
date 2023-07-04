@@ -1,6 +1,12 @@
 import { Entity } from "./Entity";
-import { CHAR_OFFSET_X, CHAR_OFFSET_Y, SPRITE_SIZE } from "./constants";
-import { loadImage } from "./utils";
+import {
+  CAMERA_NUDGE_X,
+  CAMERA_NUDGE_Y,
+  CHAR_OFFSET_X,
+  CHAR_OFFSET_Y,
+  SPRITE_SIZE,
+} from "./constants";
+import { loadImage, withGrid } from "./utils";
 
 export type SpriteFrameCoords = [number, number];
 
@@ -97,9 +103,11 @@ export class Sprite {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    const x = this.entity.x - CHAR_OFFSET_X;
-    const y = this.entity.y - CHAR_OFFSET_Y;
+  draw(ctx: CanvasRenderingContext2D, camera: Entity) {
+    const x =
+      this.entity.x - CHAR_OFFSET_X + withGrid(CAMERA_NUDGE_X) - camera.x;
+    const y =
+      this.entity.y - CHAR_OFFSET_Y + withGrid(CAMERA_NUDGE_Y) - camera.y;
 
     if (this.shadow) {
       ctx.drawImage(this.shadow, x, y, SPRITE_SIZE, SPRITE_SIZE);

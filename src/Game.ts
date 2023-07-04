@@ -28,8 +28,12 @@ export class Game {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       if (this.scene) {
+        const camera = this.scene.entities.hero;
+
         this.scene.update({
           directionInput: this.directionInput!,
+          camera,
+          scene: this.scene!,
         });
 
         this.scene.draw(this.ctx);

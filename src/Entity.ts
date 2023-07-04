@@ -1,6 +1,7 @@
 import { Sprite, SpriteConfig } from "@/Sprite";
 import { Direction } from "@/types";
-import { DirectionInput } from "./Inputs/DirectionInput";
+import { DirectionInput } from "@/Inputs/DirectionInput";
+import { SceneController } from "@/SceneController";
 
 export type EntityConfig = Omit<SpriteConfig, "src" | "entity"> & {
   x: number;
@@ -11,6 +12,8 @@ export type EntityConfig = Omit<SpriteConfig, "src" | "entity"> & {
 
 export type EntityStateUpdate = {
   directionInput: DirectionInput;
+  scene: SceneController;
+  camera?: Entity;
 };
 
 export class Entity {
@@ -19,6 +22,7 @@ export class Entity {
   y = 0;
   sprite: Sprite;
   direction: Direction = "down";
+  isMounted = false;
 
   constructor({ x, y, src, direction, ...spriteConfig }: EntityConfig) {
     this.x = x;
@@ -40,4 +44,9 @@ export class Entity {
   }
 
   update(_state: EntityStateUpdate) {}
+
+  mount(id: string) {
+    this.id = id;
+    this.isMounted = true;
+  }
 }
