@@ -1,3 +1,4 @@
+import { Entity } from "./Entity";
 import {
   CHAR_OFFSET_X,
   CHAR_OFFSET_Y,
@@ -31,32 +32,20 @@ export class Game {
     const x = 5;
     const y = 5;
 
-    const hero = await loadImage("/images/characters/people/hero.png");
+    const hero = new Entity({
+      x,
+      y,
+    });
 
-    this.ctx.drawImage(
-      hero,
-      0,
-      0,
-      SPRITE_SIZE,
-      SPRITE_SIZE,
-      x * TILE_SIZE - CHAR_OFFSET_X,
-      y * TILE_SIZE - CHAR_OFFSET_Y,
-      SPRITE_SIZE,
-      SPRITE_SIZE
-    );
+    const npc1 = new Entity({
+      x: 7,
+      y: 9,
+      src: "/images/characters/people/npc1.png",
+    });
 
-    const shadow = await loadImage("/images/characters/shadow.png");
-
-    this.ctx.drawImage(
-      shadow,
-      0,
-      0,
-      SPRITE_SIZE,
-      SPRITE_SIZE,
-      x * TILE_SIZE - CHAR_OFFSET_X,
-      y * TILE_SIZE - CHAR_OFFSET_Y,
-      SPRITE_SIZE,
-      SPRITE_SIZE
-    );
+    setTimeout(() => {
+      hero.sprite.draw(this.ctx);
+      npc1.sprite.draw(this.ctx);
+    }, 200);
   }
 }
