@@ -104,7 +104,7 @@ export class Character extends Entity {
     if (isSceneBehavior("stand", behavior)) {
       const { direction, who, time } = behavior.payload;
       this.direction = direction;
-      this.isStanding = true;
+
       setTimeout(() => {
         globalEvents.emit("PersonStandComplete", {
           whoId: who,
@@ -134,9 +134,5 @@ export class Character extends Entity {
         whoId: this.id,
       });
     }
-  }
-
-  override isBehaviorReady(): boolean {
-    return !this.isStanding;
   }
 }

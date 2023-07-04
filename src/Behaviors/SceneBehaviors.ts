@@ -114,6 +114,11 @@ export const SceneBehavior = createSlice({
 
       return sceneEvent;
     },
+    changeScene(sceneEvent, action: PayloadAction<{ scene: string }>) {
+      sceneEvent.scene.game?.startScene(action.payload.scene);
+      sceneEvent.resolve?.();
+      return sceneEvent;
+    },
   },
 });
 

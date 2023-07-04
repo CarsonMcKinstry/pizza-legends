@@ -1,7 +1,7 @@
 import { DirectionInput } from "./Inputs/DirectionInput";
 import { globalEvents } from "./Inputs/GlobalEvents";
 import { KeyPressListener } from "./Inputs/KeyPressListener";
-import { SceneController } from "./SceneController";
+import { SceneConfig, SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
 
 export type GameConfig = {
@@ -62,8 +62,20 @@ export class Game {
     });
   }
 
+  startScene(scene: string) {
+    const sceneConfig = Scenes[scene];
+
+    this.scene?.cleanup();
+    const newScene = new SceneController(sceneConfig);
+
+    newScene.game = this;
+    newScene.mountEntities();
+
+    this.scene = newScene;
+  }
+
   async init() {
-    this.scene = new SceneController(Scenes.DemoRoom);
+    this.startScene("DemoRoom");
 
     this.bindActionInput();
     this.bindHeroPositionCheck();
@@ -71,31 +83,6 @@ export class Game {
     this.directionInput = new DirectionInput();
     this.directionInput.init();
 
-    this.scene.mountEntities();
-
     this.startGameLoop();
-
-    // this.scene.startCutscene([
-    //   SceneBehaviors.walk({
-    //     direction: "down",
-    //     who: "hero",
-    //   }),
-    //   SceneBehaviors.walk({
-    //     direction: "down",
-    //     who: "hero",
-    //   }),
-    //   SceneBehaviors.walk({
-    //     direction: "left",
-    //     who: "npc1",
-    //   }),
-    //   SceneBehaviors.walk({
-    //     direction: "left",
-    //     who: "npc1",
-    //   }),
-    //   SceneBehaviors.stand({
-    //     direction: "up",
-    //     who: "npc1",
-    //   }),
-    // ]);
   }
 }

@@ -1,6 +1,7 @@
 import { SceneBehaviorType } from "./Behaviors/SceneBehaviors";
 import { Character } from "./Entities/Character";
 import { Entity, EntityStateUpdate } from "./Entity";
+import { Game } from "./Game";
 import { SceneEvent } from "./SceneEvent";
 import { CAMERA_NUDGE_X, CAMERA_NUDGE_Y } from "./constants";
 import { Direction, TriggerSpaces } from "./types";
@@ -10,7 +11,7 @@ type SceneControllerConfig = {
   entities: Record<string, Entity>;
   backgroundSrc: string;
   foregroundSrc: string;
-  walls: Record<string, true>;
+  walls?: Record<string, true>;
   triggerSpaces?: TriggerSpaces;
 };
 
@@ -34,6 +35,8 @@ export class SceneController {
   triggerSpaces: TriggerSpaces = {};
 
   overlay: HTMLElement = document.querySelector(".game-overlay") as HTMLElement;
+
+  game?: Game;
 
   constructor({
     entities,
@@ -60,6 +63,9 @@ export class SceneController {
   }
 
   cleanup() {
+    for (const entity of Object.values(this.entities)) {
+      entity.dismount();
+    }
     this.entities = {};
   }
 
@@ -132,7 +138,6 @@ export class SceneController {
   checkForFootstepCutscene() {
     const hero = this.entities["hero"];
     const match = this.triggerSpaces[`${hero.x},${hero.y}`];
-
     if (!this.isCutscenePlaying && match) {
       this.startCutscene(match[0].events);
     }
@@ -160,7 +165,7 @@ export class SceneController {
                 ...event,
                 payload: {
                   ...event.payload,
-                  who: event.payload.who ?? match.id,
+                  who: "who" in event.payload ? event.payload.who : match.id,
                 },
               } as SceneBehaviorType)
           )

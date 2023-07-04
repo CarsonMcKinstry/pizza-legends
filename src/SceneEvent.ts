@@ -21,7 +21,6 @@ export class SceneEvent {
   init() {
     return new Promise((resolve) => {
       this.resolve = resolve;
-
       SceneBehavior.reducer(this, this.event);
     });
   }

@@ -64,26 +64,30 @@ export const Scenes: Record<string, SceneConfig> = {
           ],
         },
       ],
+      [asGridCoords(5, 10)]: [
+        {
+          events: [SceneBehaviors.changeScene({ scene: "Kitchen" })],
+        },
+      ],
     },
   },
-  // Kitchen: {
-  //   backgroundSrc: "/images/maps/KitchenLower.png",
-  //   foregroundSrc: "/images/maps/KitchenUpper.png",
-  //   entities: {
-  //     hero: new Entity({
-  //       x: 3,
-  //       y: 1,
-  //     }),
-  //     npcA: new Entity({
-  //       x: 9,
-  //       y: 2,
-  //       src: "/images/characters/people/npc2.png",
-  //     }),
-  //     npcB: new Entity({
-  //       x: 10,
-  //       y: 4,
-  //       src: "/images/characters/people/npc3.png",
-  //     }),
-  //   },
-  // },
+  Kitchen: {
+    backgroundSrc: "/images/maps/KitchenLower.png",
+    foregroundSrc: "/images/maps/KitchenUpper.png",
+    entities: {
+      hero: new Character({
+        x: withGrid(5),
+        y: withGrid(5),
+        spriteName: "hero",
+        isPlayerControlled: true,
+      }),
+    },
+    triggerSpaces: {
+      [asGridCoords(5, 10)]: [
+        {
+          events: [SceneBehaviors.changeScene({ scene: "DemoRoom" })],
+        },
+      ],
+    },
+  },
 };

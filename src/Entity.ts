@@ -27,7 +27,6 @@ export class Entity {
   sprite: Sprite;
   direction: Direction = "down";
   isMounted = false;
-  isStanding = false;
 
   behaviorLoop: SceneBehaviorType[] = [];
   behaviorLoopIndex = 0;
@@ -73,8 +72,12 @@ export class Entity {
     }, 0);
   }
 
+  dismount() {
+    this.isMounted = false;
+  }
+
   async doBehaviorEvent(scene: SceneController) {
-    if (!this.behaviorLoop.length) {
+    if (!this.behaviorLoop.length || !this.isMounted) {
       return;
     }
 
@@ -110,9 +113,5 @@ export class Entity {
       (this.behaviorLoopIndex + 1) % this.behaviorLoop.length;
 
     this.doBehaviorEvent(scene);
-  }
-
-  isBehaviorReady() {
-    return true;
   }
 }
