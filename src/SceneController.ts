@@ -1,3 +1,4 @@
+import { Character } from "./Entities/Character";
 import { Entity, EntityStateUpdate } from "./Entity";
 import { CAMERA_NUDGE_X, CAMERA_NUDGE_Y } from "./constants";
 import { Direction } from "./types";
@@ -48,7 +49,21 @@ export class SceneController {
 
   isSpaceTaken(currentX: number, currentY: number, direction: Direction) {
     const { x, y } = nextPosition(currentX, currentY, direction);
-    return this.walls[`${x},${y}`] ?? false;
+    if (this.walls[`${x},${y}`]) return true;
+
+    for (const entity of Object.values(this.entities)) {
+      if (entity.x === x && entity.y === y) return true;
+      if (
+        entity instanceof Character &&
+        entity.intentPosition &&
+        entity.intentPosition.x === x &&
+        entity.intentPosition.y === y
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private async loadGround(backgroundSrc: string, foregroundSrc: string) {
@@ -68,7 +83,9 @@ export class SceneController {
   draw(ctx: CanvasRenderingContext2D) {
     if (this.background && this.foreground) {
       this.drawImage(ctx, this.background);
-      for (const entity of Object.values(this.entities)) {
+      for (const entity of Object.values(this.entities).sort(
+        (a, b) => a.y - b.y
+      )) {
         entity.sprite.draw(ctx, this.camera!);
       }
       this.drawImage(ctx, this.foreground);

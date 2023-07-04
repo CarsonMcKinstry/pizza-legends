@@ -52,6 +52,8 @@ export class Game {
 
     this.directionInput.init();
 
+    this.scene.mountEntities();
+
     this.startGameLoop();
   }
 }

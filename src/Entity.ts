@@ -23,6 +23,7 @@ export class Entity {
   sprite: Sprite;
   direction: Direction = "down";
   isMounted = false;
+  isStanding = false;
 
   constructor({ x, y, src, direction, ...spriteConfig }: EntityConfig) {
     this.x = x;
@@ -48,5 +49,9 @@ export class Entity {
   mount(id: string) {
     this.id = id;
     this.isMounted = true;
+  }
+
+  isBehaviorReady() {
+    return true;
   }
 }

@@ -1,5 +1,13 @@
+import {
+  SceneBehavior,
+  SceneBehaviors,
+  isSceneBehavior,
+} from "@/Behaviors/SceneBehaviors";
 import { Entity, EntityConfig, EntityStateUpdate } from "@/Entity";
+import { globalEvents } from "@/Inputs/GlobalEvents";
+import { TILE_SIZE } from "@/constants";
 import { Direction } from "@/types";
+import { nextPosition } from "@/utils";
 
 export type PersonConfig = Omit<EntityConfig, "src"> & {
   spriteName: string;
@@ -22,6 +30,11 @@ export class Character extends Entity {
 
   private movingProgressRemaining = 0;
 
+  intentPosition?: {
+    x: number;
+    y: number;
+  };
+
   constructor({
     spriteName,
     isPlayerControlled,
@@ -36,33 +49,73 @@ export class Character extends Entity {
   }
 
   override update(state: EntityStateUpdate) {
-    const { directionInput } = state;
-    this.updatePosition();
-    this.updateSprite(state);
+    if (this.movingProgressRemaining > 0) {
+      this.updatePosition();
+    } else {
+      const { directionInput } = state;
+      if (
+        //!state.scene.isCutscenePlayer &&
+        this.isPlayerControlled &&
+        directionInput.direction
+      ) {
+        this.startBehavior(
+          state,
+          SceneBehaviors.walk({ direction: directionInput.direction })
+        );
+      }
 
-    if (
-      this.isPlayerControlled &&
-      this.movingProgressRemaining === 0 &&
-      directionInput.direction
-    ) {
-      this.direction = directionInput.direction;
-      this.movingProgressRemaining = 16;
+      this.updateSprite();
     }
   }
 
-  updateSprite({ directionInput }: EntityStateUpdate) {
-    if (
-      this.isPlayerControlled &&
-      this.movingProgressRemaining === 0 &&
-      !directionInput.direction
-    ) {
-      this.sprite.setAnimation(`idle-${this.direction}`);
+  startBehavior(state: EntityStateUpdate, behavior: SceneBehavior) {
+    if (!this.isMounted) {
       return;
     }
 
+    if (isSceneBehavior("walk", behavior)) {
+      const { direction, retry, who } = behavior.payload;
+      this.direction = direction;
+      if (state.scene.isSpaceTaken(this.x, this.y, this.direction)) {
+        if (retry) {
+          setTimeout(() => {
+            this.startBehavior(state, behavior);
+          }, 20);
+        } else {
+          globalEvents.emit("PersonWalkingComplete", {
+            whoId: who,
+          });
+        }
+        return;
+      }
+
+      this.movingProgressRemaining = TILE_SIZE;
+
+      this.intentPosition = nextPosition(this.x, this.y, this.direction);
+
+      this.updateSprite();
+      return;
+    }
+
+    if (isSceneBehavior("stand", behavior)) {
+      const { direction, who, time } = behavior.payload;
+      this.direction = direction;
+      this.isStanding = true;
+      setTimeout(() => {
+        globalEvents.emit("PersonStandComplete", {
+          whoId: who,
+        });
+      }, time ?? 0);
+    }
+  }
+
+  updateSprite() {
     if (this.movingProgressRemaining > 0) {
       this.sprite.setAnimation(`walk-${this.direction}`);
+      return;
     }
+
+    this.sprite.setAnimation(`idle-${this.direction}`);
   }
 
   updatePosition() {
@@ -71,5 +124,9 @@ export class Character extends Entity {
       this[prop] += val;
       this.movingProgressRemaining -= 1;
     }
+  }
+
+  override isBehaviorReady(): boolean {
+    return !this.isStanding;
   }
 }
