@@ -1,0 +1,41 @@
+:root {
+  --scene-transition-time: 0.3s;
+}
+
+.SceneTransition-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.SceneTransition {
+  animation: scene-transition-fade-in var(--scene-transition-time) forwards;
+  background: #fff;
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.SceneTransition.fade-out {
+  animation: scene-transition-fade-out var(--scene-transition-time) forwards;
+}
+
+@keyframes scene-transition-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scene-transition-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

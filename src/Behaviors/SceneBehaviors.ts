@@ -3,6 +3,7 @@ import { GlobalEventHandler, globalEvents } from "@/Inputs/GlobalEvents";
 import { SceneController } from "@/SceneController";
 
 import { SceneEvent } from "@/SceneEvent";
+import { SceneTransition } from "@/Ui/SceneTranstion";
 import { TextMessage } from "@/Ui/TextMessage";
 import { Direction } from "@/types";
 import { oppositeDirection } from "@/utils";
@@ -115,8 +116,17 @@ export const SceneBehavior = createSlice({
       return sceneEvent;
     },
     changeScene(sceneEvent, action: PayloadAction<{ scene: string }>) {
-      sceneEvent.scene.game?.startScene(action.payload.scene);
-      sceneEvent.resolve?.();
+      const transition = new SceneTransition({
+        onComplete() {
+          sceneEvent.scene.game?.startScene(action.payload.scene);
+
+          transition.fadeOut();
+
+          sceneEvent.resolve?.();
+        },
+      });
+      transition.init(sceneEvent.scene.overlay as unknown as HTMLElement);
+
       return sceneEvent;
     },
   },
