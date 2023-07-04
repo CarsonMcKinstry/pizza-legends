@@ -3,7 +3,9 @@ import { GlobalEventHandler, globalEvents } from "@/Inputs/GlobalEvents";
 import { SceneController } from "@/SceneController";
 
 import { SceneEvent } from "@/SceneEvent";
+import { TextMessage } from "@/Ui/TextMessage";
 import { Direction } from "@/types";
+import { oppositeDirection } from "@/utils";
 import { PayloadAction, createSlice, isAllOf } from "@reduxjs/toolkit";
 
 export const SceneBehavior = createSlice({
@@ -80,6 +82,37 @@ export const SceneBehavior = createSlice({
       } else {
         sceneEvent.resolve?.();
       }
+      return sceneEvent;
+    },
+    textMessage(
+      sceneEvent,
+      action: PayloadAction<{
+        text: string;
+        who?: string;
+        faceHero?: true;
+      }>
+    ) {
+      const { faceHero, who: whoId, text } = action.payload;
+
+      if (faceHero && whoId) {
+        const who = sceneEvent.scene.entities[whoId];
+
+        if (who) {
+          who.direction = oppositeDirection(
+            sceneEvent.scene.entities["hero"].direction
+          );
+        }
+      }
+
+      const message = new TextMessage({
+        text,
+        onComplete() {
+          sceneEvent.resolve?.();
+        },
+      });
+
+      message.init(sceneEvent.scene.overlay as unknown as HTMLElement);
+
       return sceneEvent;
     },
   },

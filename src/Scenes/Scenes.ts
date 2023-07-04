@@ -27,7 +27,14 @@ export const Scenes: Record<string, SceneConfig> = {
         ],
         talking: [
           {
-            events: [SceneBehaviors.walk({ direction: "up", who: "hero" })],
+            events: [
+              SceneBehaviors.textMessage({
+                text: "I'm busy...",
+                faceHero: true,
+              }),
+              SceneBehaviors.textMessage({ text: "Go away." }),
+              SceneBehaviors.walk({ direction: "up", who: "hero" }),
+            ],
           },
         ],
       }),
@@ -49,6 +56,7 @@ export const Scenes: Record<string, SceneConfig> = {
           events: [
             SceneBehaviors.walk({ direction: "left", who: "npcB" }),
             SceneBehaviors.stand({ direction: "up", who: "npcB" }),
+            SceneBehaviors.textMessage({ text: "You can't be in there!" }),
             SceneBehaviors.walk({ direction: "right", who: "npcB" }),
             SceneBehaviors.stand({ direction: "down", who: "npcB" }),
             SceneBehaviors.walk({ direction: "down", who: "hero" }),

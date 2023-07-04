@@ -59,3 +59,13 @@ export const nextPosition = (
 
 export const asGridCoords = (x: number, y: number) =>
   `${x * TILE_SIZE},${y * TILE_SIZE}`;
+
+export const oppositeDirection = (direction: Direction): Direction => {
+  const map: Record<Direction, Direction> = {
+    up: "down",
+    right: "left",
+    down: "up",
+    left: "right",
+  };
+  return map[direction];
+};

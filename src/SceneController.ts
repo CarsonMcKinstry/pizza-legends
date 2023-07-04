@@ -154,13 +154,16 @@ export class SceneController {
         match.talking.length
       ) {
         this.startCutscene(
-          match.talking[0].events.map((event) => ({
-            ...event,
-            payload: {
-              ...event.payload,
-              who: event.payload.who ?? match.id,
-            },
-          }))
+          match.talking[0].events.map(
+            (event) =>
+              ({
+                ...event,
+                payload: {
+                  ...event.payload,
+                  who: event.payload.who ?? match.id,
+                },
+              } as SceneBehaviorType)
+          )
         );
       }
     }

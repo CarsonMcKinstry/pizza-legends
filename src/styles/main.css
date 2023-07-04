@@ -6,15 +6,47 @@
   --game-window-width: 352px;
   --game-window-height: 198px;
   --game-scale: 2.5;
+
+  --border-color: #291d4d;
+  --dialog-background: #fff3b4;
+  --menu-background: #ffe8d2;
+  --menu-border-color: #a48465;
+  --menu-font-color: #3a160d;
+  --menu-selected-background: #7fc2ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
 }
 
 body {
+  font-family: sans-serif;
+  background: #333;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  /* font-family: "Ribeye", cursive; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.game-container,
+.game-overlay {
+  position: absolute;
+  width: 352px;
+  height: 198px;
+
+  transform: scale(var(--game-scale));
 }
 
 .game-container {
-  width: var(--game-window-width);
-  height: var(--game-window-height);
-  transform: scale(var(--game-scale));
+  outline: 1px solid #fff;
 }
 
 .game-canvas,

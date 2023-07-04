@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ribeye&display=swap"
+      rel="stylesheet"
+    />
     <title>Pizza Legends!</title>
   </head>
-  <body
-    class="h-full bg-neutral-900 p-0 m-0 overflow-hidden flex items-center justify-center"
-  >
-    <div class="game-container absolute outline outline-white outline-1">
-      <canvas class="game-canvas" width="352" height="198" />
+  <body>
+    <div class="game-container">
+      <canvas class="game-canvas" width="352" height="198"></canvas>
     </div>
+    <div class="game-overlay"></div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

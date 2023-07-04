@@ -32,6 +32,8 @@ export class Entity {
   behaviorLoop: SceneBehaviorType[] = [];
   behaviorLoopIndex = 0;
 
+  retryTimeout?: number;
+
   constructor({
     x,
     y,
@@ -72,19 +74,31 @@ export class Entity {
   }
 
   async doBehaviorEvent(scene: SceneController) {
-    if (scene.isCutscenePlaying || !this.behaviorLoop.length) {
+    if (!this.behaviorLoop.length) {
+      return;
+    }
+
+    if (scene.isCutscenePlaying) {
+      if (this.retryTimeout) {
+        clearTimeout(this.retryTimeout);
+      }
+
+      this.retryTimeout = setTimeout(() => {
+        this.doBehaviorEvent(scene);
+      }, 1000);
+
       return;
     }
 
     const behavior = this.behaviorLoop[this.behaviorLoopIndex];
 
-    const eventConfig: SceneBehaviorType = {
+    const eventConfig = {
       ...behavior,
       payload: {
         ...behavior.payload,
         who: this.id,
       },
-    };
+    } as SceneBehaviorType;
 
     const eventHandler = new SceneEvent({
       scene,
