@@ -2,50 +2,43 @@ import { KeyPressListener } from "@/Inputs/KeyPressListener";
 import { RevealingText, revealingTextSlice } from "@/components/RevealingText";
 import { RevealingTextState } from "@/components/RevealingText/state";
 import "@/styles/TextMessage.css";
-import { Store, configureStore } from "@reduxjs/toolkit";
-import { Root, createRoot } from "react-dom/client";
-import { Provider } from "react-redux";
 
-type TextMessageConfig = {
-  text: string;
-  onComplete: () => void;
+import { UiElementConfig, UiElement } from "./UiElement";
+
+type TextMessageState = {
+  revealingText: RevealingTextState;
 };
 
-export class TextMessage {
-  root?: Root;
-  element?: HTMLElement;
-
+type TextMessageConfig = UiElementConfig<TextMessageState> & {
   text: string;
-  onComplete: () => void;
+};
+
+export class TextMessage extends UiElement<TextMessageState> {
+  text: string;
 
   actionListener?: KeyPressListener;
 
-  store: Store<{ revealingText: RevealingTextState }>;
-
-  constructor({ text, onComplete }: TextMessageConfig) {
-    this.text = text;
-    this.onComplete = onComplete;
-
-    this.store = configureStore({
-      reducer: {
-        revealingText: revealingTextSlice.reducer,
+  constructor(config: TextMessageConfig) {
+    super({
+      onComplete: config.onComplete,
+      name: "TextMessage",
+      storeConfig: {
+        reducer: {
+          revealingText: revealingTextSlice.reducer,
+        },
       },
     });
+    this.text = config.text;
   }
 
-  createElement() {
-    this.element = document.createElement("div");
-    this.element.classList.add("TextMessage");
-
-    this.root = createRoot(this.element);
-
-    this.root.render(
-      <Provider store={this.store}>
+  render() {
+    return (
+      <>
         <p className="TextMessage_p m-0">
           <RevealingText
             text={this.text}
             onComplete={() => {
-              this.store.dispatch(revealingTextSlice.actions.done());
+              this.dispatch(revealingTextSlice.actions.done());
             }}
           />
         </p>
@@ -57,38 +50,27 @@ export class TextMessage {
         >
           Continue...
         </button>
-      </Provider>
+      </>
     );
+  }
 
+  override afterRender() {
     this.actionListener = new KeyPressListener("Enter", () => {
-      this.actionListener?.unbind();
       this.done();
     });
   }
 
   get isDone() {
-    return this.store.getState().revealingText.done;
+    return this.state.revealingText.done;
   }
 
   done() {
     if (this.isDone) {
-      this.root?.unmount();
-      this.element?.remove();
+      this.unmount();
       this.actionListener?.unbind();
       this.onComplete();
     } else {
-      this.store.dispatch(revealingTextSlice.actions.done());
+      this.dispatch(revealingTextSlice.actions.done());
     }
-  }
-
-  init(container: HTMLElement) {
-    this.createElement();
-    if (this.element) {
-      container.appendChild(this.element);
-    }
-
-    this.actionListener = new KeyPressListener("Enter", () => {
-      this.done();
-    });
   }
 }

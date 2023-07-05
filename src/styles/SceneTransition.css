@@ -3,14 +3,6 @@
 }
 
 .SceneTransition-container {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-}
-
-.SceneTransition {
   animation: scene-transition-fade-in var(--scene-transition-time) forwards;
   background: #fff;
   opacity: 0;
@@ -18,7 +10,15 @@
   width: 100%;
 }
 
-.SceneTransition.fade-out {
+.SceneTransition {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.SceneTransition-container.fade-out {
   animation: scene-transition-fade-out var(--scene-transition-time) forwards;
 }
 

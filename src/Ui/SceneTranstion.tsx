@@ -1,11 +1,11 @@
 import "@/styles/SceneTransition.css";
-import { Store, configureStore, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import clsx from "clsx";
-import { Root, createRoot } from "react-dom/client";
-import { Provider, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { UiElement, UiElementConfig } from "./UiElement";
 
-type SceneTransitionConfig = {
-  onComplete: () => void;
+type SceneTransitionState = {
+  isDone: boolean;
 };
 
 const sceneTransitionSlice = createSlice({
@@ -20,56 +20,32 @@ const sceneTransitionSlice = createSlice({
   },
 });
 
-export class SceneTransition {
-  element?: HTMLElement;
-  root?: Root;
-
-  onComplete: () => void;
-
-  store: Store<{ isDone: boolean }>;
-
-  constructor({ onComplete }: SceneTransitionConfig) {
-    this.onComplete = onComplete;
-
-    this.store = configureStore({
-      reducer: sceneTransitionSlice.reducer,
+export class SceneTransition extends UiElement<SceneTransitionState> {
+  constructor(config: UiElementConfig) {
+    super({
+      name: "SceneTransition",
+      ...config,
+      storeConfig: {
+        reducer: sceneTransitionSlice.reducer,
+      },
     });
   }
 
-  createElement() {
-    this.element = document.createElement("div");
-    this.element.classList.add("SceneTransition-container");
-
-    this.root = createRoot(this.element);
-
-    this.root.render(
-      <Provider store={this.store}>
-        <SceneTransitionComponent
-          onCleanup={() => {
-            this.done();
-          }}
-          onComplete={() => {
-            this.onComplete();
-          }}
-        />
-      </Provider>
+  override render(): JSX.Element {
+    return (
+      <SceneTransitionComponent
+        onCleanup={() => {
+          this.unmount();
+        }}
+        onComplete={() => {
+          this.onComplete();
+        }}
+      />
     );
   }
 
   fadeOut() {
-    this.store.dispatch(sceneTransitionSlice.actions.done());
-  }
-
-  done() {
-    this.root?.unmount();
-    this.element?.remove();
-  }
-
-  init(container: HTMLElement) {
-    this.createElement();
-    if (this.element) {
-      container.appendChild(this.element);
-    }
+    this.dispatch(sceneTransitionSlice.actions.done());
   }
 }
 
@@ -82,13 +58,13 @@ export const SceneTransitionComponent = ({
   onCleanup,
   onComplete,
 }: SceneTransitionProps) => {
-  const isDone = useSelector<{ isDone: boolean }, boolean>(
+  const isDone = useSelector<SceneTransitionState, boolean>(
     (state) => state.isDone
   );
 
   return (
     <div
-      className={clsx("SceneTransition", {
+      className={clsx("SceneTransition-container", {
         "fade-out": isDone,
       })}
       onAnimationEnd={() => {
