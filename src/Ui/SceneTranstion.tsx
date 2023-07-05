@@ -64,7 +64,7 @@ export const SceneTransitionComponent = ({
 
   return (
     <div
-      className={clsx("SceneTransition-container", {
+      className={clsx("SceneTransition-animator", {
         "fade-out": isDone,
       })}
       onAnimationEnd={() => {
