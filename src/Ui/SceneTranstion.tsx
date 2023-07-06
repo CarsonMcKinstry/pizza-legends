@@ -1,24 +1,11 @@
 import "@/styles/SceneTransition.css";
-import { createSlice } from "@reduxjs/toolkit";
-import clsx from "clsx";
-import { useSelector } from "react-redux";
+
 import { UiElement, UiElementConfig } from "./UiElement";
-
-type SceneTransitionState = {
-  isDone: boolean;
-};
-
-const sceneTransitionSlice = createSlice({
-  name: "SceneTransition",
-  initialState: {
-    isDone: false,
-  },
-  reducers: {
-    done(state) {
-      state.isDone = true;
-    },
-  },
-});
+import {
+  SceneTransitionAnimator,
+  SceneTransitionState,
+  sceneTransitionSlice,
+} from "@/components/SceneTransition";
 
 export class SceneTransition extends UiElement<SceneTransitionState> {
   constructor(config: UiElementConfig) {
@@ -33,7 +20,7 @@ export class SceneTransition extends UiElement<SceneTransitionState> {
 
   override render(): JSX.Element {
     return (
-      <SceneTransitionComponent
+      <SceneTransitionAnimator
         onCleanup={() => {
           this.unmount();
         }}
@@ -48,32 +35,3 @@ export class SceneTransition extends UiElement<SceneTransitionState> {
     this.dispatch(sceneTransitionSlice.actions.done());
   }
 }
-
-type SceneTransitionProps = {
-  onComplete: () => void;
-  onCleanup: () => void;
-};
-
-export const SceneTransitionComponent = ({
-  onCleanup,
-  onComplete,
-}: SceneTransitionProps) => {
-  const isDone = useSelector<SceneTransitionState, boolean>(
-    (state) => state.isDone
-  );
-
-  return (
-    <div
-      className={clsx("SceneTransition-animator", {
-        "fade-out": isDone,
-      })}
-      onAnimationEnd={() => {
-        if (isDone) {
-          onCleanup();
-        } else {
-          onComplete();
-        }
-      }}
-    />
-  );
-};
