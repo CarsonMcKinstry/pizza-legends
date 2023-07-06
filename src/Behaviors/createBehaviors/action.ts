@@ -5,6 +5,8 @@ export type PayloadAction<P = void, T extends string = string> = {
   type: T;
 };
 
+export type Actions<T extends keyof any = string> = Record<T, Action>;
+
 export type Action<T extends string = string> = {
   type: T;
 };
@@ -52,7 +54,7 @@ export interface ActionCreatorWithPayload<P, T extends string = string>
 export interface ActionCreatorWithNonInferrablePayload<
   T extends string = string
 > extends BaseActionCreator<unknown, T> {
-  <PT>(payload: PT): PayloadAction<PageTransitionEvent, T>;
+  <PT>(payload: PT): PayloadAction<PT, T>;
 }
 
 export interface ActionCreatorWithoutPayload<T extends string = string>
@@ -82,3 +84,12 @@ export function createAction<P = void, T extends string = string>(
 
   return actionCreator as PayloadActionCreator<P, T>;
 }
+
+export type ActionCreatorForCaseHandler<CH, Type extends string> = CH extends (
+  state: any,
+  action: infer Action
+) => any
+  ? Action extends { payload: infer P }
+    ? PayloadActionCreator<P, Type>
+    : ActionCreatorWithoutPayload<Type>
+  : ActionCreatorWithoutPayload<Type>;

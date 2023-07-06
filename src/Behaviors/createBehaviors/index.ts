@@ -1,12 +1,9 @@
 import {
-  Action,
-  ActionCreatorWithoutPayload,
-  AnyAction,
-  PayloadAction,
-  PayloadActionCreator,
-  UnknownAction,
+  type ActionCreatorForCaseHandler,
+  type PayloadAction,
   createAction,
 } from "./action";
+import type { CaseHandler, Handler } from "./handler";
 
 export interface Behaviors<
   State = any,
@@ -24,47 +21,22 @@ export interface CreateBehaviorsOptions<
   handlers: ValidateBehaviorCaseHandlers<State, CH>;
 }
 
-export type Actions<T extends keyof any = string> = Record<T, Action>;
-
-export type Handler<S = any, A extends Action = UnknownAction> = (
-  state: S,
-  action: A
-) => void | Promise<void>;
-
-export type CaseReducer<S = any, A extends Action = AnyAction> = (
-  state: S,
-  action: A
-) => void;
-
-export type CaseHandlers<State, AS extends Actions> = {
-  [T in keyof AS]: AS[T] extends Action ? CaseReducer<State, AS[T]> : void;
-};
-
 type BehaviorHandlerActions<CaseHandlers extends BehaviorCaseHandlers<any>> = {
-  [Type in keyof CaseHandlers]: ActionCreatorForCaseReducer<
+  [Type in keyof CaseHandlers]: ActionCreatorForCaseHandler<
     CaseHandlers[Type],
     string
   >;
 };
 
-type ActionCreatorForCaseReducer<CH, Type extends string> = CH extends (
-  state: any,
-  action: infer Action
-) => any
-  ? Action extends { payload: infer P }
-    ? PayloadActionCreator<P, Type>
-    : ActionCreatorWithoutPayload<Type>
-  : ActionCreatorWithoutPayload<Type>;
-
 export type BehaviorCaseHandlers<State> = {
-  [K: string]: CaseReducer<State, PayloadAction<any>>;
+  [K: string]: CaseHandler<State, PayloadAction<any>>;
 };
 
 export type ValidateBehaviorCaseHandlers<
   S,
   ACR extends BehaviorCaseHandlers<S>
 > = ACR & {
-  [T in keyof ACR]: any;
+  [T in keyof ACR]: {};
 };
 
 export function createBehaviors<
@@ -88,15 +60,22 @@ export function createBehaviors<
   );
 
   return {
-    run: async (state, action) => {
+    run: (state, action) => {
       for (const handlerName of handlerNames) {
         if (action.type === handlerName) {
-          const reducer = handlers[action.type];
+          const handler = handlers[action.type];
 
-          await reducer(state, action as PayloadAction<any>);
+          handler(state, action as PayloadAction<any>);
         }
       }
     },
     actions: actionCreators as any,
   };
 }
+
+const b = createBehaviors({
+  exampleState: {} as { direction: string },
+  handlers: {
+    walk(state) {},
+  },
+});
