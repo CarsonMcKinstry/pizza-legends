@@ -1,6 +1,5 @@
 import { KeyPressListener } from "@/Inputs/KeyPressListener";
-import { RevealingText, revealingTextSlice } from "@/components/RevealingText";
-import { RevealingTextState } from "@/components/RevealingText/state";
+import { RevealingText, RevealingTextState } from "@/components/RevealingText";
 import "@/styles/TextMessage.css";
 
 import { UiElementConfig, UiElement } from "./UiElement";

@@ -1,7 +1,4 @@
-// import { ConfigureStoreOptions, Store, configureStore } from "@reduxjs/toolkit";
-import { createContext } from "react";
 import { Root, createRoot } from "react-dom/client";
-import { Provider } from "react-redux";
 import { StateCreator, StoreApi, createStore } from "zustand";
 
 type OnComplete<R = void> = (value?: R) => void;
@@ -9,7 +6,6 @@ type OnComplete<R = void> = (value?: R) => void;
 export type UiElementConfig<S = any, R = void> = {
   onComplete: OnComplete<R>;
   storeConfig?: StateCreator<S>;
-  // storeConfig?: ConfigureStoreOptions<S>;
 };
 
 export interface UiElement<S = any, R = void> {
