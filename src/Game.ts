@@ -1,7 +1,7 @@
 import { DirectionInput } from "./Inputs/DirectionInput";
 import { globalEvents } from "./Inputs/GlobalEvents";
 import { KeyPressListener } from "./Inputs/KeyPressListener";
-import { SceneConfig, SceneController } from "./SceneController";
+import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
 
 export type GameConfig = {

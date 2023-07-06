@@ -73,9 +73,9 @@ export function createBehaviors<
   };
 }
 
-const b = createBehaviors({
-  exampleState: {} as { direction: string },
-  handlers: {
-    walk(state) {},
-  },
-});
+// const b = createBehaviors({
+//   exampleState: {} as { direction: string },
+//   handlers: {
+//     walk(state) {},
+//   },
+// });
