@@ -31,6 +31,7 @@ export abstract class UiElement<S = any, R = void> {
   }
 
   dispatch(...params: Parameters<Store<S>["dispatch"]>) {
+    console.log(...params);
     this.store?.dispatch(...params);
   }
 

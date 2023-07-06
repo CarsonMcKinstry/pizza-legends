@@ -1,3 +1,4 @@
+import { SceneBehaviors } from "./Behaviors/SceneBehaviors";
 import { DirectionInput } from "./Inputs/DirectionInput";
 import { globalEvents } from "./Inputs/GlobalEvents";
 import { KeyPressListener } from "./Inputs/KeyPressListener";
@@ -84,5 +85,7 @@ export class Game {
     this.directionInput.init();
 
     this.startGameLoop();
+
+    this.scene?.startCutscene([SceneBehaviors.battle()]);
   }
 }

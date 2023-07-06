@@ -164,8 +164,11 @@ export class SceneController {
               ({
                 ...event,
                 details: {
-                  ...event.details,
-                  who: "who" in event.details ? event.details.who : match.id,
+                  ...(event.details ?? {}),
+                  who:
+                    event.details! && "who" in event.details
+                      ? event.details.who
+                      : match.id,
                 },
               } as SceneBehaviorType)
           )

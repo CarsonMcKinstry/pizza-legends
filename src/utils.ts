@@ -1,5 +1,8 @@
 import { TILE_SIZE } from "@/constants";
 import { Direction } from "@/types";
+import { AnyAction } from "@reduxjs/toolkit";
+import { createContext } from "react";
+import { ReactReduxContextValue, createSelectorHook } from "react-redux";
 
 export const loadImage = (src: string): Promise<HTMLImageElement> =>
   new Promise<HTMLImageElement>((res, rej) => {
@@ -68,4 +71,12 @@ export const oppositeDirection = (direction: Direction): Direction => {
     left: "right",
   };
   return map[direction];
+};
+
+export const clamp = (n: number, min: number, max: number) =>
+  n > max ? max : n < min ? min : n;
+
+export const createReduxContext = <State>() => {
+  const context = createContext({} as ReactReduxContextValue<State, AnyAction>);
+  return [context, createSelectorHook(context)] as const;
 };

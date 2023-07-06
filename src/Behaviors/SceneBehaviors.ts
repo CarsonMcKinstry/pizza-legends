@@ -7,6 +7,7 @@ import { Direction } from "@/types";
 import { oppositeDirection } from "@/utils";
 import { DetailedAction, createBehaviorHandler } from "./createBehaviorHandler";
 import { SceneTransition } from "@/Ui/SceneTranstion";
+import { Battle } from "@/Battle/Battle";
 
 export const sceneBehaviorHandler = createBehaviorHandler({
   exampleState: {} as SceneEvent,
@@ -122,6 +123,15 @@ export const sceneBehaviorHandler = createBehaviorHandler({
         },
       });
       transition.init(sceneEvent.scene.overlay);
+    },
+    battle(sceneEvent) {
+      const battle = new Battle({
+        onComplete() {
+          sceneEvent.resolve?.();
+        },
+      });
+
+      battle.init(sceneEvent.scene.overlay);
     },
   },
 });
