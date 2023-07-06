@@ -1,32 +1,31 @@
 import { Character } from "@/Entities/Character";
 import { GlobalEventHandler, globalEvents } from "@/Inputs/GlobalEvents";
-import { SceneController } from "@/SceneController";
 
 import { SceneEvent } from "@/SceneEvent";
-import { SceneTransition } from "@/Ui/SceneTranstion";
 import { TextMessage } from "@/Ui/TextMessage";
 import { Direction } from "@/types";
 import { oppositeDirection } from "@/utils";
-import { PayloadAction, createSlice, isAllOf } from "@reduxjs/toolkit";
+import { DetailedAction, createBehaviorHandler } from "./createBehaviorHandler";
+import { SceneTransition } from "@/Ui/SceneTranstion";
 
-export const SceneBehavior = createSlice({
-  name: "SceneBehavior",
-  initialState: {} as SceneEvent,
-  reducers: {
+export const sceneBehaviorHandler = createBehaviorHandler({
+  exampleState: {} as SceneEvent,
+  handlers: {
     walk(
       sceneEvent,
-      behavior: PayloadAction<{
+      action: DetailedAction<{
         direction: Direction;
         who?: string;
         retry?: true;
       }>
     ) {
-      const whoId = behavior.payload.who;
+      const { details } = action;
+      const whoId = details.who;
       const who = whoId ? sceneEvent.scene.entities[whoId] : null;
 
       if (who && who instanceof Character) {
         if (whoId !== "hero") {
-          behavior.payload.retry = true;
+          details.retry = true;
         }
 
         const completeHandler: GlobalEventHandler<"PersonWalkingComplete"> = (
@@ -41,24 +40,24 @@ export const SceneBehavior = createSlice({
 
         who.startBehavior(
           {
-            scene: sceneEvent.scene as unknown as SceneController,
+            scene: sceneEvent.scene,
           },
-          behavior as SceneBehaviorType
+          action
         );
       } else {
         sceneEvent.resolve?.();
       }
-      return sceneEvent;
     },
     stand(
       sceneEvent,
-      behavior: PayloadAction<{
+      action: DetailedAction<{
         direction: Direction;
         who?: string;
         time?: number;
       }>
     ) {
-      const whoId = behavior.payload.who;
+      const { details } = action;
+      const whoId = details.who;
       const who = whoId ? sceneEvent.scene.entities[whoId] : null;
 
       if (who && who instanceof Character) {
@@ -75,24 +74,23 @@ export const SceneBehavior = createSlice({
 
         who.startBehavior(
           {
-            scene: sceneEvent.scene as unknown as SceneController,
+            scene: sceneEvent.scene,
           },
-          behavior as SceneBehaviorType
+          action
         );
       } else {
         sceneEvent.resolve?.();
       }
-      return sceneEvent;
     },
     textMessage(
       sceneEvent,
-      action: PayloadAction<{
+      action: DetailedAction<{
         text: string;
         who?: string;
         faceHero?: true;
       }>
     ) {
-      const { faceHero, who: whoId, text } = action.payload;
+      const { text, who: whoId, faceHero } = action.details;
 
       if (faceHero && whoId) {
         const who = sceneEvent.scene.entities[whoId];
@@ -111,36 +109,32 @@ export const SceneBehavior = createSlice({
         },
       });
 
-      message.init(sceneEvent.scene.overlay as unknown as HTMLElement);
-
-      return sceneEvent;
+      message.init(sceneEvent.scene.overlay);
     },
-    changeScene(sceneEvent, action: PayloadAction<{ scene: string }>) {
+    changeScene(sceneEvent, action: DetailedAction<{ scene: string }>) {
       const transition = new SceneTransition({
         onComplete() {
-          sceneEvent.scene.game?.startScene(action.payload.scene);
+          sceneEvent.scene.game?.startScene(action.details.scene);
 
           transition.fadeOut();
 
           sceneEvent.resolve?.();
         },
       });
-      transition.init(sceneEvent.scene.overlay as unknown as HTMLElement);
-
-      return sceneEvent;
+      transition.init(sceneEvent.scene.overlay);
     },
   },
 });
 
 export type SceneBehaviorType = ReturnType<
-  (typeof SceneBehavior.actions)[keyof typeof SceneBehavior.actions]
+  (typeof sceneBehaviorHandler.actions)[keyof typeof sceneBehaviorHandler.actions]
 >;
 
-export const SceneBehaviors = SceneBehavior.actions;
+export const SceneBehaviors = sceneBehaviorHandler.actions;
 
 export const isSceneBehavior = <B extends keyof typeof SceneBehaviors>(
   behaviorType: B,
-  behavior: unknown
+  behavior: any
 ): behavior is ReturnType<(typeof SceneBehaviors)[B]> => {
-  return isAllOf(SceneBehaviors[behaviorType])(behavior);
+  return behavior.type === behaviorType;
 };

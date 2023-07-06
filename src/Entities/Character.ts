@@ -79,7 +79,7 @@ export class Character extends Entity {
     }
 
     if (isSceneBehavior("walk", behavior)) {
-      const { direction, retry, who } = behavior.payload;
+      const { direction, retry, who } = behavior.details;
       this.direction = direction;
       if (state.scene.isSpaceTaken(this.x, this.y, this.direction)) {
         if (retry) {
@@ -102,7 +102,7 @@ export class Character extends Entity {
     }
 
     if (isSceneBehavior("stand", behavior)) {
-      const { direction, who, time } = behavior.payload;
+      const { direction, who, time } = behavior.details;
       this.direction = direction;
 
       setTimeout(() => {

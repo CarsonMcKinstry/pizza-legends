@@ -1,4 +1,7 @@
-import { SceneBehavior, SceneBehaviorType } from "@/Behaviors/SceneBehaviors";
+import {
+  sceneBehaviorHandler,
+  SceneBehaviorType,
+} from "@/Behaviors/SceneBehaviors";
 import { SceneController } from "@/SceneController";
 
 type EventResolver = (value?: unknown) => void;
@@ -21,7 +24,7 @@ export class SceneEvent {
   init() {
     return new Promise((resolve) => {
       this.resolve = resolve;
-      SceneBehavior.reducer(this, this.event);
+      sceneBehaviorHandler.run(this, this.event);
     });
   }
 }

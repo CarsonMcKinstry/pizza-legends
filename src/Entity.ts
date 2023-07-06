@@ -97,8 +97,8 @@ export class Entity {
 
     const eventConfig = {
       ...behavior,
-      payload: {
-        ...behavior.payload,
+      details: {
+        ...behavior.details,
         who: this.id,
       },
     } as SceneBehaviorType;

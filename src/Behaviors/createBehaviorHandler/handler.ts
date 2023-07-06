@@ -1,11 +1,28 @@
 import {
+  type Action,
+  type UnknownAction,
+  type Actions,
   type ActionCreatorForCaseHandler,
-  type PayloadAction,
+  type DetailedAction,
   createAction,
+  AnyAction,
 } from "./action";
-import type { CaseHandler, Handler } from "./handler";
 
-export interface Behaviors<
+export type Handler<S = any, A extends Action = UnknownAction> = (
+  state: S,
+  action: A
+) => void;
+
+export type CaseHandler<S = any, A extends Action = AnyAction> = (
+  state: S,
+  action: A
+) => void;
+
+export type CaseHandlers<State, AS extends Actions> = {
+  [T in keyof AS]: AS[T] extends Action ? CaseHandler<State, AS[T]> : void;
+};
+
+export interface BehaviorHandler<
   State = any,
   CaseHandlers extends BehaviorCaseHandlers<State> = BehaviorCaseHandlers<State>
 > {
@@ -29,7 +46,7 @@ type BehaviorHandlerActions<CaseHandlers extends BehaviorCaseHandlers<any>> = {
 };
 
 export type BehaviorCaseHandlers<State> = {
-  [K: string]: CaseHandler<State, PayloadAction<any>>;
+  [K: string]: CaseHandler<State, DetailedAction<any>>;
 };
 
 export type ValidateBehaviorCaseHandlers<
@@ -39,12 +56,12 @@ export type ValidateBehaviorCaseHandlers<
   [T in keyof ACR]: {};
 };
 
-export function createBehaviors<
+export function createBehaviorHandler<
   State,
   CaseHandlers extends BehaviorCaseHandlers<State>
 >(
   options: CreateBehaviorsOptions<State, CaseHandlers>
-): Behaviors<State, CaseHandlers> {
+): BehaviorHandler<State, CaseHandlers> {
   const handlers = options.handlers || {};
 
   const handlerNames = Object.keys(handlers);
@@ -65,17 +82,10 @@ export function createBehaviors<
         if (action.type === handlerName) {
           const handler = handlers[action.type];
 
-          handler(state, action as PayloadAction<any>);
+          handler(state, action as DetailedAction<any>);
         }
       }
     },
     actions: actionCreators as any,
   };
 }
-
-// const b = createBehaviors({
-//   exampleState: {} as { direction: string },
-//   handlers: {
-//     walk(state) {},
-//   },
-// });
