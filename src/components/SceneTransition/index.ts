@@ -1,2 +1,4 @@
-export { sceneTransitionSlice, type SceneTransitionState } from "./state";
-export { SceneTransitionAnimator } from "./SceneTransition";
+export {
+  SceneTransitionAnimator,
+  type SceneTransitionState,
+} from "./SceneTransition";

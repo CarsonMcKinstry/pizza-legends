@@ -3,8 +3,9 @@ import { UiElement, UiElementConfig } from "@/Ui/UiElement";
 import { Combatant } from "./Combatant";
 import { Pizzas } from "@/Content/Pizzas";
 import React from "react";
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { createReduxContext } from "@/utils";
+
+import { TurnCycle } from "./TurnCycle";
+import { BattleEvent } from "./BattleEvent";
 
 export type Team = "player" | "enemy";
 
@@ -17,42 +18,20 @@ export type BattleState = {
   };
 };
 
-const battleSlice = createSlice({
-  name: "Battle",
-  initialState: {
-    activeCombatants: {
-      player: "player1",
-      enemy: "enemy1",
-    },
-  } as BattleState,
-  reducers: {
-    newEnemyAppeared(
-      state,
-      action: PayloadAction<{ team: Team; combatant: string }>
-    ) {
-      state.activeCombatants[action.payload.team] = action.payload.combatant;
-    },
-  },
-});
-
-export const [BattleContext, useBattleSelector] =
-  createReduxContext<BattleState>();
-
-export const useIsActiveCombatant = (id: string, team: Team) =>
-  useBattleSelector<BattleState, boolean>(
-    (state) => state.activeCombatants[team] === id
-  );
-
 export class Battle extends UiElement<BattleState> {
   combatants: Record<string, Combatant>;
+  turnCycle?: TurnCycle;
 
   constructor(config: BattleConfig) {
     super({
       name: "Battle",
       onComplete: config.onComplete,
-      storeConfig: {
-        reducer: battleSlice.reducer,
-      },
+      storeConfig: () => ({
+        activeCombatants: {
+          player: "player1",
+          enemy: "enemy1",
+        },
+      }),
     });
 
     this.combatants = {
@@ -121,5 +100,23 @@ export class Battle extends UiElement<BattleState> {
         })}
       </>
     );
+  }
+
+  override afterRender(): void {
+    this.turnCycle = new TurnCycle({
+      battle: this,
+      onNewEvent: (event) => {
+        return new Promise((resolve) => {
+          const battleEvent = new BattleEvent({
+            battle: this,
+            event,
+          });
+
+          battleEvent.init(resolve);
+        });
+      },
+    });
+
+    this.turnCycle.init();
   }
 }

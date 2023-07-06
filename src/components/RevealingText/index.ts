@@ -1,2 +1,1 @@
-export { RevealingText } from "./RevealingText";
-export { revealingTextSlice } from "./state";
+export { RevealingText, type RevealingTextState } from "./RevealingText";

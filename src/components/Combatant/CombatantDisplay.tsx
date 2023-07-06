@@ -1,7 +1,9 @@
 import clsx from "clsx";
 import { PizzaType } from "@/Content/Pizzas";
-import { Team, useIsActiveCombatant } from "@/Battle/Battle";
-import { useCombatantState } from "./state";
+import { BattleState, Team } from "@/Battle/Battle";
+import { CombatantState } from "./state";
+import { StoreApi, useStore } from "zustand";
+import { clamp } from "@/utils";
 
 type CombatantProps = {
   id: string;
@@ -10,6 +12,10 @@ type CombatantProps = {
   icon: string;
   type: PizzaType;
   team: Team;
+  store: {
+    battle: StoreApi<BattleState>;
+    combatant: StoreApi<CombatantState>;
+  };
 };
 
 export const CombatantDisplay = ({
@@ -19,10 +25,22 @@ export const CombatantDisplay = ({
   type,
   team,
   id,
+  store,
 }: CombatantProps) => {
-  const { level, hpPercentage, xpPercentage, status } = useCombatantState();
+  const { level, hpPercentage, xpPercentage, status } = useStore(
+    store.combatant,
+    ({ level, hp, maxHp, xp, maxXp, status }) => ({
+      level,
+      hpPercentage: clamp(Math.floor((hp / maxHp) * 100), 0, 100),
+      xpPercentage: Math.floor((xp / maxXp) * 100),
+      status,
+    })
+  );
 
-  const isActive = useIsActiveCombatant(id, team);
+  const isActive = useStore(
+    store.battle,
+    (state) => state.activeCombatants[team] === id
+  );
 
   if (!isActive) return null;
 

@@ -5,9 +5,7 @@ import "@/styles/TextMessage.css";
 
 import { UiElementConfig, UiElement } from "./UiElement";
 
-type TextMessageState = {
-  revealingText: RevealingTextState;
-};
+type TextMessageState = RevealingTextState;
 
 type TextMessageConfig = UiElementConfig<TextMessageState> & {
   text: string;
@@ -22,11 +20,9 @@ export class TextMessage extends UiElement<TextMessageState> {
     super({
       onComplete: config.onComplete,
       name: "TextMessage",
-      storeConfig: {
-        reducer: {
-          revealingText: revealingTextSlice.reducer,
-        },
-      },
+      storeConfig: () => ({
+        done: false,
+      }),
     });
     this.text = config.text;
   }
@@ -36,9 +32,12 @@ export class TextMessage extends UiElement<TextMessageState> {
       <>
         <p className="TextMessage_p m-0">
           <RevealingText
+            store={this.store!}
             text={this.text}
             onComplete={() => {
-              this.dispatch(revealingTextSlice.actions.done());
+              this.setState({
+                done: true,
+              });
             }}
           />
         </p>
@@ -61,7 +60,7 @@ export class TextMessage extends UiElement<TextMessageState> {
   }
 
   get isDone() {
-    return this.state.revealingText.done;
+    return this.state.done;
   }
 
   done() {
@@ -70,7 +69,9 @@ export class TextMessage extends UiElement<TextMessageState> {
       this.actionListener?.unbind();
       this.onComplete();
     } else {
-      this.dispatch(revealingTextSlice.actions.done());
+      this.setState({
+        done: true,
+      });
     }
   }
 }

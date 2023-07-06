@@ -1,7 +1,2 @@
 export { CombatantDisplay } from "./CombatantDisplay";
-export {
-  type CombatantState,
-  CombatantSlice,
-  CombatantContext,
-  useCombatantSelector,
-} from "./state";
+export { type CombatantState } from "./state";

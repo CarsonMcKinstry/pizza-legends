@@ -1,10 +1,8 @@
 import "@/styles/SceneTransition.css";
-
 import { UiElement, UiElementConfig } from "./UiElement";
 import {
   SceneTransitionAnimator,
   SceneTransitionState,
-  sceneTransitionSlice,
 } from "@/components/SceneTransition";
 
 export class SceneTransition extends UiElement<SceneTransitionState> {
@@ -12,8 +10,10 @@ export class SceneTransition extends UiElement<SceneTransitionState> {
     super({
       name: "SceneTransition",
       ...config,
-      storeConfig: {
-        reducer: sceneTransitionSlice.reducer,
+      storeConfig: () => {
+        return {
+          isDone: false,
+        };
       },
     });
   }
@@ -21,6 +21,7 @@ export class SceneTransition extends UiElement<SceneTransitionState> {
   override render(): JSX.Element {
     return (
       <SceneTransitionAnimator
+        store={this.store!}
         onCleanup={() => {
           this.unmount();
         }}
@@ -32,6 +33,8 @@ export class SceneTransition extends UiElement<SceneTransitionState> {
   }
 
   fadeOut() {
-    this.dispatch(sceneTransitionSlice.actions.done());
+    this.setState({
+      isDone: true,
+    });
   }
 }

@@ -1,19 +1,22 @@
 import clsx from "clsx";
-import { useSelector } from "react-redux";
-import { SceneTransitionState } from "./state";
+import { StoreApi, useStore } from "zustand";
+
+export type SceneTransitionState = {
+  isDone: boolean;
+};
 
 type SceneTransitionProps = {
+  store: StoreApi<SceneTransitionState>;
   onComplete: () => void;
   onCleanup: () => void;
 };
 
 export const SceneTransitionAnimator = ({
+  store,
   onCleanup,
   onComplete,
 }: SceneTransitionProps) => {
-  const isDone = useSelector<SceneTransitionState, boolean>(
-    (state) => state.isDone
-  );
+  const { isDone } = useStore(store);
 
   return (
     <div

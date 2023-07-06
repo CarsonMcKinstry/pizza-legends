@@ -1,18 +1,12 @@
 import "@/styles/Combatant.css";
 import { UiElement } from "@/Ui/UiElement";
-import { Battle, BattleContext, Team } from "./Battle";
+import { Battle, Team } from "./Battle";
 import { PizzaType } from "@/Content/Pizzas";
-import {
-  CombatantContext,
-  CombatantDisplay,
-  CombatantState,
-  CombatantSlice,
-} from "@/components/Combatant";
-import { Provider } from "react-redux";
+import { CombatantDisplay, CombatantState } from "@/components/Combatant";
 import { Pizza } from "@/components/Combatant/Pizza";
 
 export type CombatantConfig = {
-  actions: any[];
+  actions: string[];
   name: string;
   type: PizzaType;
   src: string;
@@ -41,9 +35,8 @@ export class Combatant extends UiElement<CombatantState> {
     super({
       name: "Combatant",
       onComplete() {},
-      storeConfig: {
-        preloadedState: config.state,
-        reducer: CombatantSlice.reducer,
+      storeConfig: () => {
+        return config.state;
       },
     });
 
@@ -59,19 +52,21 @@ export class Combatant extends UiElement<CombatantState> {
 
   render() {
     return (
-      <Provider context={BattleContext} store={this.battle.store!}>
-        <Provider context={CombatantContext} store={this.store!}>
-          <CombatantDisplay
-            id={this.id}
-            name={this.name}
-            type={this.type}
-            src={this.src}
-            icon={this.icon}
-            team={this.team}
-          />
-          <Pizza src={this.src} name={this.name} team={this.team} />
-        </Provider>
-      </Provider>
+      <>
+        <CombatantDisplay
+          store={{
+            battle: this.battle.store!,
+            combatant: this.store!,
+          }}
+          id={this.id}
+          name={this.name}
+          type={this.type}
+          src={this.src}
+          icon={this.icon}
+          team={this.team}
+        />
+        <Pizza src={this.src} name={this.name} team={this.team} />
+      </>
     );
   }
 }

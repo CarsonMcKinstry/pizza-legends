@@ -37,7 +37,8 @@ body {
 }
 
 .game-container,
-.game-overlay {
+.game-overlay,
+.battle-overlay {
   position: absolute;
   width: 352px;
   height: 198px;
@@ -50,7 +51,8 @@ body {
 }
 
 .game-canvas,
-.game-overlay {
+.game-overlay,
+.battle-overlay {
   /* all four are needed to support the most browsers */
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;

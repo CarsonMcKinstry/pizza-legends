@@ -131,7 +131,7 @@ export const sceneBehaviorHandler = createBehaviorHandler({
         },
       });
 
-      battle.init(sceneEvent.scene.overlay);
+      battle.init(document.querySelector(".battle-overlay")!);
     },
   },
 });
