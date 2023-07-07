@@ -28,6 +28,12 @@ export class TurnCycle {
       })
     );
 
+    await this.onNewEvent(
+      BattleBehaviors.textMessage({
+        text: "Another equally as important message!",
+      })
+    );
+
     this.turn();
   }
 }

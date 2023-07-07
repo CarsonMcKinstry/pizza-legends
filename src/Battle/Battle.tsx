@@ -6,6 +6,8 @@ import React from "react";
 
 import { TurnCycle } from "./TurnCycle";
 import { BattleEvent } from "./BattleEvent";
+import { BattleUi, BattleUiState } from "@/components/BattleUi/BattleUi";
+import { StoreApi, createStore } from "zustand";
 
 export type Team = "player" | "enemy";
 
@@ -21,6 +23,8 @@ export type BattleState = {
 export class Battle extends UiElement<BattleState> {
   combatants: Record<string, Combatant>;
   turnCycle?: TurnCycle;
+
+  battleUiStore: StoreApi<BattleUiState>;
 
   constructor(config: BattleConfig) {
     super({
@@ -81,6 +85,8 @@ export class Battle extends UiElement<BattleState> {
         this
       ),
     };
+
+    this.battleUiStore = createStore<BattleUiState>(() => ({}));
   }
 
   render() {
@@ -98,6 +104,8 @@ export class Battle extends UiElement<BattleState> {
             <React.Fragment key={key}>{combatant.render()}</React.Fragment>
           );
         })}
+
+        <BattleUi store={this.battleUiStore} />
       </>
     );
   }

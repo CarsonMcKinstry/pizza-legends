@@ -10,7 +10,9 @@ type RevealingTextProps = {
 };
 
 export type RevealingTextState = {
-  done: boolean;
+  revealingText?: {
+    done: boolean;
+  };
 };
 
 export const RevealingText = ({
@@ -19,7 +21,8 @@ export const RevealingText = ({
   onComplete,
   store,
 }: RevealingTextProps) => {
-  const { done } = useStore(store);
+  const done = useStore(store, (state) => state.revealingText?.done);
+
   const textLength = useRef(text.length);
   const timeoutRef = useRef<number | null>(0);
   const delaysRef = useRef<{ char: string; delay: number }[]>(

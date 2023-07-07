@@ -1,10 +1,9 @@
 import { KeyPressListener } from "@/Inputs/KeyPressListener";
-import { RevealingText, RevealingTextState } from "@/components/RevealingText";
+
 import "@/styles/TextMessage.css";
 
 import { UiElementConfig, UiElement } from "./UiElement";
-
-type TextMessageState = RevealingTextState;
+import { TextMessageDisplay, TextMessageState } from "@/components/TextMessage";
 
 type TextMessageConfig = UiElementConfig<TextMessageState> & {
   text: string;
@@ -20,7 +19,12 @@ export class TextMessage extends UiElement<TextMessageState> {
       onComplete: config.onComplete,
       name: "TextMessage",
       storeConfig: () => ({
-        done: false,
+        revealingText: {
+          done: false,
+        },
+        textMessage: {
+          text: config.text,
+        },
       }),
     });
     this.text = config.text;
@@ -28,27 +32,12 @@ export class TextMessage extends UiElement<TextMessageState> {
 
   render() {
     return (
-      <>
-        <p className="TextMessage_p m-0">
-          <RevealingText
-            store={this.store!}
-            text={this.text}
-            onComplete={() => {
-              this.setState({
-                done: true,
-              });
-            }}
-          />
-        </p>
-        <button
-          className="TextMessage_button"
-          onClick={() => {
-            this.done();
-          }}
-        >
-          Continue...
-        </button>
-      </>
+      <TextMessageDisplay
+        store={this.store!}
+        onContinue={() => {
+          this.done();
+        }}
+      />
     );
   }
 
@@ -59,7 +48,7 @@ export class TextMessage extends UiElement<TextMessageState> {
   }
 
   get isDone() {
-    return this.state.done;
+    return this.state.revealingText.done;
   }
 
   done() {
@@ -69,7 +58,9 @@ export class TextMessage extends UiElement<TextMessageState> {
       this.onComplete();
     } else {
       this.setState({
-        done: true,
+        revealingText: {
+          done: true,
+        },
       });
     }
   }
