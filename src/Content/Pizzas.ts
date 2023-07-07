@@ -17,14 +17,14 @@ export const Pizzas: Record<
     type: PizzaType.Spicy,
     src: "./images/characters/pizzas/s001.png",
     icon: "/images/icons/spicy.png",
-    actions: ["damage1"],
+    actions: ["clumsyStatus", "damage1"],
   },
   v001: {
     name: "Call Me Kale",
     type: PizzaType.Veggie,
     src: "./images/characters/pizzas/v001.png",
     icon: "/images/icons/veggie.png",
-    actions: ["damage1"],
+    actions: ["clumsyStatus", "damage1"],
   },
   f001: {
     name: "Portabello Express",

@@ -79,3 +79,7 @@ export const wait = (ms: number) =>
       resolve();
     }, ms);
   });
+
+export const randomFromArray = (arr: boolean[]) => {
+  return arr[Math.floor(Math.random() * arr.length)];
+};

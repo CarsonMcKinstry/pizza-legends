@@ -2,8 +2,9 @@ import {
   BattleBehaviorType,
   BattleBehaviors,
 } from "@/Behaviors/BattleBehaviors";
-import { Battle, Team } from "./Battle";
+import { Battle } from "./Battle";
 import { Submission } from "@/Ui/SubmissionMenu";
+import { TeamType } from "@/types";
 
 type TurnCycleConfig<R = void> = {
   battle: Battle;
@@ -13,7 +14,7 @@ type TurnCycleConfig<R = void> = {
 export class TurnCycle {
   battle: Battle;
   onNewEvent: <R = void>(event: BattleBehaviorType) => Promise<R>;
-  currentTeam: Team = "player";
+  currentTeam: TeamType = "player";
 
   constructor({ battle, onNewEvent }: TurnCycleConfig) {
     this.battle = battle;
@@ -38,7 +39,7 @@ export class TurnCycle {
       })
     );
 
-    const resultingEvents = submission.action.success;
+    const resultingEvents = caster.getReplacedEvents(submission.action.success);
 
     for (const rawEvent of resultingEvents) {
       const event = {
@@ -52,6 +53,30 @@ export class TurnCycle {
         },
       };
       await this.onNewEvent(event as BattleBehaviorType);
+    }
+
+    // Check for post events
+    // (do stuff AFTER the original turn submission)
+    const postEvents = caster.getPostEvents();
+    for (const rawEvent of postEvents) {
+      const event = {
+        ...rawEvent,
+        details: {
+          ...rawEvent.details,
+          submission,
+          action: submission.action,
+          caster,
+          target: submission.target,
+        },
+      };
+      await this.onNewEvent(event as BattleBehaviorType);
+    }
+
+    // check for status expiration
+    const expiredEvent = caster.decrementStatus();
+
+    if (expiredEvent) {
+      await this.onNewEvent(expiredEvent);
     }
 
     this.currentTeam = this.currentTeam === "player" ? "enemy" : "player";

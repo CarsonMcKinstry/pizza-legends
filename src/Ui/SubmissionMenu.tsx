@@ -1,6 +1,6 @@
 import { Combatant } from "@/Battle/Combatant";
 import { Action, Actions } from "@/Content/Actions";
-import React from "jsx-dom";
+// import React from "jsx-dom";
 
 export type Submission = {
   action: Action;
@@ -34,7 +34,7 @@ export class SubmissionMenu {
     });
   }
 
-  init(container: HTMLElement) {
+  init(_container: HTMLElement) {
     this.decide();
   }
 }

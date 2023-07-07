@@ -1,13 +1,12 @@
 import "@/styles/Battle.css";
-import { Combatant, Status } from "./Combatant";
+import { Combatant } from "./Combatant";
 import { Pizzas } from "@/Content/Pizzas";
 
 import { TurnCycle } from "./TurnCycle";
 import { BattleEvent } from "./BattleEvent";
 
 import React, { JSX } from "jsx-dom";
-
-export type Team = "player" | "enemy";
+import { Status, TeamType } from "@/types";
 
 type BattleConfig = {
   onComplete: () => void;
@@ -26,7 +25,7 @@ export class Battle {
   combatants: Record<string, Combatant>;
   turnCycle?: TurnCycle;
 
-  activeCombatants: Record<Team, string>;
+  activeCombatants: Record<TeamType, string>;
 
   container: HTMLElement = document.querySelector(
     ".game-container"
@@ -45,10 +44,6 @@ export class Battle {
             xp: 0,
             maxXp: 100,
             level: 1,
-            status: {
-              type: Status.Saucy,
-              expiresIn: 3,
-            },
           },
         },
         this
@@ -63,10 +58,6 @@ export class Battle {
             xp: 0,
             maxXp: 100,
             level: 1,
-            status: {
-              type: Status.Clumsy,
-              expiresIn: 3,
-            },
           },
         },
         this

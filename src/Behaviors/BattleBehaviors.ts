@@ -4,8 +4,9 @@ import { BattleEvent } from "@/Battle/BattleEvent";
 import { Action } from "@/Content/Actions";
 import { Combatant } from "@/Battle/Combatant";
 import { Submission, SubmissionMenu } from "@/Ui/SubmissionMenu";
-import { wait } from "@/utils";
+import { clamp, wait } from "@/utils";
 import { BattleAnimations } from "@/Content/BattleAnimations";
+import { CombatantStatus, TargetType } from "@/types";
 
 export const battleBehaviorHandler = createBehaviorHandler({
   exampleState: {} as BattleEvent<any>,
@@ -56,7 +57,11 @@ export const battleBehaviorHandler = createBehaviorHandler({
     },
     animation(
       battleEvent,
-      action: DetailedAction<{ animation: string; caster?: Combatant }>
+      action: DetailedAction<{
+        animation: string;
+        caster?: Combatant;
+        color?: string;
+      }>
     ) {
       const fn = BattleAnimations[action.details.animation];
       fn(action, battleEvent.resolve!);
@@ -67,9 +72,19 @@ export const battleBehaviorHandler = createBehaviorHandler({
         damage?: number;
         caster?: Combatant;
         target?: Combatant;
+        recover?: number;
+        onCaster?: boolean;
+        status?: CombatantStatus;
+        targetType?: TargetType;
       }>
     ) {
-      const { caster, target, damage } = action.details;
+      const { target, caster, damage, recover, onCaster, status, targetType } =
+        action.details;
+      let who = onCaster ? caster : target;
+
+      if (targetType === TargetType.Friendly) {
+        who = caster;
+      }
 
       if (damage) {
         // modify the target to have less hp
@@ -80,14 +95,34 @@ export const battleBehaviorHandler = createBehaviorHandler({
 
         // start blinking
         target?.pizzaElement?.classList.add("battle-damage-blink");
+
+        await wait(600);
+
+        // Wait a bit...
+        // stop bliking
+
+        target?.pizzaElement?.classList.remove("battle-damage-blink");
       }
 
-      await wait(600);
+      if (who) {
+        if (recover) {
+          const newHp = clamp(who?.state.hp + recover, 0, who?.state.maxHp);
 
-      // Wait a bit...
-      // stop bliking
+          who.update({
+            hp: newHp,
+          });
+        }
 
-      target?.pizzaElement?.classList.remove("battle-damage-blink");
+        if (status) {
+          if (who) {
+            who.update({
+              status: {
+                ...status,
+              },
+            });
+          }
+        }
+      }
 
       battleEvent.resolve?.();
     },

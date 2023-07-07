@@ -1,19 +1,14 @@
 import "@/styles/Combatant.css";
 import "@/styles/Pizza.css";
-import { Battle, Team } from "./Battle";
+import { Battle } from "./Battle";
 import { PizzaType } from "@/Content/Pizzas";
 import React, { JSX } from "jsx-dom";
-import { clamp } from "@/utils";
-
-export enum Status {
-  Saucy = "saucy",
-  Clumsy = "clumsy",
-}
-
-export type CombatantStatus = {
-  type: Status;
-  expiresIn: number;
-};
+import { clamp, randomFromArray } from "@/utils";
+import {
+  BattleBehaviorType,
+  BattleBehaviors,
+} from "@/Behaviors/BattleBehaviors";
+import { CombatantStatus, Status, TeamType } from "@/types";
 
 type CombatantState = {
   hp: number;
@@ -30,7 +25,7 @@ export type CombatantConfig = {
   type: PizzaType;
   src: string;
   icon: string;
-  team: Team;
+  team: TeamType;
   state: CombatantState;
 };
 
@@ -48,7 +43,7 @@ export class Combatant {
   type: PizzaType;
   src: string;
   icon: string;
-  team: Team;
+  team: TeamType;
   id?: string;
 
   state: {
@@ -62,7 +57,7 @@ export class Combatant {
 
   constructor(
     config: CombatantConfig & {
-      team: Team;
+      team: TeamType;
     },
     battle: Battle
   ) {
@@ -86,6 +81,42 @@ export class Combatant {
 
   get isActive() {
     return this.battle?.activeCombatants[this.team] === this.id;
+  }
+
+  getPostEvents(): BattleBehaviorType[] {
+    if (this.state.status?.type === "saucy") {
+      return [
+        BattleBehaviors.textMessage({
+          text: "Feelin' Saucy!",
+        }),
+        BattleBehaviors.stateChange({
+          recover: 5,
+          onCaster: true,
+        }),
+      ];
+    }
+
+    return [];
+  }
+
+  decrementStatus() {
+    if (
+      this.state.status?.expiresIn !== undefined &&
+      this.state.status?.expiresIn > 0
+    ) {
+      this.state.status.expiresIn -= 1;
+      if (this.state.status.expiresIn === 0) {
+        const action = BattleBehaviors.textMessage({
+          text: `${this.state.status.type
+            .charAt(0)
+            .toUpperCase()}${this.state.status.type.slice(1)} expired!`,
+        });
+        this.update({
+          status: undefined,
+        });
+        return action;
+      }
+    }
   }
 
   createElement() {
@@ -210,6 +241,21 @@ export class Combatant {
       statusElement.innerText = "";
       statusElement.style.display = "none";
     }
+  }
+
+  getReplacedEvents(originalEvents: BattleBehaviorType[]) {
+    if (
+      this.state.status?.type === Status.Clumsy &&
+      randomFromArray([true, false, false])
+    ) {
+      return [
+        BattleBehaviors.textMessage({
+          text: `${this.name} flops over!`,
+        }),
+      ];
+    }
+
+    return originalEvents;
   }
 
   init(container: JSX.Element) {
