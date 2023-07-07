@@ -3,7 +3,7 @@ import {
   BattleBehaviors,
 } from "@/Behaviors/BattleBehaviors";
 
-type Action = {
+export type Action = {
   name: string;
   success: BattleBehaviorType[];
 };

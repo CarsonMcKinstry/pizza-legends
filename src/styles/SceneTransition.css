@@ -8,17 +8,12 @@
   right: 0;
   top: 0;
   bottom: 0;
-}
-
-.SceneTransition-animator {
   animation: scene-transition-fade-in var(--scene-transition-time) forwards;
   background: #fff;
   opacity: 0;
-  height: 100%;
-  width: 100%;
 }
 
-.SceneTransition-animator.fade-out {
+.SceneTransition.fade-out {
   animation: scene-transition-fade-out var(--scene-transition-time) forwards;
 }
 

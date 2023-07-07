@@ -110,7 +110,7 @@ export const sceneBehaviorHandler = createBehaviorHandler({
         },
       });
 
-      message.init(sceneEvent.scene.overlay);
+      message.init(sceneEvent.scene.container);
     },
     changeScene(sceneEvent, action: DetailedAction<{ scene: string }>) {
       const transition = new SceneTransition({
@@ -122,7 +122,7 @@ export const sceneBehaviorHandler = createBehaviorHandler({
           sceneEvent.resolve?.();
         },
       });
-      transition.init(sceneEvent.scene.overlay);
+      transition.init(sceneEvent.scene.container);
     },
     battle(sceneEvent) {
       const battle = new Battle({
@@ -131,7 +131,7 @@ export const sceneBehaviorHandler = createBehaviorHandler({
         },
       });
 
-      battle.init(document.querySelector(".battle-overlay")!);
+      battle.init(sceneEvent.scene.container);
     },
   },
 });

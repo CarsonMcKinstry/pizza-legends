@@ -8,7 +8,10 @@ export enum PizzaType {
   Chill = "chill",
 }
 
-export const Pizzas: Record<string, Omit<CombatantConfig, "id" | "team">> = {
+export const Pizzas: Record<
+  string,
+  Omit<CombatantConfig, "id" | "team" | "state">
+> = {
   s001: {
     name: "Slice Samurai",
     type: PizzaType.Spicy,
@@ -17,7 +20,7 @@ export const Pizzas: Record<string, Omit<CombatantConfig, "id" | "team">> = {
     actions: [],
   },
   v001: {
-    name: "Slice Samurai",
+    name: "Call Me Kale",
     type: PizzaType.Veggie,
     src: "./images/characters/pizzas/v001.png",
     icon: "/images/icons/veggie.png",

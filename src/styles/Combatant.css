@@ -9,6 +9,14 @@
   transform: scale(2);
 }
 
+.Battle .Combatant {
+  opacity: 0;
+}
+
+.Battle .Combatant.active {
+  opacity: 1;
+}
+
 .Combatant.player {
   left: 46px;
   top: 70px;
@@ -99,7 +107,7 @@
   position: absolute;
   font-size: 5px;
   left: 47px;
-  bottom: 03px;
+  bottom: -3px;
   padding-left: 2px;
   padding-right: 2px;
   background: rgba(0, 0, 0, 0.8);

@@ -1,55 +1,43 @@
-import { DetailedAction } from "./createBehaviorHandler/action";
-import { createBehaviorHandler } from "./createBehaviorHandler";
+import { TextMessage } from "@/Ui/TextMessage";
+import { createBehaviorHandler, DetailedAction } from "./createBehaviorHandler";
 import { BattleEvent } from "@/Battle/BattleEvent";
-import { KeyPressListener } from "@/Inputs/KeyPressListener";
+import { Action } from "@/Content/Actions";
+import { Combatant } from "@/Battle/Combatant";
 
 export const battleBehaviorHandler = createBehaviorHandler({
   exampleState: {} as BattleEvent,
   handlers: {
-    textMessage(battleEvent, action: DetailedAction<{ text: string }>) {
-      const { text } = action.details;
+    textMessage(
+      battleEvent,
+      action: DetailedAction<{
+        text: string;
+        caster?: Combatant;
+        target?: Combatant;
+        action?: Action;
+      }>
+    ) {
+      const { caster, target } = action.details;
 
-      let finished = false;
+      const text = action.details.text
+        .replace("{CASTER}", caster?.name ?? "")
+        .replace("{TARGET}", target?.name ?? "")
+        .replace("{ACTION}", action.details.action?.name ?? "");
 
-      const unsub = battleEvent.battle.battleUiStore.subscribe(
-        (state, prevState) => {
-          if (!prevState.revealingText?.done && !!state.revealingText?.done) {
-            finished = true;
-          }
-        }
-      );
-
-      // acts as this.done
-      const listener = new KeyPressListener("Enter", () => {
-        if (finished) {
+      const message = new TextMessage({
+        text,
+        onComplete() {
           battleEvent.resolve?.();
-          listener.unbind();
-          unsub();
-          battleEvent.battle.battleUiStore.setState({
-            textMessage: undefined,
-            revealingText: {
-              done: false,
-            },
-          });
-        } else {
-          battleEvent.battle.battleUiStore.setState({
-            revealingText: {
-              done: true,
-            },
-          });
-          finished = true;
-        }
+        },
       });
 
-      battleEvent.battle.battleUiStore.setState({
-        textMessage: {
-          text,
-        },
-        revealingText: {
-          done: false,
-        },
-      });
+      message.init(battleEvent.battle.container);
     },
+    submissionMenu(
+      battleEvent,
+      action: DetailedAction<{
+        caster: Combatant;
+      }>
+    ) {},
     animation(_state, _action: DetailedAction<{ name: string }>) {},
     damage(_state, _action: DetailedAction<{ damage: number }>) {},
   },

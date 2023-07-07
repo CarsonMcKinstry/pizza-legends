@@ -19,18 +19,37 @@ export class TurnCycle {
     this.onNewEvent = onNewEvent;
   }
 
-  async turn() {}
+  async turn() {
+    // Get the caster
+
+    const casterId = this.battle.activeCombatants[this.currentTeam];
+
+    const caster = this.battle.combatants[casterId];
+
+    const submission = await this.onNewEvent(
+      BattleBehaviors.submissionMenu({
+        caster,
+      })
+    );
+
+    // const casterId = this.battle.activeCombatants[this.currentTeam];
+    // const caster = this.battle.combatants[casterId];
+    // const enemyId =
+    //   this.battle.activeCombatants[
+    //     caster.team === "player" ? "enemy" : "player"
+    //   ];
+    // const enemy = this.battle.combatants[enemyId];
+    // const submission = await this.onNewEvent({
+    //   type: "submissionMenu",
+    //   enemy,
+    //   caster,
+    // });
+  }
 
   async init() {
     await this.onNewEvent(
       BattleBehaviors.textMessage({
         text: "The battle is starting!",
-      })
-    );
-
-    await this.onNewEvent(
-      BattleBehaviors.textMessage({
-        text: "Another equally as important message!",
       })
     );
 

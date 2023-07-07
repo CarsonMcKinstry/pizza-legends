@@ -34,7 +34,9 @@ export class SceneController {
   isCutscenePlaying = false;
   triggerSpaces: TriggerSpaces = {};
 
-  overlay: HTMLElement = document.querySelector(".game-overlay") as HTMLElement;
+  container: HTMLElement = document.querySelector(
+    ".game-container"
+  ) as HTMLElement;
 
   game?: Game;
 

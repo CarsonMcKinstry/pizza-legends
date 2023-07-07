@@ -3,6 +3,9 @@
   transform: scale(2);
   background: url(/images/characters/pizzas/pizza-shadow.png) no-repeat
     no-repeat;
+  opacity: 0;
+  transform: translate3d(0, 16px, 0) scale(2);
+  transition: opacity 0.4s, transform 0.4s;
 }
 
 .Pizza.player {
@@ -13,4 +16,9 @@
 .Pizza.enemy {
   top: 47px;
   right: 100px;
+}
+
+.Pizza.active {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(2);
 }
