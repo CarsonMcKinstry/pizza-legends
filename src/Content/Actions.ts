@@ -1,7 +1,4 @@
-import {
-  BattleBehaviorType,
-  BattleBehaviors,
-} from "@/Behaviors/BattleBehaviors";
+import { BattleBehaviorType } from "@/Behaviors/BattleBehaviors";
 
 export type Action = {
   name: string;
@@ -12,15 +9,24 @@ export const Actions: Record<string, Action> = {
   damage1: {
     name: "Whomp!",
     success: [
-      BattleBehaviors.textMessage({
-        text: "{CASTER} uses Whomp!",
-      }),
-      //   BattleBehaviors.animation({
-      //     name: "willBeDefinedHere",
-      //   }),
-      //   BattleBehaviors.damage({
-      //     damage: 10,
-      //   }),
+      {
+        type: "textMessage",
+        details: {
+          text: "{CASTER} uses {ACTION}",
+        },
+      },
+      {
+        type: "animation",
+        details: {
+          animation: "spin",
+        },
+      },
+      {
+        type: "stateChange",
+        details: {
+          damage: 10,
+        },
+      },
     ],
   },
 };

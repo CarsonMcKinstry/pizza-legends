@@ -72,3 +72,10 @@ export const oppositeDirection = (direction: Direction): Direction => {
 
 export const clamp = (n: number, min: number, max: number) =>
   n > max ? max : n < min ? min : n;
+
+export const wait = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });

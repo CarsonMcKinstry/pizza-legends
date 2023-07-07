@@ -3,9 +3,12 @@ import { createBehaviorHandler, DetailedAction } from "./createBehaviorHandler";
 import { BattleEvent } from "@/Battle/BattleEvent";
 import { Action } from "@/Content/Actions";
 import { Combatant } from "@/Battle/Combatant";
+import { Submission, SubmissionMenu } from "@/Ui/SubmissionMenu";
+import { wait } from "@/utils";
+import { BattleAnimations } from "@/Content/BattleAnimations";
 
 export const battleBehaviorHandler = createBehaviorHandler({
-  exampleState: {} as BattleEvent,
+  exampleState: {} as BattleEvent<any>,
   handlers: {
     textMessage(
       battleEvent,
@@ -36,10 +39,58 @@ export const battleBehaviorHandler = createBehaviorHandler({
       battleEvent,
       action: DetailedAction<{
         caster: Combatant;
+        enemy: Combatant;
       }>
-    ) {},
-    animation(_state, _action: DetailedAction<{ name: string }>) {},
-    damage(_state, _action: DetailedAction<{ damage: number }>) {},
+    ) {
+      const { caster, enemy } = action.details;
+
+      const menu = new SubmissionMenu({
+        caster,
+        enemy,
+        onComplete: (submission: Submission) => {
+          battleEvent.resolve?.(submission as any);
+        },
+      });
+
+      menu.init(battleEvent.battle.container);
+    },
+    animation(
+      battleEvent,
+      action: DetailedAction<{ animation: string; caster?: Combatant }>
+    ) {
+      const fn = BattleAnimations[action.details.animation];
+      fn(action, battleEvent.resolve!);
+    },
+    async stateChange(
+      battleEvent,
+      action: DetailedAction<{
+        damage?: number;
+        caster?: Combatant;
+        target?: Combatant;
+      }>
+    ) {
+      const { caster, target, damage } = action.details;
+
+      if (damage) {
+        // modify the target to have less hp
+
+        target?.update({
+          hp: target.state.hp - damage,
+        });
+
+        // start blinking
+        target?.pizzaElement?.classList.add("battle-damage-blink");
+      }
+
+      await wait(600);
+
+      // Wait a bit...
+      // stop bliking
+
+      target?.pizzaElement?.classList.remove("battle-damage-blink");
+
+      battleEvent.resolve?.();
+    },
   },
 });
 
