@@ -7,6 +7,7 @@ import { BattleEvent } from "./BattleEvent";
 
 import React, { JSX } from "jsx-dom";
 import { Item, TeamType } from "@/types";
+import { Team } from "./Team";
 
 type BattleConfig = {
   onComplete: () => void;
@@ -32,6 +33,9 @@ export class Battle {
   ) as HTMLElement;
 
   items: Item[];
+
+  playerTeam?: Team;
+  enemyTeam?: Team;
 
   constructor(config: BattleConfig) {
     this.onComplete = config.onComplete;
@@ -142,11 +146,24 @@ export class Battle {
     if (this.element) {
       container.appendChild(this.element);
 
+      this.playerTeam = new Team("player", "Hero");
+
+      this.enemyTeam = new Team("enemy", "Bully");
+
       for (const [key, combatant] of Object.entries(this.combatants)) {
         combatant.id = key;
 
         combatant.init(this.element);
+
+        if (combatant.team === "player") {
+          this.playerTeam.combatants.push(combatant);
+        } else if (combatant.team === "enemy") {
+          this.enemyTeam.combatants.push(combatant);
+        }
       }
+
+      this.playerTeam.init(this.element);
+      this.enemyTeam.init(this.element);
 
       this.turnCycle = new TurnCycle({
         battle: this,

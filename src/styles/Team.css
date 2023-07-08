@@ -1,0 +1,30 @@
+.Team {
+  display: flex;
+  position: absolute;
+  top: 4px;
+  gap: 4px;
+}
+
+.Team.player {
+  left: 4px;
+}
+
+.Team.enemy {
+  right: 4px;
+}
+
+.Team .dead-pizza {
+  display: none;
+}
+
+.Team .active-pizza-indicator {
+  display: none;
+}
+
+.Team .dead .dead-pizza {
+  display: block;
+}
+
+.Team .active .active-pizza-indicator {
+  display: block;
+}

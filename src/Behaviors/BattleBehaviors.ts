@@ -92,27 +92,20 @@ export const battleBehaviorHandler = createBehaviorHandler({
         action.details;
       const who = onCaster ? caster : target;
 
-      if (damage) {
-        // modify the target to have less hp
-
-        target?.update({
-          hp: target.state.hp - damage,
-        });
-
-        // start blinking
-        target?.pizzaElement?.classList.add("battle-damage-blink");
-
-        await wait(600);
-
-        // Wait a bit...
-        // stop bliking
-
-        target?.pizzaElement?.classList.remove("battle-damage-blink");
-      }
-
       if (who) {
+        if (damage) {
+          // modify the target to have less hp
+
+          target?.update({
+            hp: clamp(target.state.hp - damage, 0, who.state.maxHp),
+          });
+
+          // start blinking
+          target?.pizzaElement?.classList.add("battle-damage-blink");
+        }
+
         if (recover) {
-          const newHp = clamp(who?.state.hp + recover, 0, who?.state.maxHp);
+          const newHp = clamp(who?.state.hp + recover, 0, who.state.maxHp);
 
           who.update({
             hp: newHp,
@@ -135,6 +128,16 @@ export const battleBehaviorHandler = createBehaviorHandler({
           }
         }
       }
+
+      // Wait a bit...
+      await wait(600);
+
+      battleEvent.battle.playerTeam?.update();
+      battleEvent.battle.enemyTeam?.update();
+
+      // stop bliking
+
+      target?.pizzaElement?.classList.remove("battle-damage-blink");
 
       battleEvent.resolve?.();
     },
@@ -162,6 +165,9 @@ export const battleBehaviorHandler = createBehaviorHandler({
       replacement.update({});
 
       await wait(400);
+
+      battleEvent.battle.playerTeam?.update();
+      battleEvent.battle.enemyTeam?.update();
 
       battleEvent.resolve?.();
     },
