@@ -6,7 +6,7 @@ import { TurnCycle } from "./TurnCycle";
 import { BattleEvent } from "./BattleEvent";
 
 import React, { JSX } from "jsx-dom";
-import { Status, TeamType } from "@/types";
+import { Item, TeamType } from "@/types";
 
 type BattleConfig = {
   onComplete: () => void;
@@ -30,6 +30,8 @@ export class Battle {
   container: HTMLElement = document.querySelector(
     ".game-container"
   ) as HTMLElement;
+
+  items: Item[];
 
   constructor(config: BattleConfig) {
     this.onComplete = config.onComplete;
@@ -82,6 +84,29 @@ export class Battle {
       player: "player1",
       enemy: "enemy1",
     };
+
+    this.items = [
+      {
+        actionId: "item_recoverStatus",
+        instanceId: "p1",
+        team: "player",
+      },
+      {
+        actionId: "item_recoverHp",
+        instanceId: "p3",
+        team: "player",
+      },
+      {
+        actionId: "item_recoverStatus",
+        instanceId: "p2",
+        team: "player",
+      },
+      {
+        actionId: "item_recoverStatus",
+        instanceId: "p3",
+        team: "enemy",
+      },
+    ];
   }
 
   createElement() {

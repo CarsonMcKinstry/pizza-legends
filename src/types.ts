@@ -23,3 +23,9 @@ export type TeamType = "player" | "enemy";
 export enum TargetType {
   Friendly = "friendly",
 }
+
+export type Item = {
+  actionId: string;
+  instanceId: string;
+  team: TeamType;
+};

@@ -1,30 +1,50 @@
 import { Combatant } from "@/Battle/Combatant";
 import { Action, Actions } from "@/Content/Actions";
 import { KeyboardMenu, MenuOption } from "@/Inputs/KeyboardMenu";
-import { TargetType } from "@/types";
-import { JSX } from "jsx-dom";
+import { Item, TargetType } from "@/types";
+import React, { JSX } from "jsx-dom";
 
 export type Submission = {
   action: Action;
   target: Combatant;
+  instanceId?: string;
 };
 
 type SubmissionMenuConfig = {
   caster: Combatant;
   enemy: Combatant;
+  items: Item[];
   onComplete: (submission: Submission) => void;
 };
 
 export class SubmissionMenu {
   caster: Combatant;
   enemy: Combatant;
+  items: (Item & { quantity: number })[];
   onComplete: (submission: Submission) => void;
   keyboardMenu?: KeyboardMenu;
 
-  constructor({ caster, enemy, onComplete }: SubmissionMenuConfig) {
+  constructor({ caster, enemy, onComplete, items }: SubmissionMenuConfig) {
     this.caster = caster;
     this.enemy = enemy;
     this.onComplete = onComplete;
+
+    const quantityMap: Record<string, Item & { quantity: number }> = {};
+
+    for (const item of items) {
+      if (item.team === caster.team) {
+        if (!quantityMap[item.actionId]) {
+          quantityMap[item.actionId] = {
+            quantity: 0,
+            ...item,
+          };
+        }
+
+        quantityMap[item.actionId].quantity += 1;
+      }
+    }
+
+    this.items = Object.values(quantityMap);
   }
 
   get pages(): Record<string, MenuOption[]> {
@@ -60,7 +80,22 @@ export class SubmissionMenu {
           },
         },
       ],
-      items: [backOption],
+      items: [
+        backOption,
+        ...this.items.map((item) => {
+          const action = Actions[item.actionId];
+          return {
+            label: action.name,
+            description: action.description,
+            handler: () => {
+              this.menuSubmit(action, item.instanceId);
+            },
+            right: () => {
+              return <span>x{item.quantity}</span>;
+            },
+          };
+        }),
+      ],
       swap: [backOption],
       attacks: [
         backOption,
@@ -91,6 +126,7 @@ export class SubmissionMenu {
   menuSubmit(action: Action, instanceId?: string) {
     this.keyboardMenu?.close();
     this.onComplete({
+      instanceId,
       action,
       target:
         action.targetType === TargetType.Friendly ? this.caster : this.enemy,

@@ -39,6 +39,12 @@ export class TurnCycle {
       })
     );
 
+    if (submission.instanceId) {
+      this.battle.items = this.battle.items.filter(
+        (item) => item.instanceId !== submission.instanceId
+      );
+    }
+
     const resultingEvents = caster.getReplacedEvents(submission.action.success);
 
     for (const rawEvent of resultingEvents) {

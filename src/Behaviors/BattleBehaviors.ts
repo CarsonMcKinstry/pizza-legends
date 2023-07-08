@@ -48,6 +48,7 @@ export const battleBehaviorHandler = createBehaviorHandler({
       const menu = new SubmissionMenu({
         caster,
         enemy,
+        items: battleEvent.battle.items,
         onComplete: (submission: Submission) => {
           battleEvent.resolve?.(submission as any);
         },
@@ -76,7 +77,7 @@ export const battleBehaviorHandler = createBehaviorHandler({
         target?: Combatant;
         recover?: number;
         onCaster?: boolean;
-        status?: CombatantStatus;
+        status?: CombatantStatus | null;
         targetType?: TargetType;
       }>
     ) {
@@ -117,6 +118,12 @@ export const battleBehaviorHandler = createBehaviorHandler({
               status: {
                 ...status,
               },
+            });
+          }
+        } else if (status === null) {
+          if (who) {
+            who.update({
+              status: undefined,
             });
           }
         }
