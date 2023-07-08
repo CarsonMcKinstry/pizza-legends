@@ -5,6 +5,7 @@ import {
 import { Battle } from "./Battle";
 import { Submission } from "@/Ui/SubmissionMenu";
 import { TeamType } from "@/types";
+import { Combatant } from "./Combatant";
 
 type TurnCycleConfig<R = void> = {
   battle: Battle;
@@ -39,13 +40,30 @@ export class TurnCycle {
       })
     );
 
+    if (submission.replacement) {
+      await this.onNewEvent(
+        BattleBehaviors.replace({
+          replacement: submission.replacement,
+        })
+      );
+      await this.onNewEvent(
+        BattleBehaviors.textMessage({
+          text: `Go get 'em ${submission.replacement.name}!`,
+        })
+      );
+      this.nextTurn();
+      return;
+    }
+
     if (submission.instanceId) {
       this.battle.items = this.battle.items.filter(
         (item) => item.instanceId !== submission.instanceId
       );
     }
 
-    const resultingEvents = caster.getReplacedEvents(submission.action.success);
+    const resultingEvents = caster.getReplacedEvents(
+      submission.action?.success ?? []
+    );
 
     for (const rawEvent of resultingEvents) {
       const event = {
@@ -59,6 +77,55 @@ export class TurnCycle {
         },
       };
       await this.onNewEvent(event as BattleBehaviorType);
+    }
+
+    // Did the target die?
+    const isTargetDead = submission.target!.state.hp <= 0;
+    if (isTargetDead) {
+      await this.onNewEvent(
+        BattleBehaviors.textMessage({
+          text: `${submission.target!.name} is ruined!`,
+        })
+      );
+    }
+
+    // Do we have a winning team?
+    // End the battle ->
+
+    const winner = this.getWinningTeam();
+    // Dead target, no winner, bring in replacement
+
+    if (winner) {
+      await this.onNewEvent(
+        BattleBehaviors.textMessage({
+          text: "Winner!",
+        })
+      );
+      return;
+    }
+
+    if (isTargetDead) {
+      const replacement = await this.onNewEvent<Combatant>(
+        BattleBehaviors.replacementMenu({
+          team: submission.target!.team,
+        })
+      );
+
+      await this.onNewEvent(
+        BattleBehaviors.replace({
+          replacement,
+        })
+      );
+
+      await this.onNewEvent(
+        BattleBehaviors.textMessage({
+          text: `${replacement.name} appears!`,
+        })
+      );
+
+      this.currentTeam = "player";
+      this.turn();
+      return;
     }
 
     // Check for post events
@@ -85,6 +152,26 @@ export class TurnCycle {
       await this.onNewEvent(expiredEvent);
     }
 
+    this.nextTurn();
+  }
+
+  getWinningTeam(): TeamType | void {
+    const aliveTeams: Record<TeamType, boolean> = {
+      player: false,
+      enemy: false,
+    };
+
+    for (const combatant of Object.values(this.battle.combatants)) {
+      if (combatant.state.hp > 0) {
+        aliveTeams[combatant.team] = true;
+      }
+    }
+
+    if (!aliveTeams.player) return "enemy";
+    if (!aliveTeams.enemy) return "player";
+  }
+
+  nextTurn() {
     this.currentTeam = this.currentTeam === "player" ? "enemy" : "player";
     this.turn();
   }

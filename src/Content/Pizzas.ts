@@ -19,6 +19,13 @@ export const Pizzas: Record<
     icon: "/images/icons/spicy.png",
     actions: ["clumsyStatus", "damage1"],
   },
+  s002: {
+    name: "Bacon Brigade",
+    type: PizzaType.Spicy,
+    src: "./images/characters/pizzas/s002.png",
+    icon: "/images/icons/spicy.png",
+    actions: ["clumsyStatus", "saucyStatus", "damage1"],
+  },
   v001: {
     name: "Call Me Kale",
     type: PizzaType.Veggie,
@@ -31,6 +38,6 @@ export const Pizzas: Record<
     type: PizzaType.Fungi,
     src: "./images/characters/pizzas/f001.png",
     icon: "/images/icons/fungi.png",
-    actions: [],
+    actions: ["damage1"],
   },
 };

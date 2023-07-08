@@ -1,13 +1,15 @@
 import { Combatant } from "@/Battle/Combatant";
+
 import { Action, Actions } from "@/Content/Actions";
 import { KeyboardMenu, MenuOption } from "@/Inputs/KeyboardMenu";
 import { Item, TargetType } from "@/types";
 import React, { JSX } from "jsx-dom";
 
 export type Submission = {
-  action: Action;
-  target: Combatant;
+  action?: Action;
+  target?: Combatant;
   instanceId?: string;
+  replacement?: Combatant;
 };
 
 type SubmissionMenuConfig = {
@@ -15,19 +17,28 @@ type SubmissionMenuConfig = {
   enemy: Combatant;
   items: Item[];
   onComplete: (submission: Submission) => void;
+  replacements: Combatant[];
 };
 
 export class SubmissionMenu {
   caster: Combatant;
   enemy: Combatant;
   items: (Item & { quantity: number })[];
+  replacements: Combatant[];
   onComplete: (submission: Submission) => void;
   keyboardMenu?: KeyboardMenu;
 
-  constructor({ caster, enemy, onComplete, items }: SubmissionMenuConfig) {
+  constructor({
+    caster,
+    enemy,
+    onComplete,
+    items,
+    replacements,
+  }: SubmissionMenuConfig) {
     this.caster = caster;
     this.enemy = enemy;
     this.onComplete = onComplete;
+    this.replacements = replacements;
 
     const quantityMap: Record<string, Item & { quantity: number }> = {};
 
@@ -76,7 +87,7 @@ export class SubmissionMenu {
           label: "Swap",
           description: "Change to another pizza",
           handler: () => {
-            this.keyboardMenu?.setOptions(this.pages.items);
+            this.keyboardMenu?.setOptions(this.pages.swap);
           },
         },
       ],
@@ -96,7 +107,18 @@ export class SubmissionMenu {
           };
         }),
       ],
-      swap: [backOption],
+      swap: [
+        backOption,
+        ...this.replacements.map((combatant) => {
+          return {
+            label: combatant.name,
+            description: combatant.name,
+            handler: () => {
+              this.menuSubmitReplacement(combatant);
+            },
+          };
+        }),
+      ],
       attacks: [
         backOption,
         ...this.caster.actions.map((key) => {
@@ -113,6 +135,13 @@ export class SubmissionMenu {
     };
   }
 
+  menuSubmitReplacement(replacement: Combatant) {
+    this.keyboardMenu?.close();
+    this.onComplete({
+      replacement,
+    });
+  }
+
   showMenu(container: JSX.Element) {
     this.keyboardMenu = new KeyboardMenu();
     this.keyboardMenu.init(container);
@@ -124,6 +153,11 @@ export class SubmissionMenu {
   }
 
   menuSubmit(action: Action, instanceId?: string) {
+    if (!action) {
+      throw new Error(
+        `No actions found for ${this.caster.id} in SubmissionMenu.`
+      );
+    }
     this.keyboardMenu?.close();
     this.onComplete({
       instanceId,

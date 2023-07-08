@@ -51,12 +51,27 @@ export class Battle {
         },
         this
       ),
+      player2: new Combatant(
+        {
+          ...Pizzas["s002"],
+          isPlayerControlled: true,
+          team: "player",
+          state: {
+            hp: 25,
+            maxHp: 50,
+            xp: 0,
+            maxXp: 100,
+            level: 1,
+          },
+        },
+        this
+      ),
       enemy1: new Combatant(
         {
           ...Pizzas["v001"],
           team: "enemy",
           state: {
-            hp: 25,
+            hp: 1,
             maxHp: 50,
             xp: 0,
             maxXp: 100,

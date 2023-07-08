@@ -6,7 +6,8 @@ import { Combatant } from "@/Battle/Combatant";
 import { Submission, SubmissionMenu } from "@/Ui/SubmissionMenu";
 import { clamp, wait } from "@/utils";
 import { BattleAnimations } from "@/Content/BattleAnimations";
-import { CombatantStatus, TargetType } from "@/types";
+import { CombatantStatus, TargetType, TeamType } from "@/types";
+import { ReplacementMenu } from "@/Ui/ReplacementMenu";
 
 export const battleBehaviorHandler = createBehaviorHandler({
   exampleState: {} as BattleEvent<any>,
@@ -44,10 +45,16 @@ export const battleBehaviorHandler = createBehaviorHandler({
       }>
     ) {
       const { caster, enemy } = action.details;
-
+      const replacements = Object.values(battleEvent.battle.combatants).filter(
+        (combatant) =>
+          combatant.id !== caster.id &&
+          combatant.team === caster.team &&
+          combatant.state.hp > 0
+      );
       const menu = new SubmissionMenu({
         caster,
         enemy,
+        replacements,
         items: battleEvent.battle.items,
         onComplete: (submission: Submission) => {
           battleEvent.resolve?.(submission as any);
@@ -130,6 +137,46 @@ export const battleBehaviorHandler = createBehaviorHandler({
       }
 
       battleEvent.resolve?.();
+    },
+    async replace(
+      battleEvent,
+      action: DetailedAction<{
+        replacement: Combatant;
+      }>
+    ) {
+      const { replacement } = action.details;
+
+      const prevCombatant =
+        battleEvent.battle.combatants[
+          battleEvent.battle.activeCombatants[replacement.team]
+        ];
+
+      delete battleEvent.battle.activeCombatants[replacement.team];
+
+      prevCombatant.update({});
+
+      await wait(400);
+
+      battleEvent.battle.activeCombatants[replacement.team] = replacement.id!;
+
+      replacement.update({});
+
+      await wait(400);
+
+      battleEvent.resolve?.();
+    },
+    replacementMenu(battleEvent, action: DetailedAction<{ team: TeamType }>) {
+      const menu = new ReplacementMenu({
+        replacements: Object.values(battleEvent.battle.combatants).filter(
+          (c) => {
+            return c.team === action.details.team && c.state.hp > 0;
+          }
+        ),
+        onComplete: (replacement) => {
+          battleEvent.resolve?.(replacement as any);
+        },
+      });
+      menu.init(battleEvent.battle.element!);
     },
   },
 });

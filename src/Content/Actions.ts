@@ -15,7 +15,7 @@ const createEvent = (
   return {
     type,
     details,
-  };
+  } as BattleBehaviorType;
 };
 
 const castTextEvent = createEvent("textMessage", {
