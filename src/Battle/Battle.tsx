@@ -37,6 +37,7 @@ export class Battle {
       player1: new Combatant(
         {
           ...Pizzas["s001"],
+          isPlayerControlled: true,
           team: "player",
           state: {
             hp: 25,

@@ -3,12 +3,15 @@ import { Status, TargetType } from "@/types";
 
 export type Action = {
   name: string;
+  description: "";
   success: BattleBehaviorType[];
+  targetType?: TargetType;
 };
 
 export const Actions: Record<string, Action> = {
   damage1: {
     name: "Whomp!",
+    description: "",
     success: [
       {
         type: "textMessage",
@@ -32,6 +35,8 @@ export const Actions: Record<string, Action> = {
   },
   saucyStatus: {
     name: "Tomato Squeeze",
+    description: "",
+    targetType: TargetType.Friendly,
     success: [
       {
         type: "textMessage",
@@ -54,6 +59,7 @@ export const Actions: Record<string, Action> = {
   },
   clumsyStatus: {
     name: "Olive Oil",
+    description: "",
     success: [
       {
         type: "textMessage",

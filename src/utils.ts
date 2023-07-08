@@ -83,3 +83,39 @@ export const wait = (ms: number) =>
 export const randomFromArray = (arr: boolean[]) => {
   return arr[Math.floor(Math.random() * arr.length)];
 };
+
+export const focusNextElement = (
+  n: number,
+  nodeList: NodeListOf<HTMLElement>
+) => {
+  if (n >= nodeList.length) {
+    return;
+  }
+
+  const nextElement = nodeList[n + 1];
+
+  if (nextElement && "disabled" in nextElement && !nextElement.disabled) {
+    nextElement.focus();
+    return;
+  }
+
+  focusNextElement(n + 1, nodeList);
+};
+
+export const focusPrevElement = (
+  n: number,
+  nodeList: NodeListOf<HTMLElement>
+) => {
+  if (n <= 0) {
+    return;
+  }
+
+  const prevElement = nodeList[n - 1];
+
+  if (prevElement && "disabled" in prevElement && !prevElement.disabled) {
+    prevElement.focus();
+    return;
+  }
+
+  focusPrevElement(n - 1, nodeList);
+};

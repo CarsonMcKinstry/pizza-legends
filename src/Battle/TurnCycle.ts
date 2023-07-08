@@ -84,12 +84,6 @@ export class TurnCycle {
   }
 
   async init() {
-    await this.onNewEvent(
-      BattleBehaviors.textMessage({
-        text: "The battle is starting!",
-      })
-    );
-
     this.turn();
   }
 }

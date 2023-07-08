@@ -53,7 +53,9 @@ export const battleBehaviorHandler = createBehaviorHandler({
         },
       });
 
-      menu.init(battleEvent.battle.container);
+      if (battleEvent.battle.element) {
+        menu.init(battleEvent.battle.element);
+      }
     },
     animation(
       battleEvent,
@@ -78,13 +80,9 @@ export const battleBehaviorHandler = createBehaviorHandler({
         targetType?: TargetType;
       }>
     ) {
-      const { target, caster, damage, recover, onCaster, status, targetType } =
+      const { target, caster, damage, recover, onCaster, status } =
         action.details;
-      let who = onCaster ? caster : target;
-
-      if (targetType === TargetType.Friendly) {
-        who = caster;
-      }
+      const who = onCaster ? caster : target;
 
       if (damage) {
         // modify the target to have less hp

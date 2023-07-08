@@ -26,6 +26,7 @@ export type CombatantConfig = {
   src: string;
   icon: string;
   team: TeamType;
+  isPlayerControlled?: true;
   state: CombatantState;
 };
 
@@ -46,6 +47,8 @@ export class Combatant {
   team: TeamType;
   id?: string;
 
+  isPlayerControlled = false;
+
   state: {
     hp: number;
     maxHp: number;
@@ -55,12 +58,7 @@ export class Combatant {
     status?: CombatantStatus;
   };
 
-  constructor(
-    config: CombatantConfig & {
-      team: TeamType;
-    },
-    battle: Battle
-  ) {
+  constructor(config: CombatantConfig, battle: Battle) {
     this.name = config.name;
     this.actions = config.actions;
     this.battle = battle;
@@ -69,6 +67,8 @@ export class Combatant {
     this.icon = config.icon;
     this.team = config.team;
     this.state = config.state;
+    this.isPlayerControlled =
+      config.isPlayerControlled ?? this.isPlayerControlled;
   }
 
   get hpPercentage() {
