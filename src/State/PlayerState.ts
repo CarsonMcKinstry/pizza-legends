@@ -1,3 +1,4 @@
+import { globalEvents } from "@/Inputs/GlobalEvents";
 import { CombatantState, Item } from "@/types";
 
 export class PlayerState {
@@ -17,6 +18,14 @@ export class PlayerState {
     },
     p2: {
       pizzaId: "v001",
+      hp: 51,
+      maxHp: 50,
+      xp: 99,
+      maxXp: 100,
+      level: 1,
+    },
+    p3: {
+      pizzaId: "f001",
       hp: 51,
       maxHp: 50,
       xp: 99,
@@ -46,7 +55,22 @@ export class PlayerState {
     },
   ];
 
-  constructor() {}
+  swapLineup(oldId: string, incomingId: string) {
+    this.lineup = this.lineup.map((id) => {
+      if (id === oldId) {
+        return incomingId;
+      }
+
+      return id;
+    });
+    globalEvents.emit("LineupChanged", {});
+  }
+
+  moveToFront(futureFrontId: string) {
+    this.lineup = this.lineup.filter((id) => id !== futureFrontId);
+    this.lineup.unshift(futureFrontId);
+    globalEvents.emit("LineupChanged", {});
+  }
 }
 
 export const playerState = new PlayerState();

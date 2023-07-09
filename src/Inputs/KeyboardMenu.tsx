@@ -14,6 +14,7 @@ export type MenuOption = {
 export class KeyboardMenu {
   options: MenuOption[] = [];
   element?: JSX.Element;
+  descriptionContainer?: JSX.Element;
   descriptionElement?: JSX.Element;
   descriptionElementText?: HTMLParagraphElement;
 
@@ -21,6 +22,14 @@ export class KeyboardMenu {
 
   up?: KeyPressListener;
   down?: KeyPressListener;
+
+  constructor({
+    descriptionContainer,
+  }: {
+    descriptionContainer?: JSX.Element;
+  }) {
+    this.descriptionContainer = descriptionContainer;
+  }
 
   setOptions(options: MenuOption[]) {
     this.options = options;
@@ -94,7 +103,9 @@ export class KeyboardMenu {
     this.createElement();
 
     if (this.element && this.descriptionElement) {
-      container.appendChild(this.descriptionElement);
+      (this.descriptionContainer ?? container).appendChild(
+        this.descriptionElement
+      );
       container.appendChild(this.element);
 
       this.up = new KeyPressListener("ArrowUp", () => {

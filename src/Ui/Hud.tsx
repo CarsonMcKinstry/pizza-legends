@@ -8,10 +8,16 @@ import React, { JSX } from "jsx-dom";
 export class Hud {
   element?: JSX.Element;
 
-  scoreBoards: Combatant[];
+  scoreBoards: Combatant[] = [];
 
-  constructor() {
-    this.scoreBoards = playerState.lineup.map((key) => {
+  update() {
+    for (const scoreBoard of Object.values(this.scoreBoards)) {
+      scoreBoard.update(playerState.pizzas[scoreBoard.id!]);
+    }
+  }
+
+  createScoreboards() {
+    return playerState.lineup.map((key) => {
       const { pizzaId, ...combatantState } = playerState.pizzas[key];
 
       const scoreboard = new Combatant({
@@ -25,13 +31,12 @@ export class Hud {
     });
   }
 
-  update() {
-    for (const scoreBoard of Object.values(this.scoreBoards)) {
-      scoreBoard.update(playerState.pizzas[scoreBoard.id!]);
-    }
-  }
-
   createElement() {
+    if (this.element) {
+      this.element?.remove();
+      this.scoreBoards = [];
+    }
+    this.scoreBoards = this.createScoreboards();
     this.element = (
       <div className="Hud">
         {this.scoreBoards.map((scoreBoard) => scoreBoard.hudElement)}
@@ -47,6 +52,11 @@ export class Hud {
 
     globalEvents.on("PlayerStateUpdated", () => {
       this.update();
+    });
+
+    globalEvents.on("LineupChanged", () => {
+      this.createElement();
+      container.appendChild(this.element!);
     });
   }
 }

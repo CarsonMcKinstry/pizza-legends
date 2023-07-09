@@ -40,6 +40,8 @@ export class SceneController {
 
   game?: Game;
 
+  isPaused = false;
+
   constructor({
     entities,
     backgroundSrc,

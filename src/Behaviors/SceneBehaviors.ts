@@ -9,6 +9,7 @@ import { DetailedAction, createBehaviorHandler } from "./createBehaviorHandler";
 import { SceneTransition } from "@/Ui/SceneTranstion";
 import { Battle } from "@/Battle/Battle";
 import { Enemies } from "@/Content/Enemies";
+import { PauseMenu } from "@/Ui/PauseMenu";
 
 export const sceneBehaviorHandler = createBehaviorHandler({
   exampleState: {} as SceneEvent,
@@ -134,6 +135,19 @@ export const sceneBehaviorHandler = createBehaviorHandler({
       });
 
       battle.init(sceneEvent.scene.container);
+    },
+    pause(sceneEvent) {
+      sceneEvent.scene.isPaused = true;
+
+      const menu = new PauseMenu({
+        onComplete() {
+          sceneEvent.resolve?.();
+          sceneEvent.scene.isPaused = false;
+          sceneEvent.scene.game?.startGameLoop();
+        },
+      });
+
+      menu.init(sceneEvent.scene.container);
     },
   },
 });

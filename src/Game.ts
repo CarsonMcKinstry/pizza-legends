@@ -1,3 +1,4 @@
+import { SceneBehaviors } from "./Behaviors/SceneBehaviors";
 import { DirectionInput } from "./Inputs/DirectionInput";
 import { globalEvents } from "./Inputs/GlobalEvents";
 import { KeyPressListener } from "./Inputs/KeyPressListener";
@@ -44,7 +45,9 @@ export class Game {
         this.scene.draw(this.ctx);
       }
 
-      requestAnimationFrame(step);
+      if (!this.scene!.isPaused) {
+        requestAnimationFrame(step);
+      }
     };
 
     requestAnimationFrame(step);
@@ -54,6 +57,12 @@ export class Game {
     new KeyPressListener("Enter", () => {
       // Is there a person here to talk to?
       this.scene?.checkForActionCutscene();
+    });
+
+    new KeyPressListener("Escape", () => {
+      if (!this.scene?.isCutscenePlaying) {
+        this.scene?.startCutscene([SceneBehaviors.pause()]);
+      }
     });
   }
 
