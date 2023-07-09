@@ -8,16 +8,7 @@ import {
   BattleBehaviorType,
   BattleBehaviors,
 } from "@/Behaviors/BattleBehaviors";
-import { CombatantStatus, Status, TeamType } from "@/types";
-
-type CombatantState = {
-  hp: number;
-  maxHp: number;
-  xp: number;
-  maxXp: number;
-  level: number;
-  status?: CombatantStatus;
-};
+import { CombatantState, CombatantStatus, Status, TeamType } from "@/types";
 
 export type CombatantConfig = {
   actions: string[];
@@ -81,6 +72,10 @@ export class Combatant {
 
   get isActive() {
     return this.battle?.activeCombatants[this.team] === this.id;
+  }
+
+  get givesXp() {
+    return this.state.level * 20;
   }
 
   getPostEvents(): BattleBehaviorType[] {

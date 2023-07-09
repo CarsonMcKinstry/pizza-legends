@@ -10,28 +10,31 @@ import { Combatant } from "./Combatant";
 type TurnCycleConfig<R = void> = {
   battle: Battle;
   onNewEvent: (event: BattleBehaviorType) => Promise<R>;
+  onWinner: (winner: TeamType) => void;
 };
 
 export class TurnCycle {
   battle: Battle;
   onNewEvent: <R = void>(event: BattleBehaviorType) => Promise<R>;
   currentTeam: TeamType = "player";
+  onWinner: (winner: TeamType) => void;
 
-  constructor({ battle, onNewEvent }: TurnCycleConfig) {
+  constructor({ battle, onNewEvent, onWinner }: TurnCycleConfig) {
     this.battle = battle;
     this.onNewEvent = onNewEvent as typeof this.onNewEvent;
+    this.onWinner = onWinner;
   }
 
   async turn() {
     // Get the caster
 
     const casterId = this.battle.activeCombatants[this.currentTeam];
-    const caster = this.battle.combatants[casterId];
+    const caster = this.battle.combatants[casterId!];
     const enemyId =
       this.battle.activeCombatants[
         caster.team === "player" ? "enemy" : "player"
       ];
-    const enemy = this.battle.combatants[enemyId];
+    const enemy = this.battle.combatants[enemyId!];
 
     const submission = await this.onNewEvent<Submission>(
       BattleBehaviors.submissionMenu({
@@ -56,6 +59,8 @@ export class TurnCycle {
     }
 
     if (submission.instanceId) {
+      this.battle.usedInstanceIds[submission.instanceId] = true;
+
       this.battle.items = this.battle.items.filter(
         (item) => item.instanceId !== submission.instanceId
       );
@@ -87,6 +92,23 @@ export class TurnCycle {
           text: `${submission.target!.name} is ruined!`,
         })
       );
+
+      if (submission.target?.team === "enemy") {
+        const playerActivePizzaId = this.battle.activeCombatants.player;
+        const xp = submission.target.givesXp;
+
+        await this.onNewEvent(
+          BattleBehaviors.textMessage({
+            text: `Gained ${xp} xp`,
+          })
+        );
+        await this.onNewEvent(
+          BattleBehaviors.giveXp({
+            xp,
+            combatant: this.battle.combatants[playerActivePizzaId!],
+          })
+        );
+      }
     }
 
     // Do we have a winning team?
@@ -101,6 +123,10 @@ export class TurnCycle {
           text: "Winner!",
         })
       );
+
+      // end the battle
+
+      this.onWinner(winner);
       return;
     }
 
@@ -177,6 +203,12 @@ export class TurnCycle {
   }
 
   async init() {
+    await this.onNewEvent(
+      BattleBehaviors.textMessage({
+        text: `${this.battle.enemy.name} wants to battle!`,
+      })
+    );
+
     this.turn();
   }
 }

@@ -184,6 +184,31 @@ export const battleBehaviorHandler = createBehaviorHandler({
       });
       menu.init(battleEvent.battle.element!);
     },
+    giveXp(
+      battleEvent,
+      action: DetailedAction<{ xp: number; combatant: Combatant }>
+    ) {
+      const { xp, combatant } = action.details;
+
+      let amount = xp;
+
+      const step = () => {
+        if (amount > 0) {
+          amount -= 1;
+          combatant.state.xp += 1;
+
+          if (combatant.state.xp === combatant.state.maxXp) {
+            combatant.state.xp = 0;
+            combatant.state.level += 1;
+          }
+          combatant.update({});
+          requestAnimationFrame(step);
+          battleEvent.resolve?.();
+          return;
+        }
+      };
+      requestAnimationFrame(step);
+    },
   },
 });
 

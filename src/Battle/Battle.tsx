@@ -6,11 +6,13 @@ import { TurnCycle } from "./TurnCycle";
 import { BattleEvent } from "./BattleEvent";
 
 import React, { JSX } from "jsx-dom";
-import { Item, TeamType } from "@/types";
+import { CombatantState, Enemy, Item, TeamType } from "@/types";
 import { Team } from "./Team";
+import { playerState } from "@/State/PlayerState";
 
 type BattleConfig = {
-  onComplete: () => void;
+  enemy: Enemy;
+  onComplete: (winner: TeamType) => void;
 };
 
 export type BattleState = {
@@ -22,110 +24,71 @@ export type BattleState = {
 
 export class Battle {
   element?: JSX.Element;
-  onComplete: () => void;
-  combatants: Record<string, Combatant>;
+  onComplete: (winner: TeamType) => void;
+  combatants: Record<string, Combatant> = {};
   turnCycle?: TurnCycle;
 
-  activeCombatants: Record<TeamType, string>;
+  activeCombatants: Partial<Record<TeamType, string>> = {};
 
   container: HTMLElement = document.querySelector(
     ".game-container"
   ) as HTMLElement;
 
-  items: Item[];
+  items: Item[] = [];
 
   playerTeam?: Team;
   enemyTeam?: Team;
 
+  enemy: Enemy;
+
+  usedInstanceIds: Record<string, true> = {};
+
   constructor(config: BattleConfig) {
     this.onComplete = config.onComplete;
-    this.combatants = {
-      player1: new Combatant(
-        {
-          ...Pizzas["s001"],
-          isPlayerControlled: true,
-          team: "player",
-          state: {
-            hp: 25,
-            maxHp: 50,
-            xp: 0,
-            maxXp: 100,
-            level: 1,
-          },
-        },
-        this
-      ),
-      player2: new Combatant(
-        {
-          ...Pizzas["s002"],
-          isPlayerControlled: true,
-          team: "player",
-          state: {
-            hp: 25,
-            maxHp: 50,
-            xp: 0,
-            maxXp: 100,
-            level: 1,
-          },
-        },
-        this
-      ),
-      enemy1: new Combatant(
-        {
-          ...Pizzas["v001"],
-          team: "enemy",
-          state: {
-            hp: 1,
-            maxHp: 50,
-            xp: 0,
-            maxXp: 100,
-            level: 1,
-          },
-        },
-        this
-      ),
-      enemy2: new Combatant(
-        {
-          ...Pizzas["f001"],
-          team: "enemy",
-          state: {
-            hp: 50,
-            maxHp: 50,
-            xp: 0,
-            maxXp: 100,
-            level: 1,
-          },
-        },
-        this
-      ),
-    };
-    this.activeCombatants = {
-      player: "player1",
-      enemy: "enemy1",
-    };
+    this.enemy = config.enemy;
 
-    this.items = [
+    for (const combatantId of playerState.lineup) {
+      const combatantState = playerState.pizzas[combatantId];
+
+      this.addCombatant(combatantId, combatantState, "player");
+    }
+
+    for (const [combatantId, combatantState] of Object.entries(
+      this.enemy.pizzas
+    )) {
+      this.addCombatant(combatantId, combatantState, "enemy");
+    }
+
+    this.items = playerState.items.map((item) => ({
+      ...item,
+      team: "player",
+    }));
+  }
+
+  addCombatant(
+    id: string,
+    state: Partial<CombatantState> & { pizzaId: string },
+    team: TeamType
+  ) {
+    const { pizzaId, ...combatantState } = state;
+    this.combatants[id] = new Combatant(
       {
-        actionId: "item_recoverStatus",
-        instanceId: "p1",
-        team: "player",
+        ...Pizzas[pizzaId],
+        team,
+        isPlayerControlled: team === "player" ? true : undefined,
+        state: {
+          hp: 50,
+          xp: 0,
+          maxXp: 100,
+          maxHp: combatantState.maxHp ?? combatantState.hp ?? 50,
+          level: 1,
+          ...combatantState,
+        },
       },
-      {
-        actionId: "item_recoverHp",
-        instanceId: "p3",
-        team: "player",
-      },
-      {
-        actionId: "item_recoverStatus",
-        instanceId: "p2",
-        team: "player",
-      },
-      {
-        actionId: "item_recoverStatus",
-        instanceId: "p3",
-        team: "enemy",
-      },
-    ];
+      this
+    );
+
+    this.activeCombatants[team] = this.activeCombatants[team] ?? id;
   }
 
   createElement() {
@@ -135,7 +98,10 @@ export class Battle {
           <img src="/images/characters/people/hero.png" alt="Hero" />
         </div>
         <div className="Battle_enemy">
-          <img src="/images/characters/people/npc3.png" alt="Enemy" />
+          <img
+            src={`/images/characters/people/${this.enemy.spriteName}.png`}
+            alt={this.enemy.name}
+          />
         </div>
       </div>
     );
@@ -176,6 +142,31 @@ export class Battle {
 
             battleEvent.init(resolve);
           });
+        },
+        onWinner: (winner) => {
+          if (winner === "player") {
+            Object.keys(playerState.pizzas).forEach((id) => {
+              const playerStatePizza = playerState.pizzas[id];
+              const combatant = this.combatants[id];
+              if (combatant) {
+                playerStatePizza.hp = combatant.state.hp;
+                playerStatePizza.maxHp = combatant.state.maxHp;
+                playerStatePizza.xp = combatant.state.xp;
+                playerStatePizza.maxXp = combatant.state.maxXp;
+                playerStatePizza.level = combatant.state.level;
+              }
+              playerState.pizzas[id] = playerStatePizza;
+
+              playerState.items = this.items
+                .filter((item) => {
+                  return this.usedInstanceIds[item.instanceId];
+                })
+                .map(({ team: _team, ...item }) => item);
+            });
+          }
+
+          this.element?.remove();
+          this.onComplete(winner);
         },
       });
 

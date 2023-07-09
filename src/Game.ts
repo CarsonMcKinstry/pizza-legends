@@ -85,7 +85,5 @@ export class Game {
     this.directionInput.init();
 
     this.startGameLoop();
-
-    this.scene?.startCutscene([SceneBehaviors.battle()]);
   }
 }

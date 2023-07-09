@@ -32,8 +32,11 @@ export const Scenes: Record<string, SceneConfig> = {
                 text: "I'm busy...",
                 faceHero: true,
               }),
-              SceneBehaviors.textMessage({ text: "Go away." }),
-              SceneBehaviors.walk({ direction: "up", who: "hero" }),
+              SceneBehaviors.battle({
+                enemyId: "beth",
+              }),
+              // SceneBehaviors.textMessage({ text: "Go away." }),
+              // SceneBehaviors.walk({ direction: "up", who: "hero" }),
             ],
           },
         ],
@@ -41,7 +44,19 @@ export const Scenes: Record<string, SceneConfig> = {
       npcB: new Character({
         x: withGrid(8),
         y: withGrid(5),
-        spriteName: "npc2",
+        spriteName: "erio",
+        talking: [
+          {
+            events: [
+              SceneBehaviors.textMessage({
+                text: "Bahahaha!",
+              }),
+              SceneBehaviors.battle({
+                enemyId: "erio",
+              }),
+            ],
+          },
+        ],
       }),
     },
     walls: {

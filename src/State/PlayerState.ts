@@ -1,0 +1,52 @@
+import { CombatantState, Item } from "@/types";
+
+export class PlayerState {
+  pizzas: Record<
+    string,
+    CombatantState & {
+      pizzaId: string;
+    }
+  > = {
+    p1: {
+      pizzaId: "s001",
+      hp: 30,
+      maxHp: 50,
+      xp: 99,
+      maxXp: 100,
+      level: 1,
+    },
+    p2: {
+      pizzaId: "v001",
+      hp: 51,
+      maxHp: 50,
+      xp: 99,
+      maxXp: 100,
+      level: 1,
+    },
+  };
+
+  lineup: string[] = ["p2", "p1"];
+
+  items: Omit<Item, "team">[] = [
+    {
+      actionId: "item_recoverStatus",
+      instanceId: "p1",
+    },
+    {
+      actionId: "item_recoverHp",
+      instanceId: "p3",
+    },
+    {
+      actionId: "item_recoverStatus",
+      instanceId: "p2",
+    },
+    {
+      actionId: "item_recoverStatus",
+      instanceId: "p3",
+    },
+  ];
+
+  constructor() {}
+}
+
+export const playerState = new PlayerState();

@@ -8,6 +8,7 @@ import { oppositeDirection } from "@/utils";
 import { DetailedAction, createBehaviorHandler } from "./createBehaviorHandler";
 import { SceneTransition } from "@/Ui/SceneTranstion";
 import { Battle } from "@/Battle/Battle";
+import { Enemies } from "@/Content/Enemies";
 
 export const sceneBehaviorHandler = createBehaviorHandler({
   exampleState: {} as SceneEvent,
@@ -124,8 +125,9 @@ export const sceneBehaviorHandler = createBehaviorHandler({
       });
       transition.init(sceneEvent.scene.container);
     },
-    battle(sceneEvent) {
+    battle(sceneEvent, action: DetailedAction<{ enemyId: string }>) {
       const battle = new Battle({
+        enemy: Enemies[action.details.enemyId],
         onComplete() {
           sceneEvent.resolve?.();
         },

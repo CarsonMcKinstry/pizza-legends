@@ -29,3 +29,23 @@ export type Item = {
   instanceId: string;
   team: TeamType;
 };
+
+export type CombatantState = {
+  hp: number;
+  maxHp: number;
+  xp: number;
+  maxXp: number;
+  level: number;
+  status?: CombatantStatus;
+};
+
+export type Enemy = {
+  name: string;
+  spriteName: string;
+  pizzas: Record<
+    string,
+    Partial<CombatantState> & {
+      pizzaId: string;
+    }
+  >;
+};
