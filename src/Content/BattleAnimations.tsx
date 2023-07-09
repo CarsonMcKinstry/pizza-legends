@@ -51,7 +51,7 @@ export const BattleAnimations: Record<
       </div>
     );
 
-    caster?.battle.container.appendChild(glob);
+    caster?.battle?.container.appendChild(glob);
 
     await wait(820);
     onComplete();

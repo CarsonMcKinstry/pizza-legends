@@ -151,16 +151,16 @@ export const battleBehaviorHandler = createBehaviorHandler({
 
       const prevCombatant =
         battleEvent.battle.combatants[
-          battleEvent.battle.activeCombatants[replacement.team]
+          battleEvent.battle.activeCombatants[replacement.team!]!
         ];
 
-      delete battleEvent.battle.activeCombatants[replacement.team];
+      delete battleEvent.battle.activeCombatants[replacement.team!];
 
       prevCombatant.update({});
 
       await wait(400);
 
-      battleEvent.battle.activeCombatants[replacement.team] = replacement.id!;
+      battleEvent.battle.activeCombatants[replacement.team!] = replacement.id!;
 
       replacement.update({});
 

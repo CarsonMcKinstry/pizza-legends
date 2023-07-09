@@ -99,7 +99,7 @@ export class TurnCycle {
 
         await this.onNewEvent(
           BattleBehaviors.textMessage({
-            text: `Gained ${xp} xp`,
+            text: `Gained ${xp} XP!`,
           })
         );
         await this.onNewEvent(
@@ -133,7 +133,7 @@ export class TurnCycle {
     if (isTargetDead) {
       const replacement = await this.onNewEvent<Combatant>(
         BattleBehaviors.replacementMenu({
-          team: submission.target!.team,
+          team: submission.target!.team!,
         })
       );
 
@@ -189,7 +189,7 @@ export class TurnCycle {
 
     for (const combatant of Object.values(this.battle.combatants)) {
       if (combatant.state.hp > 0) {
-        aliveTeams[combatant.team] = true;
+        aliveTeams[combatant.team!] = true;
       }
     }
 

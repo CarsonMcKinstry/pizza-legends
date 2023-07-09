@@ -5,6 +5,7 @@ interface GlobalEventDefinitions {
   PersonStandComplete: {
     whoId?: string;
   };
+  PlayerStateUpdated: {};
 }
 
 export type GlobalEventHandler<Type extends keyof GlobalEventDefinitions> = (

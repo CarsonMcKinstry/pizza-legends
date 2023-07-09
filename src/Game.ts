@@ -1,9 +1,9 @@
-import { SceneBehaviors } from "./Behaviors/SceneBehaviors";
 import { DirectionInput } from "./Inputs/DirectionInput";
 import { globalEvents } from "./Inputs/GlobalEvents";
 import { KeyPressListener } from "./Inputs/KeyPressListener";
 import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
+import { Hud } from "./Ui/Hud";
 
 export type GameConfig = {
   element: HTMLElement;
@@ -17,6 +17,8 @@ export class Game {
   scene?: SceneController;
 
   directionInput?: DirectionInput;
+
+  hud?: Hud;
 
   constructor(config: GameConfig) {
     this.element = config.element;
@@ -76,6 +78,9 @@ export class Game {
   }
 
   async init() {
+    this.hud = new Hud();
+    this.hud.init(this.element);
+
     this.startScene("DemoRoom");
 
     this.bindActionInput();

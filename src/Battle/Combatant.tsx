@@ -16,7 +16,7 @@ export type CombatantConfig = {
   type: PizzaType;
   src: string;
   icon: string;
-  team: TeamType;
+  team?: TeamType;
   isPlayerControlled?: true;
   state: CombatantState;
 };
@@ -31,11 +31,11 @@ export class Combatant {
 
   actions: string[];
   name: string;
-  battle: Battle;
+  battle?: Battle;
   type: PizzaType;
   src: string;
   icon: string;
-  team: TeamType;
+  team?: TeamType;
   id?: string;
 
   isPlayerControlled = false;
@@ -49,7 +49,7 @@ export class Combatant {
     status?: CombatantStatus;
   };
 
-  constructor(config: CombatantConfig, battle: Battle) {
+  constructor(config: CombatantConfig, battle?: Battle) {
     this.name = config.name;
     this.actions = config.actions;
     this.battle = battle;
@@ -71,7 +71,7 @@ export class Combatant {
   }
 
   get isActive() {
-    return this.battle?.activeCombatants[this.team] === this.id;
+    return this.battle?.activeCombatants[this.team!] === this.id;
   }
 
   get givesXp() {

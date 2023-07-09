@@ -9,6 +9,7 @@ import React, { JSX } from "jsx-dom";
 import { CombatantState, Enemy, Item, TeamType } from "@/types";
 import { Team } from "./Team";
 import { playerState } from "@/State/PlayerState";
+import { globalEvents } from "@/Inputs/GlobalEvents";
 
 type BattleConfig = {
   enemy: Enemy;
@@ -162,6 +163,10 @@ export class Battle {
                   return this.usedInstanceIds[item.instanceId];
                 })
                 .map(({ team: _team, ...item }) => item);
+
+              // send signal to update hud.
+
+              globalEvents.emit("PlayerStateUpdated", {});
             });
           }
 
