@@ -1,4 +1,4 @@
-import "@/styles/PauseMenu.css";
+import "@/styles/Menus.css";
 import { KeyPressListener } from "@/Inputs/KeyPressListener";
 import { KeyboardMenu, MenuOption } from "@/Inputs/KeyboardMenu";
 import { wait } from "@/utils";
@@ -100,7 +100,7 @@ export class PauseMenu {
 
   createElement() {
     this.element = (
-      <div className="PauseMenu">
+      <div className="overlayMenu">
         <h2>Pause Menu</h2>
       </div>
     );

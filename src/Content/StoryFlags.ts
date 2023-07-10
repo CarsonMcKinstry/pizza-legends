@@ -3,4 +3,5 @@ export enum StoryFlag {
   DEFEATED_FIRST_BOSS,
   TALKED_TO_ERIO,
   DEFEATED_BETH,
+  USED_PIZZA_STONE,
 }

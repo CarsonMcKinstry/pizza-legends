@@ -161,12 +161,7 @@ export class SceneController {
         return `${entity.x},${entity.y}` === `${nextCoords.x},${nextCoords.y}`;
       });
 
-      if (
-        !this.isCutscenePlaying &&
-        match &&
-        match instanceof Character &&
-        match.talking.length
-      ) {
+      if (!this.isCutscenePlaying && match && match.talking?.length) {
         const relevantScenario = match.talking.find((scenario) => {
           return (scenario.requires ?? []).every(
             (item) => playerState.storyFlags[item]

@@ -6,13 +6,12 @@ import {
 import { Entity, EntityConfig, EntityStateUpdate } from "@/Entity";
 import { globalEvents } from "@/Inputs/GlobalEvents";
 import { TILE_SIZE } from "@/constants";
-import { CutsceneConfig, Direction } from "@/types";
+import { Direction } from "@/types";
 import { nextPosition } from "@/utils";
 
 export type CharacterConfig = Omit<EntityConfig, "src"> & {
   spriteName: string;
   isPlayerControlled?: true;
-  talking?: CutsceneConfig[];
 };
 
 type DirectionUpdate = ["x" | "y", 1 | -1];
@@ -35,8 +34,6 @@ export class Character extends Entity {
     x: number;
     y: number;
   };
-
-  talking: CutsceneConfig[] = [];
 
   constructor({
     spriteName,

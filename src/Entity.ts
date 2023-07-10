@@ -1,5 +1,5 @@
 import { Sprite, SpriteConfig } from "@/Sprite";
-import { Direction } from "@/types";
+import { CutsceneConfig, Direction } from "@/types";
 import { DirectionInput } from "@/Inputs/DirectionInput";
 import { SceneController } from "@/SceneController";
 import { SceneBehaviorType } from "./Behaviors/SceneBehaviors";
@@ -12,6 +12,7 @@ export type EntityConfig = Omit<SpriteConfig, "src" | "entity"> & {
   direction?: Direction;
 
   behaviorLoop?: SceneBehaviorType[];
+  talking?: CutsceneConfig[];
 };
 
 export type EntityStateUpdate = {
@@ -32,6 +33,8 @@ export class Entity {
   behaviorLoopIndex = 0;
 
   retryTimeout?: number;
+
+  talking?: CutsceneConfig[];
 
   constructor({
     x,

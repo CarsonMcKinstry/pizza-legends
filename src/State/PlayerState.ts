@@ -74,6 +74,24 @@ export class PlayerState {
     this.lineup.unshift(futureFrontId);
     globalEvents.emit("LineupChanged", {});
   }
+
+  addPizza(pizzaId: string) {
+    const newId = `p${Date.now()}${Math.floor(Math.random() * 999999)}`;
+
+    this.pizzas[newId] = {
+      pizzaId,
+      hp: 50,
+      maxHp: 50,
+      xp: 0,
+      maxXp: 100,
+      level: 1,
+    };
+
+    if (this.lineup.length < 3) {
+      this.lineup.push(newId);
+    }
+    globalEvents.emit("LineupChanged", {});
+  }
 }
 
 export const playerState = new PlayerState();

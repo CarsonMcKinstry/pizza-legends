@@ -12,6 +12,7 @@ import { Enemies } from "@/Content/Enemies";
 import { PauseMenu } from "@/Ui/PauseMenu";
 import { StoryFlag } from "@/Content/StoryFlags";
 import { playerState } from "@/State/PlayerState";
+import { CraftingMenu } from "@/Ui/CraftingMenu";
 
 export const sceneBehaviorHandler = createBehaviorHandler({
   exampleState: {} as SceneEvent,
@@ -157,6 +158,21 @@ export const sceneBehaviorHandler = createBehaviorHandler({
     addStoryFlag(sceneEvent, action: DetailedAction<{ flag: StoryFlag }>) {
       playerState.storyFlags[action.details.flag] = true;
       sceneEvent.resolve?.();
+    },
+    craftingMenu(
+      sceneEvent,
+      action: DetailedAction<{
+        pizzas: string[];
+      }>
+    ) {
+      const menu = new CraftingMenu({
+        pizzas: action.details.pizzas,
+        onComplete() {
+          sceneEvent.resolve?.();
+        },
+      });
+
+      menu.init(sceneEvent.scene.container);
     },
   },
 });

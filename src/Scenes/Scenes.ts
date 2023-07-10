@@ -4,6 +4,7 @@ import { Character } from "@/Entities/Character";
 import { SceneConfig } from "@/SceneController";
 import { SceneBehaviors } from "@/Behaviors/SceneBehaviors";
 import { StoryFlag } from "@/Content/StoryFlags";
+import { PizzaStone } from "@/Entities/PizzaStone";
 
 export const Scenes: Record<string, SceneConfig> = {
   DemoRoom: {
@@ -78,6 +79,12 @@ export const Scenes: Record<string, SceneConfig> = {
             ],
           },
         ],
+      }),
+      pizzaStone: new PizzaStone({
+        x: withGrid(2),
+        y: withGrid(7),
+        storyFlag: StoryFlag.USED_PIZZA_STONE,
+        pizzas: ["v001", "f001", "s001"],
       }),
     },
     walls: {
