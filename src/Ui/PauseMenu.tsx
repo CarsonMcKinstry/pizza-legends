@@ -5,20 +5,24 @@ import { wait } from "@/utils";
 import React, { JSX } from "jsx-dom";
 import { playerState } from "@/State/PlayerState";
 import { Pizzas } from "@/Content/Pizzas";
+import { Progress } from "@/Progress";
 
 type PauseMenuConfig = {
   onComplete: () => void;
+  progress: Progress;
 };
 
 export class PauseMenu {
   keyboardMenu?: KeyboardMenu;
   element?: JSX.Element;
   onComplete: () => void;
+  progress: Progress;
 
   esc?: KeyPressListener;
 
-  constructor({ onComplete }: PauseMenuConfig) {
+  constructor({ onComplete, progress }: PauseMenuConfig) {
     this.onComplete = onComplete;
+    this.progress = progress;
   }
 
   getOptions(pageKey: string): MenuOption[] {
@@ -42,7 +46,10 @@ export class PauseMenu {
         {
           label: "Save",
           description: "Save your progress",
-          handler: () => {},
+          handler: () => {
+            this.progress.save();
+            this.close();
+          },
         },
         {
           label: "Close",

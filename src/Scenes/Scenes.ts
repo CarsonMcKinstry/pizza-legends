@@ -8,6 +8,7 @@ import { PizzaStone } from "@/Entities/PizzaStone";
 
 export const Scenes: Record<string, SceneConfig> = {
   DemoRoom: {
+    id: "DemoRoom",
     backgroundSrc: "/images/maps/DemoLower.png",
     foregroundSrc: "/images/maps/DemoUpper.png",
     entities: {
@@ -115,6 +116,7 @@ export const Scenes: Record<string, SceneConfig> = {
     },
   },
   Kitchen: {
+    id: "Kitchen",
     backgroundSrc: "/images/maps/KitchenLower.png",
     foregroundSrc: "/images/maps/KitchenUpper.png",
     entities: {
@@ -128,7 +130,45 @@ export const Scenes: Record<string, SceneConfig> = {
     triggerSpaces: {
       [asGridCoords(5, 10)]: [
         {
-          events: [SceneBehaviors.changeScene({ scene: "DemoRoom" })],
+          events: [
+            SceneBehaviors.changeScene({
+              scene: "Street",
+              heroInitialState: {
+                x: withGrid(29),
+                y: withGrid(9),
+                direction: "down",
+              },
+            }),
+          ],
+        },
+      ],
+    },
+  },
+  Street: {
+    id: "Street",
+    backgroundSrc: "/images/maps/StreetLower.png",
+    foregroundSrc: "/images/maps/StreetUpper.png",
+    entities: {
+      hero: new Character({
+        isPlayerControlled: true,
+        x: withGrid(29),
+        y: withGrid(10),
+        spriteName: "hero",
+      }),
+    },
+    triggerSpaces: {
+      [asGridCoords(29, 9)]: [
+        {
+          events: [
+            SceneBehaviors.changeScene({
+              scene: "Kitchen",
+              heroInitialState: {
+                x: withGrid(5),
+                y: withGrid(10),
+                direction: "up",
+              },
+            }),
+          ],
         },
       ],
     },

@@ -2,9 +2,11 @@ import { SceneBehaviors } from "./Behaviors/SceneBehaviors";
 import { DirectionInput } from "./Inputs/DirectionInput";
 import { globalEvents } from "./Inputs/GlobalEvents";
 import { KeyPressListener } from "./Inputs/KeyPressListener";
+import { Progress } from "./Progress";
 import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
 import { Hud } from "./Ui/Hud";
+import { Direction, HeroInitialState } from "./types";
 
 export type GameConfig = {
   element: HTMLElement;
@@ -20,6 +22,8 @@ export class Game {
   directionInput?: DirectionInput;
 
   hud?: Hud;
+
+  progress?: Progress;
 
   constructor(config: GameConfig) {
     this.element = config.element;
@@ -74,7 +78,7 @@ export class Game {
     });
   }
 
-  startScene(scene: string) {
+  startScene(scene: string, heroInitialState?: HeroInitialState) {
     const sceneConfig = Scenes[scene];
 
     this.scene?.cleanup();
@@ -84,14 +88,45 @@ export class Game {
     newScene.mountEntities();
 
     this.scene = newScene;
+
+    if (heroInitialState && this.scene?.entities.hero) {
+      this.scene!.entities.hero.x = heroInitialState.x;
+      this.scene!.entities.hero.y = heroInitialState.y;
+      this.scene!.entities.hero.direction = heroInitialState.direction;
+    }
+
+    this.progress!.mapId = sceneConfig.id;
+    this.progress!.startingHeroX = this.scene!.entities.hero.x;
+    this.progress!.startingHeroY = this.scene!.entities.hero.y;
+    this.progress!.startingHeroDirection = this.scene!.entities.hero.direction;
   }
 
   async init() {
+    // Create a new progress tracker
+    this.progress = new Progress();
+
+    // Potentially load saved data
+    let initialHeroState: HeroInitialState | undefined = undefined;
+    const saveFile = this.progress.getSaveFile();
+
+    if (saveFile) {
+      this.progress.load();
+
+      initialHeroState = {
+        x: this.progress.startingHeroX,
+        y: this.progress.startingHeroY,
+        direction: this.progress.startingHeroDirection,
+      };
+    }
+
+    // Load the HUD
     this.hud = new Hud();
     this.hud.init(this.element);
 
-    this.startScene("DemoRoom");
+    // Start the map
+    this.startScene(this.progress.mapId, initialHeroState);
 
+    // Create controls
     this.bindActionInput();
     this.bindHeroPositionCheck();
 

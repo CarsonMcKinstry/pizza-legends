@@ -9,6 +9,7 @@ import { BattleOutcome, Direction, TriggerSpaces } from "./types";
 import { loadImage, nextPosition, withGrid } from "./utils";
 
 type SceneControllerConfig = {
+  id: string;
   entities: Record<string, Entity>;
   backgroundSrc: string;
   foregroundSrc: string;

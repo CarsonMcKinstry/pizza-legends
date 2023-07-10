@@ -56,3 +56,14 @@ export enum BattleOutcome {
   Win = "Win",
   Lose = "Lose",
 }
+
+export type HeroInitialState = {
+  x: number;
+  y: number;
+  direction: Direction;
+};
+
+export enum EntityType {
+  Character,
+  PizzaStone,
+}

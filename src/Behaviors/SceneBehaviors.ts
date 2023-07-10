@@ -3,7 +3,7 @@ import { GlobalEventHandler, globalEvents } from "@/Inputs/GlobalEvents";
 
 import { SceneEvent } from "@/SceneEvent";
 import { TextMessage } from "@/Ui/TextMessage";
-import { BattleOutcome, Direction } from "@/types";
+import { BattleOutcome, Direction, HeroInitialState } from "@/types";
 import { oppositeDirection } from "@/utils";
 import { DetailedAction, createBehaviorHandler } from "./createBehaviorHandler";
 import { SceneTransition } from "@/Ui/SceneTranstion";
@@ -117,10 +117,20 @@ export const sceneBehaviorHandler = createBehaviorHandler({
 
       message.init(sceneEvent.scene.container);
     },
-    changeScene(sceneEvent, action: DetailedAction<{ scene: string }>) {
+    changeScene(
+      sceneEvent,
+      action: DetailedAction<{
+        scene: string;
+        heroInitialState?: HeroInitialState;
+      }>
+    ) {
+      const { heroInitialState } = action.details;
       const transition = new SceneTransition({
         onComplete() {
-          sceneEvent.scene.game?.startScene(action.details.scene);
+          sceneEvent.scene.game?.startScene(
+            action.details.scene,
+            heroInitialState
+          );
 
           transition.fadeOut();
 
@@ -146,6 +156,7 @@ export const sceneBehaviorHandler = createBehaviorHandler({
       sceneEvent.scene.isPaused = true;
 
       const menu = new PauseMenu({
+        progress: sceneEvent.scene.game!.progress!,
         onComplete() {
           sceneEvent.resolve?.();
           sceneEvent.scene.isPaused = false;
