@@ -23,12 +23,8 @@ export class KeyboardMenu {
   up?: KeyPressListener;
   down?: KeyPressListener;
 
-  constructor({
-    descriptionContainer,
-  }: {
-    descriptionContainer?: JSX.Element;
-  }) {
-    this.descriptionContainer = descriptionContainer;
+  constructor(config?: { descriptionContainer?: JSX.Element }) {
+    this.descriptionContainer = config?.descriptionContainer;
   }
 
   setOptions(options: MenuOption[]) {

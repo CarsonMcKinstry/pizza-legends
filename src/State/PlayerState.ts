@@ -1,3 +1,4 @@
+import { StoryFlag } from "@/Content/StoryFlags";
 import { globalEvents } from "@/Inputs/GlobalEvents";
 import { CombatantState, Item } from "@/types";
 
@@ -10,7 +11,7 @@ export class PlayerState {
   > = {
     p1: {
       pizzaId: "s001",
-      hp: 30,
+      hp: 1,
       maxHp: 50,
       xp: 99,
       maxXp: 100,
@@ -34,7 +35,9 @@ export class PlayerState {
     },
   };
 
-  lineup: string[] = ["p2", "p1"];
+  lineup: string[] = ["p1"];
+
+  storyFlags: Partial<Record<StoryFlag, true>> = {};
 
   items: Omit<Item, "team">[] = [
     {

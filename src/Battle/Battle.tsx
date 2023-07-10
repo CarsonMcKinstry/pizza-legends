@@ -13,7 +13,7 @@ import { globalEvents } from "@/Inputs/GlobalEvents";
 
 type BattleConfig = {
   enemy: Enemy;
-  onComplete: (winner: TeamType) => void;
+  onComplete: (didWin: boolean) => void;
 };
 
 export type BattleState = {
@@ -25,7 +25,7 @@ export type BattleState = {
 
 export class Battle {
   element?: JSX.Element;
-  onComplete: (winner: TeamType) => void;
+  onComplete: (didWin: boolean) => void;
   combatants: Record<string, Combatant> = {};
   turnCycle?: TurnCycle;
 
@@ -171,7 +171,7 @@ export class Battle {
           }
 
           this.element?.remove();
-          this.onComplete(winner);
+          this.onComplete(winner === "player");
         },
       });
 

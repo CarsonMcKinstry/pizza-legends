@@ -1,8 +1,10 @@
 import { SceneBehaviorType } from "./Behaviors/SceneBehaviors";
+import { StoryFlag } from "./Content/StoryFlags";
 
 export type Direction = "up" | "right" | "down" | "left";
 
 export type CutsceneConfig = {
+  requires?: StoryFlag[];
   events: SceneBehaviorType[];
 };
 
@@ -49,3 +51,8 @@ export type Enemy = {
     }
   >;
 };
+
+export enum BattleOutcome {
+  Win = "Win",
+  Lose = "Lose",
+}

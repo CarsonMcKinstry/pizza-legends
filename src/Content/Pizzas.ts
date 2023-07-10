@@ -31,7 +31,7 @@ export const Pizzas: Record<
     type: PizzaType.Veggie,
     src: "./images/characters/pizzas/v001.png",
     icon: "/images/icons/veggie.png",
-    actions: ["clumsyStatus", "damage1"],
+    actions: ["damage1"],
   },
   f001: {
     name: "Portabello Express",

@@ -3,8 +3,9 @@ import { Character } from "./Entities/Character";
 import { Entity, EntityStateUpdate } from "./Entity";
 import { Game } from "./Game";
 import { SceneEvent } from "./SceneEvent";
+import { playerState } from "./State/PlayerState";
 import { CAMERA_NUDGE_X, CAMERA_NUDGE_Y } from "./constants";
-import { Direction, TriggerSpaces } from "./types";
+import { BattleOutcome, Direction, TriggerSpaces } from "./types";
 import { loadImage, nextPosition, withGrid } from "./utils";
 
 type SceneControllerConfig = {
@@ -99,7 +100,11 @@ export class SceneController {
         scene: this,
         event,
       });
-      await eventHandler.init();
+      const result = await eventHandler.init();
+
+      if (typeof result === "string" && result === BattleOutcome.Lose) {
+        break;
+      }
     }
 
     this.isCutscenePlaying = false;
@@ -162,21 +167,28 @@ export class SceneController {
         match instanceof Character &&
         match.talking.length
       ) {
-        this.startCutscene(
-          match.talking[0].events.map(
-            (event) =>
-              ({
-                ...event,
-                details: {
-                  ...(event.details ?? {}),
-                  who:
-                    event.details! && "who" in event.details
-                      ? event.details.who
-                      : match.id,
-                },
-              } as SceneBehaviorType)
-          )
-        );
+        const relevantScenario = match.talking.find((scenario) => {
+          return (scenario.requires ?? []).every(
+            (item) => playerState.storyFlags[item]
+          );
+        });
+        if (relevantScenario) {
+          this.startCutscene(
+            relevantScenario.events.map(
+              (event) =>
+                ({
+                  ...event,
+                  details: {
+                    ...(event.details ?? {}),
+                    who:
+                      event.details! && "who" in event.details
+                        ? event.details.who
+                        : match.id,
+                  },
+                } as SceneBehaviorType)
+            )
+          );
+        }
       }
     }
   }

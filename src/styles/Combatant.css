@@ -39,8 +39,8 @@
 .Combatant_character {
   display: block;
   position: absolute;
-  left: -11px;
-  bottom: -7px;
+  left: -9px;
+  bottom: -2px;
 }
 
 .Battle .Combatant_character_crop {

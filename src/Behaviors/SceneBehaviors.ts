@@ -3,13 +3,15 @@ import { GlobalEventHandler, globalEvents } from "@/Inputs/GlobalEvents";
 
 import { SceneEvent } from "@/SceneEvent";
 import { TextMessage } from "@/Ui/TextMessage";
-import { Direction } from "@/types";
+import { BattleOutcome, Direction } from "@/types";
 import { oppositeDirection } from "@/utils";
 import { DetailedAction, createBehaviorHandler } from "./createBehaviorHandler";
 import { SceneTransition } from "@/Ui/SceneTranstion";
 import { Battle } from "@/Battle/Battle";
 import { Enemies } from "@/Content/Enemies";
 import { PauseMenu } from "@/Ui/PauseMenu";
+import { StoryFlag } from "@/Content/StoryFlags";
+import { playerState } from "@/State/PlayerState";
 
 export const sceneBehaviorHandler = createBehaviorHandler({
   exampleState: {} as SceneEvent,
@@ -126,11 +128,14 @@ export const sceneBehaviorHandler = createBehaviorHandler({
       });
       transition.init(sceneEvent.scene.container);
     },
-    battle(sceneEvent, action: DetailedAction<{ enemyId: string }>) {
+    battle(
+      sceneEvent: SceneEvent,
+      action: DetailedAction<{ enemyId: string }>
+    ) {
       const battle = new Battle({
         enemy: Enemies[action.details.enemyId],
-        onComplete() {
-          sceneEvent.resolve?.();
+        onComplete(didWin) {
+          sceneEvent.resolve?.(didWin ? BattleOutcome.Win : BattleOutcome.Lose);
         },
       });
 
@@ -148,6 +153,10 @@ export const sceneBehaviorHandler = createBehaviorHandler({
       });
 
       menu.init(sceneEvent.scene.container);
+    },
+    addStoryFlag(sceneEvent, action: DetailedAction<{ flag: StoryFlag }>) {
+      playerState.storyFlags[action.details.flag] = true;
+      sceneEvent.resolve?.();
     },
   },
 });

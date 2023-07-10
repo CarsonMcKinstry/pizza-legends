@@ -1,0 +1,6 @@
+export enum StoryFlag {
+  DID_SOMETHING,
+  DEFEATED_FIRST_BOSS,
+  TALKED_TO_ERIO,
+  DEFEATED_BETH,
+}

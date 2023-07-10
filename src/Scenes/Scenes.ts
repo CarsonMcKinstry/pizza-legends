@@ -3,6 +3,7 @@ import { Character } from "@/Entities/Character";
 
 import { SceneConfig } from "@/SceneController";
 import { SceneBehaviors } from "@/Behaviors/SceneBehaviors";
+import { StoryFlag } from "@/Content/StoryFlags";
 
 export const Scenes: Record<string, SceneConfig> = {
   DemoRoom: {
@@ -27,13 +28,29 @@ export const Scenes: Record<string, SceneConfig> = {
         ],
         talking: [
           {
+            requires: [StoryFlag.TALKED_TO_ERIO],
             events: [
               SceneBehaviors.textMessage({
-                text: "I'm busy...",
+                text: "Isn't Erio the coolest?",
+                faceHero: true,
+              }),
+            ],
+          },
+          {
+            events: [
+              SceneBehaviors.textMessage({
+                text: "I'm going to crush you!",
                 faceHero: true,
               }),
               SceneBehaviors.battle({
                 enemyId: "beth",
+              }),
+              SceneBehaviors.addStoryFlag({
+                flag: StoryFlag.DEFEATED_BETH,
+              }),
+              SceneBehaviors.textMessage({
+                text: "You crushed me like a weak pepper",
+                faceHero: true,
               }),
               // SceneBehaviors.textMessage({ text: "Go away." }),
               // SceneBehaviors.walk({ direction: "up", who: "hero" }),
@@ -50,10 +67,14 @@ export const Scenes: Record<string, SceneConfig> = {
             events: [
               SceneBehaviors.textMessage({
                 text: "Bahahaha!",
+                faceHero: true,
               }),
-              SceneBehaviors.battle({
-                enemyId: "erio",
+              SceneBehaviors.addStoryFlag({
+                flag: StoryFlag.TALKED_TO_ERIO,
               }),
+              // SceneBehaviors.battle({
+              //   enemyId: "erio",
+              // }),
             ],
           },
         ],
