@@ -4,8 +4,13 @@ import { DirectionInput } from "@/Inputs/DirectionInput";
 import { SceneController } from "@/SceneController";
 import { SceneBehaviorType } from "./Behaviors/SceneBehaviors";
 import { SceneEvent } from "./SceneEvent";
+import { EntityType } from "./Entities/types";
 
-export type EntityConfig = Omit<SpriteConfig, "src" | "entity"> & {
+export type EntityConfig<T extends EntityType> = Omit<
+  SpriteConfig,
+  "src" | "entity"
+> & {
+  type: T;
   x: number;
   y: number;
   src?: string;
@@ -18,10 +23,10 @@ export type EntityConfig = Omit<SpriteConfig, "src" | "entity"> & {
 export type EntityStateUpdate = {
   directionInput?: DirectionInput;
   scene: SceneController;
-  camera?: Entity;
+  camera?: Entity<any>;
 };
 
-export class Entity {
+export class Entity<T extends EntityType> {
   private _id?: string;
   x = 0;
   y = 0;
@@ -43,7 +48,7 @@ export class Entity {
     direction,
     behaviorLoop,
     ...spriteConfig
-  }: EntityConfig) {
+  }: EntityConfig<T>) {
     this.x = x;
     this.y = y;
     this.direction = direction ?? this.direction;
@@ -75,7 +80,7 @@ export class Entity {
     }, 0);
   }
 
-  dismount() {
+  unmount() {
     this.isMounted = false;
   }
 

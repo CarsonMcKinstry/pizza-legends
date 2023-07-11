@@ -8,8 +8,12 @@ import { globalEvents } from "@/Inputs/GlobalEvents";
 import { TILE_SIZE } from "@/constants";
 import { Direction } from "@/types";
 import { nextPosition } from "@/utils";
+import { EntityType } from "./types";
 
-export type CharacterConfig = Omit<EntityConfig, "src"> & {
+export type CharacterConfig = Omit<
+  EntityConfig<EntityType.Character>,
+  "src"
+> & {
   spriteName: string;
   isPlayerControlled?: true;
 };
@@ -18,7 +22,7 @@ type DirectionUpdate = ["x" | "y", 1 | -1];
 
 type DirectionUpdates = Record<Direction, DirectionUpdate>;
 
-export class Character extends Entity {
+export class Character extends Entity<EntityType.Character> {
   isPlayerControlled = false;
 
   private directionUpdateMap: DirectionUpdates = {

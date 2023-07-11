@@ -13,7 +13,7 @@ export type SpriteFrameCoords = [number, number];
 export type SpriteAnimations = Record<string, SpriteFrameCoords[]>;
 
 export type SpriteConfig = {
-  entity: Entity;
+  entity: Entity<any>;
 
   src: string;
   useShadow?: boolean;
@@ -69,7 +69,7 @@ export class Sprite {
   frameProgress = 0;
 
   // Entity the sprite belongs to
-  entity: Entity;
+  entity: Entity<any>;
 
   constructor(config: SpriteConfig) {
     // Load sprites
@@ -103,7 +103,7 @@ export class Sprite {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D, camera: Entity) {
+  draw(ctx: CanvasRenderingContext2D, camera: Entity<any>) {
     const x =
       this.entity.x - CHAR_OFFSET_X + withGrid(CAMERA_NUDGE_X) - camera.x;
     const y =

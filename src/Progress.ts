@@ -2,7 +2,7 @@ import { playerState } from "./State/PlayerState";
 import { Direction } from "./types";
 
 export class Progress {
-  mapId = "DemoRoom";
+  mapId = "Kitchen";
   startingHeroX = 0;
   startingHeroY = 0;
   startingHeroDirection: Direction = "down";

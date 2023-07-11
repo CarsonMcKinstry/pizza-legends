@@ -62,8 +62,3 @@ export type HeroInitialState = {
   y: number;
   direction: Direction;
 };
-
-export enum EntityType {
-  Character,
-  PizzaStone,
-}

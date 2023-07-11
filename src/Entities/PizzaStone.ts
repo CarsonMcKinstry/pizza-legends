@@ -2,13 +2,14 @@ import { SceneBehaviors } from "@/Behaviors/SceneBehaviors";
 import { StoryFlag } from "@/Content/StoryFlags";
 import { Entity, EntityConfig, EntityStateUpdate } from "@/Entity";
 import { playerState } from "@/State/PlayerState";
+import { EntityType } from "./types";
 
-type PizzaStoneConfig = EntityConfig & {
+export type PizzaStoneConfig = EntityConfig<EntityType.PizzaStone> & {
   storyFlag: StoryFlag;
   pizzas: string[];
 };
 
-export class PizzaStone extends Entity {
+export class PizzaStone extends Entity<EntityType.PizzaStone> {
   storyFlag: StoryFlag;
   pizzas: string[];
 

@@ -1,33 +1,25 @@
 import { SceneBehaviorType } from "./Behaviors/SceneBehaviors";
 import { Character } from "./Entities/Character";
+import { fromEntityConfig } from "./Entities/types";
 import { Entity, EntityStateUpdate } from "./Entity";
 import { Game } from "./Game";
 import { SceneEvent } from "./SceneEvent";
+import { SceneConfig, SceneEntityConfig } from "./Scenes/types";
 import { playerState } from "./State/PlayerState";
 import { CAMERA_NUDGE_X, CAMERA_NUDGE_Y } from "./constants";
 import { BattleOutcome, Direction, TriggerSpaces } from "./types";
 import { loadImage, nextPosition, withGrid } from "./utils";
 
-type SceneControllerConfig = {
-  id: string;
-  entities: Record<string, Entity>;
-  backgroundSrc: string;
-  foregroundSrc: string;
-  walls?: Record<string, true>;
-  triggerSpaces?: TriggerSpaces;
-};
-
-export type SceneConfig = SceneControllerConfig;
-
 export class SceneController {
-  entities: Record<string, Entity>;
+  entities: Record<string, Entity<any>> = {};
+  entityConfigs: Record<string, SceneEntityConfig>;
 
   // The Map
   background?: HTMLImageElement;
   foreground?: HTMLImageElement;
 
   // The Camera
-  camera?: Entity;
+  camera?: Entity<any>;
 
   // Walls
   walls: Record<string, true> = {};
@@ -45,32 +37,34 @@ export class SceneController {
   isPaused = false;
 
   constructor({
-    entities,
+    entityConfigs,
     backgroundSrc,
     foregroundSrc,
     walls,
     triggerSpaces,
-  }: SceneControllerConfig) {
-    // Establish entities in the scene
-    this.entities = entities;
+  }: SceneConfig) {
+    this.entityConfigs = entityConfigs;
 
     this.loadGround(backgroundSrc, foregroundSrc);
 
-    this.camera = entities.hero;
+    this.camera = this.entities.hero;
 
     this.walls = walls ?? this.walls;
     this.triggerSpaces = triggerSpaces ?? this.triggerSpaces;
   }
 
   mountEntities() {
-    for (const [id, entity] of Object.entries(this.entities)) {
-      entity.mount(this, id);
+    for (const [id, entity] of Object.entries(this.entityConfigs)) {
+      const instance = fromEntityConfig(entity.type, entity);
+      instance.mount(this, id);
+
+      this.entities[id] = instance;
     }
   }
 
   cleanup() {
     for (const entity of Object.values(this.entities)) {
-      entity.dismount();
+      entity.unmount();
     }
     this.entities = {};
   }
