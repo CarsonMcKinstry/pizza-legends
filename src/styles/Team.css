@@ -5,11 +5,11 @@
   gap: 4px;
 }
 
-.Team[data-team="player"] {
+.Team.player {
   left: 4px;
 }
 
-.Team[data-team="enemy"] {
+.Team.enemy {
   right: 4px;
 }
 
@@ -21,10 +21,10 @@
   display: none;
 }
 
-.Team [data-dead="true"] .dead-pizza {
+.Team .dead .dead-pizza {
   display: block;
 }
 
-.Team [data-active="true"] .active-pizza-indicator {
+.Team .active .active-pizza-indicator {
   display: block;
 }

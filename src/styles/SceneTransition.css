@@ -1,17 +1,20 @@
+:root {
+  --scene-transition-time: 0.3s;
+}
+
 .SceneTransition {
   position: absolute;
-  top: 0;
   left: 0;
   right: 0;
+  top: 0;
   bottom: 0;
+  animation: scene-transition-fade-in var(--scene-transition-time) forwards;
   background: #fff;
   opacity: 0;
-
-  animation: scene-transition-fade-in 0.3s forwards;
 }
 
 .SceneTransition.fade-out {
-  animation: scene-transition-fade-out 0.3s forwards;
+  animation: scene-transition-fade-out var(--scene-transition-time) forwards;
 }
 
 @keyframes scene-transition-fade-in {
