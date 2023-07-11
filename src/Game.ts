@@ -6,6 +6,7 @@ import { Progress } from "./Progress";
 import { SceneController } from "./SceneController";
 import { Scenes } from "./Scenes";
 import { Hud } from "./Ui/Hud";
+import { TitleScreen } from "./Ui/TitleScreen";
 import { Direction, HeroInitialState } from "./types";
 
 export type GameConfig = {
@@ -18,6 +19,7 @@ export class Game {
   ctx: CanvasRenderingContext2D;
 
   scene?: SceneController;
+  titleScreen?: TitleScreen;
 
   directionInput?: DirectionInput;
 
@@ -105,11 +107,17 @@ export class Game {
     // Create a new progress tracker
     this.progress = new Progress();
 
+    const useSaveFile = (this.titleScreen = new TitleScreen({
+      progress: this.progress,
+      onComplete() {},
+    }));
+
+    await this.titleScreen.init(this.element);
+
     // Potentially load saved data
     let initialHeroState: HeroInitialState | undefined = undefined;
-    const saveFile = this.progress.getSaveFile();
 
-    if (saveFile) {
+    if (useSaveFile) {
       this.progress.load();
 
       initialHeroState = {
